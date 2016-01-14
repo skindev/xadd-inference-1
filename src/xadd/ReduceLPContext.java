@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////
 //
 // Extended Algebraic Decision Diagrams Package
-// Linear Pruning of infeasible paths and 
+// Linear Pruning of infeasible paths and
 // Removal of redundant decisions
 //
 // @author Scott Sanner (ssanner@gmail.com)
@@ -32,19 +32,19 @@ import xadd.XADD.XADDINode;
 
 
 public class ReduceLPContext {
-	
+
     //ReduceLP Flags
     private final static boolean DEFAULT_CHECK_REDUNDANCY = true; // Test only consistency or also redundancy
     private final static boolean USE_REDUCE_LPv1 = false;//false; //maplist, full redundancy older version
     private final static boolean USE_REDUCE_LPv2 = true;//true; //hashSet, result implied redundancy new version
     private final static boolean SKIP_TEST2 = false; //Skip Minimal region removal. Currenty test2 is very effective in reducing size even at very small slack.
     private static final double IMPLIED_PRECISION_T2 = 1e-40;// XADD.PRECISION;//1e-4; //Precision for removing unreliably feasible constraints
-  
+
     public static final boolean SINGLE_PATH_IMPLIED_RESULT = false; //Stop search if need to check more than one path
 
     private static final boolean ADD_EXPLICIT_BOUND_CONSTRAINTS_TO_LP = false; //Add bounds as explicit constraints (should not be necessary)
     //Debug Flags
-    public final static boolean DEBUG_CONSTRAINTS = true;
+    public final static boolean DEBUG_CONSTRAINTS = false;
     public final static boolean TEST2_INCONSIST_QUIET = true;
 
     //Implication Caches
@@ -700,12 +700,20 @@ public class ReduceLPContext {
                 Decision d = context._alOrder.get(Math.abs(decision));
                 if (!(d instanceof ExprDec)) continue;
                 CompExpr compar = ((ExprDec) d)._expr;
-                boolean greaterComp = compar.isGreater();  
+                boolean greaterComp = compar.isGreater();
                 ArithExpr exp = ((ExprDec) d)._expr._lhs;
                 try {
                     constC = setCoefficientsLocal(exp, constrCoef2);
+                    if (Double.isNaN(constC)) {
+                      lp2.free();
+                      return false;
+                    }
                 } catch (UnsupportedConstraintException e) {
+                  if (DEBUG_CONSTRAINTS) {
                     e.printStackTrace();
+										lp2.free();
+                  }
+										return false;
                 }
                 if ( (greaterComp && decision > 0) || (!greaterComp && decision < 0) ) {
                     constrCoef2[nvars] = -1; // c + f*x > 0 => f*x - S > -c
@@ -719,8 +727,7 @@ public class ReduceLPContext {
             double soln2[] = new double[nvars + 1];
             soln2 = silentSolvelp(lp2);
             double maxSlack = lp2._dObjValue;
-
-            
+						//System.out.println("TEST LP2 : " + lp2._status);
             if (lp2._status == LpSolve.INFEASIBLE) {
                 if (!TEST2_INCONSIST_QUIET){
                 	System.err.println("Infeasible at test 2? should have failed the first test!");

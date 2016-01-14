@@ -47,11 +47,11 @@ public class XADD {
     private static final boolean USE_APPLY_GET_INODE_CANON = false;
     private static final boolean TEST_CANON_METHODS = true;
 
-    
+
     private static final boolean WARN_BOUND_UNUSED_VAR = false;
     private static final boolean WARN_INODE_CANON_NEG_DEC = false;
     public final static int MAX_BRANCH_COUNT = 1000000;
-    
+
     // Debug
     public final static boolean CHECK_LOCAL_ORDERING = true;
     public final static boolean SHOW_DECISION_EVAL = false;
@@ -112,7 +112,7 @@ public class XADD {
 
     //Decision Variable Maintenance
     public ArrayList<Decision> _alOrder = new ArrayList<Decision>();
-    
+
     // Node Maintenance
     public int _markCounter = 1;
     public int _nodeCounter = 1;
@@ -159,14 +159,14 @@ public class XADD {
     public int createDoubleNode(double d){
         return getTermNode(new ExprLib.DoubleExpr(d));
     }
-    
+
     public void createStandardNodes() {
         ZERO = getTermNode(ExprLib.ZERO);
         ONE = getTermNode(ExprLib.ONE);
         POS_INF = getTermNode(ExprLib.POS_INF);
         NEG_INF = getTermNode(ExprLib.NEG_INF);
         NAN = getTermNode(ExprLib.NAN);
-        
+
         //NaN Node requires special creation
 //        int id = _nodeCounter;
 //        XADDTNode node = new XADDTNode(ExprLib.NAN, null);
@@ -313,7 +313,7 @@ public class XADD {
         return getTermNode(n._expr, n._annotate);
     }
 
-    public int getTermNode(ArithExpr e, Object annotation) {        
+    public int getTermNode(ArithExpr e, Object annotation) {
         if (USE_CANONICAL_NODES)
             e = (ArithExpr) e.makeCanonical();
 
@@ -391,24 +391,24 @@ public class XADD {
             if (WARN_INODE_CANON_NEG_DEC) System.out.println("Warning: Canonizing Negative Decision:"+var+" =>"+_alOrder.get(Math.abs(var)));
             return getINodeCanon(-var, high, low);
         }
-        
+
         if (TEST_CANON_METHODS){
-            int result1 = getINodeCanonApplyTrick(var, low, high);        
+            int result1 = getINodeCanonApplyTrick(var, low, high);
             int result2 = getINodeCanonInsert(var,low,high);
-                
+
             if (result1 != result2 && (!containsNodeID(result1,NAN)) ){
                 System.out.println("Canonical Error (Difference not on NAN):");
                 System.out.println("PROD Result:");
                 System.out.println(getExistNode(result1));
                 System.out.println("New Canon:");
                 System.out.println(getExistNode(result2));
-                
+
                 getINodeCanonApplyTrick(var, low, high);
                 getINodeCanonInsert(var,low,high);
             }
             return (USE_APPLY_GET_INODE_CANON)? result1: result2;
         }
-        else 
+        else
             return (USE_APPLY_GET_INODE_CANON)? getINodeCanonApplyTrick(var, low, high): getINodeCanonInsert(var,low,high);
     }
 
@@ -418,27 +418,27 @@ public class XADD {
         int true_half = applyInt(ind_true, high, PROD);
         // this enforces canonicity so can use applyInt rather than apply
         int false_half = applyInt(ind_false, low, PROD);
-        int result = applyInt(true_half, false_half, SUM);        
+        int result = applyInt(true_half, false_half, SUM);
 //            getGraph(true_half).launchViewer("[" + result + "] INode Input True Half");
 //            getGraph(false_half).launchViewer("[" + result + "] Input Input False Half");
-//            getGraph(result).launchViewer("[" + result + "] Output INode");        
+//            getGraph(result).launchViewer("[" + result + "] Output INode");
         return result;
     }
-    
+
     public int getINodeCanonInsert(int var, int low, int high){
         int false_half = reduceInsertNode(low, var, ZERO, true);
         int true_half = reduceInsertNode(high, var, ZERO, false);
         return applyInt(true_half, false_half, SUM);
     }
-    
+
     public int reduceInsertNode(int orig, int decision, int node_to_insert_on_dec_value, boolean dec_value){
         return reduceInsertNodeInt(orig, decision, node_to_insert_on_dec_value, dec_value, new HashMap<Integer,Integer>()); //Map only for orig
     }
-    
+
     public int reduceInsertNodeInt(int orig, int decision, int insertNode, boolean dec_value, HashMap<Integer,Integer> _hmInsertNodeCache){
         Integer ret = _hmInsertNodeCache.get(orig);
         if (ret != null) return ret;
-        
+
         XADDNode n = getExistNode(orig);
         if ( (n instanceof XADDTNode) || (n instanceof XADDINode && (!localOrderCompareGE(decision, ((XADDINode)n)._var)) ) ){
             ret = dec_value? getINode(decision, orig, insertNode): getINode(decision, insertNode, orig);
@@ -458,7 +458,7 @@ public class XADD {
                 else{
                     ret = reduceInsertNodeInt(inode._high, decision, insertNode, dec_value, _hmInsertNodeCache);
                 }
-                
+
             }
         }
         _hmInsertNodeCache.put(orig, ret);
@@ -670,7 +670,7 @@ public class XADD {
     public boolean localOrderCompareGE(int var1, int var2) {
         return (var1 >= var2);
     }
-    
+
     public void checkLocalOrderingAndExitOnError(int node) {
         XADDNode new_node = getExistNode(node);
         if (new_node instanceof XADDINode) {
@@ -817,7 +817,7 @@ public class XADD {
         }
         return false;
     }
-    
+
     ///////////////////////////////////////
     //         Operation Methods         //
     ///////////////////////////////////////
@@ -907,12 +907,12 @@ public class XADD {
 
     // Computes a terminal node value if possible
     public Integer computeTermNode(int a1, XADDNode n1, int a2, XADDNode n2, int op) {
-        
-        //NaN cannot become valid by operations 
+
+        //NaN cannot become valid by operations
         if (a1 == NAN || a2 ==NAN){
             return NAN;
         }
-        
+
         //Zero identities first -- critical for getINodeCanon to work
         if (op == PROD && (a1 == ZERO || a2 == ZERO) ){ //Compare XADD Nodes, there shouldn't be more than one ZERO XADDTNode!
             return ZERO;
@@ -928,7 +928,7 @@ public class XADD {
 
         // Infinity identities
         // NOTE: * and / can only be evaluated on leaf since 0*inf = 0, but for x!=0 x*inf = inf
-        // (Luis) Edit! -1* POS_INF = NEG_INF! 0*Inf is treated in 0 case above, /0 is always undefined/error   
+        // (Luis) Edit! -1* POS_INF = NEG_INF! 0*Inf is treated in 0 case above, /0 is always undefined/error
         if (a1 == POS_INF) {
             if (op == SUM || op == MINUS || op == MAX)
                 return POS_INF;
@@ -960,12 +960,12 @@ public class XADD {
 
         // Old INF, ZERO and NAN GetTermNode code
 //        //Zero identities first -- critical for getINodeCanon to work
-//        if (op == PROD && 
+//        if (op == PROD &&
 //                (n1 instanceof XADDTNode && ((XADDTNode)n1)._expr.equals(ExprLib.ZERO) ||
 //                (n2 instanceof XADDTNode && ((XADDTNode)n2)._expr.equals(ExprLib.ZERO)))) {
 //            return ZERO;
 //        }
-//        
+//
 //        // Check for identities if first operand is terminal
 //        if (n1 instanceof XADDTNode) {
 //
@@ -1001,7 +1001,7 @@ public class XADD {
 //                    return a2;
 //            }
 //        }
-//        
+//
 //        // Check for identities if second operand is terminal
 //        if (n2 instanceof XADDTNode) {
 //
@@ -1038,7 +1038,7 @@ public class XADD {
 //                    return a1;
 //            }
 //        }
-        
+
         // Handle result if both operands are terminals and one of the special
         // identities above did not hold
         if ((n1 instanceof XADDTNode) && (n2 instanceof XADDTNode)) {
@@ -1079,7 +1079,7 @@ public class XADD {
             return bool_assign.get(((BoolDec) d)._sVarName);
         else if (d instanceof ExprDec) {
             if (SHOW_DECISION_EVAL) { System.out.println(" - " + ((ExprDec) d)._expr + ": " + ((ExprDec) d)._expr.evaluate(cont_assign));}
-            return  ((ExprDec) d)._expr.evaluate(cont_assign);            
+            return  ((ExprDec) d)._expr.evaluate(cont_assign);
         }
         return null;
     }
@@ -1091,11 +1091,11 @@ public class XADD {
             return bool_assign.get(((BoolDec) d)._sVarName);
         else if (d instanceof ExprDec) {
             if (SHOW_DECISION_EVAL) { System.out.println(" - " + ((ExprDec) d)._expr + ": " + ((ExprDec) d)._expr.evaluate(cont_assign));}
-            return  ((ExprDec) d)._expr.evaluateSlack(cont_assign, eps);            
+            return  ((ExprDec) d)._expr.evaluateSlack(cont_assign, eps);
         }
         return null;
     }
-    
+
     public Double evaluate(int node_id, HashMap<String, Boolean> bool_assign, HashMap<String, Double> cont_assign) {
         // Get root
         XADDNode n = getExistNode(node_id);
@@ -1104,7 +1104,7 @@ public class XADD {
         while (n instanceof XADDINode) {
             XADDINode inode = (XADDINode) n;
             Boolean branch_high = evaluateDecision(_alOrder.get(inode._var), bool_assign, cont_assign);
-            
+
             // Not all required variables were assigned
             if (branch_high == null)
                 return null;
@@ -1131,7 +1131,7 @@ public class XADD {
         // Get root
         int id = node_id;
         XADDNode n = getExistNode(node_id);
-        
+
         // Traverse decision diagram until terminal found
         while (n instanceof XADDINode) {
             XADDINode inode = (XADDINode) n;
@@ -1142,11 +1142,11 @@ public class XADD {
             id = branch_high ? inode._high : inode._low;
             n = getExistNode(id);
         }
-        
+
         // Now at a terminal node so evaluate expression
         return id;
     }
-    
+
     ///////////////////////////////////////
     //        Reduce  Methods           //
     //////////////////////////////////////
@@ -1494,7 +1494,7 @@ public class XADD {
     public int reduceLP(int node_id, boolean redun) {
         return RLPContext.reduceLP(node_id, redun);
     }
-    
+
     // Linear XADD Prunning
     public int linPruneRel(int node_id, double error) {
         LinearApproximationMethod linPrune = new LinearApproximationMethod(node_id, this);
@@ -1508,19 +1508,19 @@ public class XADD {
         node_id = linPrune.linUpperPruneRel(node_id, error);
         return reduceLP(node_id);
     }
-    
+
     // Linear Maximization
     public double linMaxVal(int node_id) {
         LinearXADDMethod linMax = new LinearXADDMethod(node_id, this);
         return linMax.linMaxVal(node_id);
     }
 
-    // Linear Optimization 
+    // Linear Optimization
     public NamedOptimResult linMaxArg(int node_id) {
         LinearXADDMethod linMax = new LinearXADDMethod(node_id, this);
         return linMax.linMaxArg(node_id);
     }
-    
+
     public double linMaxDiff(int id1, int id2) {
         int dif1 = reduceLP(apply(id1, id2, XADD.MINUS));
         int dif2 = reduceLP(apply(id2, id1, XADD.MINUS));
@@ -1577,7 +1577,7 @@ public class XADD {
         //_hmInt2Node.clear();
 
         System.out.println((_hmNode2Int.size() + _hmInt2Node.size()) + " nodes]");
-        
+
         Runtime.getRuntime().gc();
 
     }
@@ -1802,14 +1802,14 @@ public class XADD {
 
     ///////////////////////////////////////
     //             Mask Functions        //
-    ///////////////////////////////////////    
-    
+    ///////////////////////////////////////
+
     public Integer createMask(Integer id,
     HashMap<String, Boolean> bool_assign,
     HashMap<String, Double> cont_assign, Integer mask_id) {
         return reduceMask(id, bool_assign, cont_assign, mask_id, new HashMap<Integer,Integer>());
     }
-    
+
     private Integer reduceMask(Integer id,
             HashMap<String, Boolean> bool_assign,
             HashMap<String, Double> cont_assign, Integer mask_id, HashMap<Integer,Integer> maskCache) {
@@ -1818,29 +1818,29 @@ public class XADD {
             if ( (ret = maskCache.get(id))!= null){
                 return ret;
             }
-                
+
             XADDNode n = getExistNode(id);
 
             if (n instanceof XADDTNode) {
                 ret = id;
             }
             else{
-                if (!(n instanceof XADDINode)) { System.err.println("Invalid node, neither TNode nor INode:\n"+n.toString()); } 
+                if (!(n instanceof XADDINode)) { System.err.println("Invalid node, neither TNode nor INode:\n"+n.toString()); }
                 // Traverse decision diagram until terminal found
                 XADDINode inode = (XADDINode) n;
                 Boolean branch_high = evaluateDecision(_alOrder.get(inode._var), bool_assign, cont_assign);
-                
-                
+
+
                 if (branch_high == null){
                     //Not all required variables were assigned, mask both paths
-                    ret = getINode(inode._var, reduceMask(inode._low, bool_assign, cont_assign, mask_id, maskCache), 
+                    ret = getINode(inode._var, reduceMask(inode._low, bool_assign, cont_assign, mask_id, maskCache),
                             reduceMask(inode._high, bool_assign, cont_assign,mask_id, maskCache));
                 }
-                else{                
+                else{
                     ret = branch_high ? getINode(inode._var, mask_id, reduceMask(inode._high, bool_assign, cont_assign,mask_id, maskCache)):
                                         getINode(inode._var, reduceMask(inode._low, bool_assign, cont_assign,mask_id, maskCache), mask_id);
                 }
-                
+
             }
             maskCache.put(id, ret);
             return ret;
@@ -1851,7 +1851,7 @@ public class XADD {
     HashMap<String, Double> cont_assign, Integer mask_replacement) {
         return reduceRetrieveMask(id, bool_assign, cont_assign, new HashMap<Integer,Integer>(), ZERO);
     }
-    
+
     private IntPair reduceRetrieveMask(Integer id,
             HashMap<String, Boolean> bool_assign,
             HashMap<String, Double> cont_assign, HashMap<Integer,Integer> maskCache, Integer runningMaskId) {
@@ -1860,18 +1860,18 @@ public class XADD {
             if ( (ret = maskCache.get(id))!= null){
                 /* if ret is on cache no need to update mask*/
                 return new IntPair(ret,runningMaskId);
-            }    
+            }
             XADDNode n = getExistNode(id);
 
             if (n instanceof XADDTNode) {
                 ret = id;
             }
             else{
-                if (!(n instanceof XADDINode)) { System.err.println("Invalid node, neither TNode nor INode:\n"+n.toString()); } 
+                if (!(n instanceof XADDINode)) { System.err.println("Invalid node, neither TNode nor INode:\n"+n.toString()); }
                 // Traverse decision diagram until terminal found
                 XADDINode inode = (XADDINode) n;
                 Boolean branch_high = evaluateDecisionSlack(_alOrder.get(inode._var), bool_assign, cont_assign, 0.1d);
-                
+
                 if (branch_high == null){
                     //Not all required variables were assigned, mask both paths
                     IntPair lowPair = reduceRetrieveMask(inode._low, bool_assign, cont_assign, maskCache, runningMaskId);
@@ -1882,7 +1882,7 @@ public class XADD {
                     runningMaskId = combine(runningMaskId, lowPair._i2);
                     runningMaskId = combine(runningMaskId, highPair._i2);
                 }
-                else{                
+                else{
                     if (branch_high){
                         int indicator = getINode(inode._var, NAN, ZERO);
                         IntPair newPair = reduceRetrieveMask(inode._high, bool_assign, cont_assign, maskCache, runningMaskId);
@@ -1906,7 +1906,7 @@ public class XADD {
         // OBS: a ONE-NAN mask combining with PROD fails if trying to mask TNode with ZERO.
         return apply(indicator1, indicator2, SUM);
     }
- 
+
     ///////////////////////////////////////
     //             Helper Classes              //
     ///////////////////////////////////////
@@ -1998,8 +1998,8 @@ public class XADD {
                     System.exit(1);
                 }
 
-                
-                
+
+
                 // Check that comparison expression is normalized
                 if (!comp._rhs.equals(ExprLib.ZERO)) {
                     _log.println("processXADDLeaf: Expected RHS = 0 for '" + comp + "'");
@@ -2137,7 +2137,7 @@ public class XADD {
                     int ub_xadd = _bIsMax
                             ? getVarNode(new ExprDec(ce), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)  // +inf gets min'ed to eval_root
                             : getVarNode(new ExprDec(ce), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY); // -inf gets max'ed to eval_root
-                    // For discussion of following operation, see independent decisions modification stage below  
+                    // For discussion of following operation, see independent decisions modification stage below
                     eval_root = apply(ub_xadd, eval_root, _bIsMax ? MIN : MAX); // NOTE: this is correct, it is not reversed
                 }
                 for (ArithExpr lb : lower_bound) {
@@ -2145,8 +2145,8 @@ public class XADD {
                     int lb_xadd = _bIsMax
                             ? getVarNode(new ExprDec(ce), Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)  // +inf gets min'ed to eval_root
                             : getVarNode(new ExprDec(ce), Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY); // -inf gets max'ed to eval_root
-                    // For discussion of following operation, see independent decisions modification stage below  
-                    eval_root = apply(lb_xadd, eval_root, _bIsMax ? MIN : MAX); // NOTE: this is correct, it is not reversed 
+                    // For discussion of following operation, see independent decisions modification stage below
+                    eval_root = apply(lb_xadd, eval_root, _bIsMax ? MIN : MAX); // NOTE: this is correct, it is not reversed
                 }
                 //max_eval_root = reduceLinearize(max_eval_root); // Removed previously
                 //max_eval_root = reduceLP(max_eval_root); // Result should be canonical
@@ -2571,7 +2571,7 @@ public class XADD {
         // Standard Reduce: getInode will handle the case of low == high
         ret = getINode(inode._var, low, high);
 //        ret = getINodeCanon(inode._var, low, high); Should this be made Canonical now?
-        
+
         // Put return value in cache and return
         _hmReduceLeafOpCache.put(new IntPair(id, leaf_op.hashCode()), ret);
         return ret;
@@ -2605,14 +2605,14 @@ public class XADD {
             collectNodes(nodes);
             return nodes;
         }
-        
+
         public HashSet<Double> collectBoundaries(String var) {
             HashSet<Double> decisions = new HashSet<Double>();
-            
+
             collectBoundaries(decisions,var);
             return decisions;
         }
-        
+
 
         public HashSet<String> collectVars() {
             HashSet<String> vars = new HashSet<String>();
@@ -2633,7 +2633,7 @@ public class XADD {
         public abstract void collectVars(HashSet<String> vars);
 
         public abstract void collectNodes(HashSet<XADDNode> nodes);
-        
+
         public abstract void collectBoundaries(HashSet<Double> nodes, String var);
 
     }
@@ -2689,7 +2689,7 @@ public class XADD {
         public void collectNodes(HashSet<XADDNode> nodes) {
             nodes.add(this);
         }
-        
+
         public void collectBoundaries(HashSet<Double> nodes,String var) {
             return;
         }
@@ -2800,17 +2800,17 @@ public class XADD {
         }
 
         public void collectBoundaries(HashSet<Double> decisions, String var) {
-                        
+
             if(this.getDecision() instanceof ExprDec){
             	    CompExpr comp = ((ExprDec)this.getDecision())._expr;
-            	    
-            	    
+
+
             	    // Takes ArithExpr expr1 linear in var, returns (coef,expr2) where expr1 = coef*x + expr2
                     CoefExprPair p = comp._lhs.removeVarFromExpr(var);
                     ArithExpr lhs_isolated = p._expr;
-                    
+
                     double var_coef = p._coef;
- 
+
                     if (var_coef == 0d) {
                         return;
                     }
@@ -2819,7 +2819,7 @@ public class XADD {
                             1d / var_coef), lhs_isolated)).makeCanonical();
 
                     Double boundary=((DoubleExpr)new_rhs)._dConstVal;
-                    	    
+
             	    if (!decisions.contains(boundary)){
                            decisions.add(boundary);
             	    }

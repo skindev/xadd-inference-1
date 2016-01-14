@@ -1,0 +1,36 @@
+cvariables ( s i w )
+min-values ( 0.0 0.0 0.0 )
+max-values ( 100 100.0 100 )
+bvariables ( )
+ivariables ( )
+
+action zero
+    s' (  [(s - 0.01*s*i)  > 0]
+            ([s - 0.01*s*i] )
+            ([0])
+    )
+    i' (   [(i + 0.01*s*i) < 100]
+            ([i + 0.01*s*i] )
+            ([100])
+    )
+    w' ([w])
+reward
+( [ -i ] )
+endaction
+
+action quarter
+    s' (   [(s - 0.01*0.75*s*i - 0.25*s) > 0]
+            ([s - 0.01*0.75*s*i - 0.25*s] )
+            ([0])
+    )
+    i' (   [(i + 0.01*0.75*s*i) < 100]
+            ([i + 0.01*0.75*s*i])
+            ([100])
+    )
+    w' ([w])
+reward
+( [ -w -i ] )
+endaction
+
+discount 1.0
+iterations 5

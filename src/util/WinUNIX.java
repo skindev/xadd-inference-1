@@ -58,8 +58,9 @@ public class WinUNIX {
             GVIZ2_CMD_CLOSE = "'";
 
         } else if (SYSTEM == MAC_OS) {
-            SAT_EXE = "/Users/ludygrv/Dropbox/Disciplinas/2sem/LABIA/LOGIC1/" +
-                    "minisat/minisat";
+            //SAT_EXE = "/Users/ludygrv/Dropbox/Disciplinas/2sem/LABIA/LOGIC1/" +
+            //        "minisat/minisat";
+            SAT_EXE = "/opt/local/bin/minisat";
             GVIZ_EXE = "/usr/local/bin/dot -Tdot";
             GVIZ_CMD = "/bin/sh 'dot -Tdot";
             GVIZ_CMD_CLOSE = "'";

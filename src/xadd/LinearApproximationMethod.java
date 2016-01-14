@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////
 //
 // Extended Algebraic Decision Diagrams Package
-// Linear Approximation, merges linear leaves 
+// Linear Approximation, merges linear leaves
 // creating a new linear function that minimize error
 // union of the constrained regions
 //
@@ -45,7 +45,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
     private final static boolean PRUNE_REMAP_DBG = false;
     private final static boolean UNDERCONSTRAINED_DBG = false;
     private final static boolean REPORT_UNBOUNDED = false;
-    
+
     //Pruning Caches
     public HashMap<Integer, Integer> _hmRemap = new HashMap<Integer, Integer>();
     public HashMap<Integer, ArrayList<HashSet<Integer>>> _hmDecList = new HashMap<Integer, ArrayList<HashSet<Integer>>>();
@@ -56,13 +56,13 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         super(localRoot, global);
     }
 
-    
-    
+
+
     ///////////////////
     //Linear Pruning//
     //////////////////
 
-    // Remap for prunning   
+    // Remap for prunning
     public int remap(int id) {
         Integer ret = _hmRemap.get(id);
         if (ret != null) {
@@ -107,7 +107,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         return linUpperPrune(id, allowErr);
     }
 
-    
+
     @SuppressWarnings("unused")
     public int linPrune(int id, double allowError) {
         if (allowError < XADD.PRECISION) return id;
@@ -137,7 +137,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         return pruned;
     }
 
-    
+
     //prune cache flush
     public void pruneClear() {
         _hmRemap.clear();
@@ -209,11 +209,11 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         // (-minErr1) is minimum value of f -avg in another extremum, so
         // maxErr - (-minErr) is the diference in errors (gap), the best a linear
         //function can do is make them equal, halving the greatest.
-        // this is a relaxation, an error better than the best possible, because ignores the constant difference  
+        // this is a relaxation, an error better than the best possible, because ignores the constant difference
         // (e.g. it is always 0 for lines with the same direction.)
-        
-        //Using MaxRange may lead to wrong conclusions about the maximal Error, because the avg is not  
-        // guaranteed to minimize the gaps, however, the smallest range is a valid lower bound on the 
+
+        //Using MaxRange may lead to wrong conclusions about the maximal Error, because the avg is not
+        // guaranteed to minimize the gaps, however, the smallest range is a valid lower bound on the
         // approximation error.
         double minRange = Double.POSITIVE_INFINITY;
         for (int i = 0; i < pathCont; i++) {
@@ -263,7 +263,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         }
         return mergeError;
     }
-    
+
     //Return function that minimizes absolute error in a finite set of points
     private OptimResult bestLinApprox(double coefs1[], double _dCoef1, ArrayList<HashSet<Integer>> paths1,
                                       double coefs2[], double _dCoef2, ArrayList<HashSet<Integer>> paths2,
@@ -294,7 +294,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         for (int j = 0; j < nPaths; j++) {
             //see to which leaf function this path corresponds
             int leafFun = (j < paths1.size()) ? 0 : 1;
-            //max => (e > (fi - f*) => e +f* > fi constraint 
+            //max => (e > (fi - f*) => e +f* > fi constraint
             for (PointKey pk : (points.get(j))) {
                 constr_coef[0] = 1;
                 constr_coef[1] = 1;
@@ -371,8 +371,8 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         for (int j = 0; j < nPaths; j++) {
             //see to which leaf function this path corresponds
             int leafFun = (j < paths1.size()) ? 0 : 1;
-            
-            // Upper Bound constraint => f* > fi constraint  
+
+            // Upper Bound constraint => f* > fi constraint
             for (PointKey pk : (points.get(j))) {
                 constr_coef[0] = 0;
                 constr_coef[1] = 1;
@@ -418,12 +418,12 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         lp.free();
         return new OptimResult(opt_val, soln);
     }
-    
+
     //Return function that minimizes error in a finite set of points
     private OptimResult minimizeSumError(double coefs1[], double _dCoef1, ArrayList<HashSet<Integer>> paths1,
                                          double coefs2[], double _dCoef2, ArrayList<HashSet<Integer>> paths2,
                                          ArrayList<HashSet<PointKey>> points, double errorLimit) {
-        //In how many points are we calculating the error 
+        //In how many points are we calculating the error
         int nPoints = 0;
 
         //Must order points to associate with errorvar (maybe unnecessary)
@@ -490,10 +490,10 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         int errorVarID = functionVars;// the first position of errorVars
         for (int j = 0; j < 2 * nPaths; j++) //the min and max err regions, now joint
         {
-            //see to which leaf function this path corresponds to 
+            //see to which leaf function this path corresponds to
             int leafFun = ((j % nPaths) < paths1.size()) ? 0 : 1;
 
-            //fi - f* points 
+            //fi - f* points
             for (PointKey pk : (points.get(j))) {
                 //for each point: 3 constraints:
                 // errorVar smaller than errorLimit
@@ -580,6 +580,12 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         try {
             _dCoef1 = setCoefficientsLocal(l1._expr, coefs1);
             _dCoef2 = setCoefficientsLocal(l2._expr, coefs2);
+
+            if (Double.isNaN(_dCoef1) || Double.isNaN(_dCoef2)) {
+              return null;
+            }
+
+
             for (int i = 0; i < nvars; i++) {
                 mrgCoefs[i] = (coefs1[i] + coefs2[i]) / 2d;
             }
@@ -590,7 +596,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
             return null;
         }
 
-        // If simple Error is too much dont even find optimal solution 
+        // If simple Error is too much dont even find optimal solution
 
         if (simpleError(coefs1, paths1, coefs2, paths2) > error) {
             return null;
@@ -693,6 +699,11 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         try {
             _dCoef1 = setCoefficientsLocal(l1._expr, coefs1);
             _dCoef2 = setCoefficientsLocal(l2._expr, coefs2);
+
+            if (Double.isNaN(_dCoef1) || Double.isNaN(_dCoef2)) {
+              return null;
+            }
+
             //Initial coefficients can be arbitrary, so no need for an upper bound start
             for (int i = 0; i < nvars; i++) {
                 mrgCoefs[i] = (coefs1[i] + coefs2[i]) / 2d;
@@ -704,7 +715,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
             return null;
         }
 
-        // If simple Error is too much don't even find optimal solution 
+        // If simple Error is too much don't even find optimal solution
         if (simpleError(coefs1, paths1, coefs2, paths2) > error) {
             return null;
         }
@@ -787,7 +798,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         }
         return null;
     }
-    
+
     //performs approximation and pruning of unnecessary decision in a XADD, assumes prune memory is clear
     public int pruneUnionPath(int root_id, double allowError) {
 
@@ -948,7 +959,7 @@ public class LinearApproximationMethod extends LinearXADDMethod {
                         _hmRemap.put(leaf._i2, res.new_id);
                         int old_id = node_id;
                         node_id = res.new_id; //continue merging from the new node!
- 
+
                         if (PRUNE_UNION_DBG) {
                             System.out.println("Merge!\nJoin: " + leaf._i2
                                     + "expr = " + ((XADDTNode) context.getExistNode(leaf._i2))._expr
@@ -993,15 +1004,15 @@ public class LinearApproximationMethod extends LinearXADDMethod {
         return root_id;
     }
 
-    
+
     public boolean isMergeable(int node_id){
     	boolean mergeable = (node_id != context.POS_INF);
     	mergeable = mergeable && (node_id != context.NEG_INF);
     	mergeable = mergeable && (node_id != context.NAN);
     	return 	mergeable;
     }
-    
-    
+
+
     //Data Storage Helper Classes
     public class PruneResult {
         int new_id;

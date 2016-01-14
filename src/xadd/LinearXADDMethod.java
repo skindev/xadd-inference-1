@@ -48,7 +48,7 @@ public class LinearXADDMethod {
     /**
      * Linear Flags
      */
-
+    private static final boolean DEBUG_CONSTRAINTS = false;
     private static final boolean ADD_EXPLICIT_BOUND_CONSTRAINTS_TO_LP = false; //Add bounds as explicit constraints (should not be necessary)
     private static final boolean WARN_INFEASIBLE_REGIONS = true; //Add bounds as explicit constraints (should not be necessary)
 
@@ -135,9 +135,10 @@ public class LinearXADDMethod {
      */
     protected void addConstraint(LP lp, int constraint_id, boolean dec) {
 
-//	      if (DEBUG_CONSTRAINTS)
-	          System.out.println("Adding constraint id [" + constraint_id+ "] = " + dec);
 
+        if (DEBUG_CONSTRAINTS) {
+	          System.out.println("Adding constraint id [" + constraint_id+ "] = " + dec);
+        }
         Decision d = context._alOrder.get(constraint_id);
         if (d instanceof ExprDec) {
             ExprDec e = (ExprDec) d;
@@ -160,20 +161,25 @@ public class LinearXADDMethod {
             double const_coef = 0; // move to
             try {
                 const_coef = setCoefficientsLocal(e._expr._lhs, coefs);
+                if (Double.isNaN(const_coef)) {
+                  return;
+                }
             } catch (UnsupportedConstraintException e1) {
-                System.out.println(e1.getMessage());
-                e1.printStackTrace();
+                if (DEBUG_CONSTRAINTS) {
+                  System.out.println(e1.getMessage());
+                  e1.printStackTrace();
+                }
                 return;
             }
 
             // RHS => -
             CompOperation type = dec ? e._expr._type : CompExpr.flipCompOper(e._expr._type);
 
-//	          if (DEBUG_CONSTRAINTS){
+	          if (DEBUG_CONSTRAINTS){
 	              System.out.println("- adding "+type+" cons: " + const_coef + " + "
 	                      + LP.PrintVector(coefs) + " <=> "
 	                      + (dec ? "" : "!") + e._expr);
-//	          }
+	          }
 
             switch (type) {
                 case GT:
@@ -253,7 +259,10 @@ public class LinearXADDMethod {
                     error = 1;
                     String exceptionMessage = "WARNING: XADD.SetCoefPrunVar ERROR [" + error
                             + "] -- unexpected LHS constraint term: " + e;
-                    throw new UnsupportedConstraintException(exceptionMessage);
+                    if (DEBUG_CONSTRAINTS) {
+                      throw new UnsupportedConstraintException(exceptionMessage);
+                    }
+                    return Double.NaN;
                 }
                 else {
                     index = cVarID2localID[context.getCVarIndex(((VarExpr) o._terms.get(1))._sVarName)];
@@ -275,7 +284,10 @@ public class LinearXADDMethod {
             } else if (o._type == ArithOperation.SUM) {
                 for (ArithExpr e2 : o._terms) {
 //                    try {
-                        accum += setCoefficientsLocal(e2, coefs);
+                        double coeff = setCoefficientsLocal(e2, coefs);
+                        //if (!Double.isNaN(coeff)){
+                          accum += coeff;
+                        //}
 //                    } catch(UnsupportedConstraintException exc) {
 //                        exc.printStackTrace();
 //                    }
@@ -366,7 +378,7 @@ public class LinearXADDMethod {
         }
     }
 
-    // Linear Optimization Argument Functions 
+    // Linear Optimization Argument Functions
     public NamedOptimResult linMaxArg(int id) {
         return linMaxMinArg(id, true);
     }
@@ -416,9 +428,12 @@ public class LinearXADDMethod {
     //Maximize a Linear function
     private OptimResult restrictedMax(ArithExpr e, HashSet<Integer> domain, boolean isMax) {
         double[] coefs = new double[nLocalCVars];
-        //if (e instanceof DoubleExpr) return new OptimResult( ((DoubleExpr)e)._dConstVal, coefs); 
+        //if (e instanceof DoubleExpr) return new OptimResult( ((DoubleExpr)e)._dConstVal, coefs);
         try {
             double const_coef = setCoefficientsLocal(e, coefs); // move to
+            if (Double.isNaN(const_coef)) {
+              return null;
+            }
             return restrictedMax(coefs, const_coef, domain, isMax);
         } catch (Exception e2) {
             System.err.println("Error on restrictMax: Expr" + e + "in " + domain + " error" + e2);
@@ -499,11 +514,11 @@ public class LinearXADDMethod {
             solution = point.clone();
         }
     }
-    
+
     public class NamedOptimResult{
         public double sol_value;
         public HashMap<String, Double> assignment;
-       
+
         NamedOptimResult(double val, HashMap<String, Double> sol) {
             sol_value = val;
             assignment = (HashMap<String,Double>) sol.clone();

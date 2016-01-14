@@ -44,10 +44,10 @@ public class CAMDP {
     private static final boolean DONT_SHOW_HUGE_GRAPHS = true;
     private static final int MAXIMUM_XADD_DISPLAY_SIZE = 500;
     public static final boolean SILENCE_ERRORS_PLOTS = false;
-    
+
     //Prune and Linear Flags
     public double maxImediateReward;
-    public boolean LINEAR_PROBLEM = true;
+    public boolean LINEAR_PROBLEM = false;
     public boolean CONTINUOUS_ACTIONS = true;
     public boolean APPROX_PRUNING = false;
     public double APPROX_ERROR = 0.0d;
@@ -57,6 +57,8 @@ public class CAMDP {
     public int DISCRETE_NUMBER = 11;
     public int GLOBAL_LB = -9;
     public int GLOBAL_UB = 9;
+    public boolean STANDARDIZE_DD = false;
+
 
     //Optimal solution maintenance
     public Integer optimalHorizon;
@@ -80,7 +82,7 @@ public class CAMDP {
     public static Runtime RUNTIME = Runtime.getRuntime();
     public final static int nTimers = 8;
     public static long[] _lTimers = new long[nTimers];
-    private static final boolean EFFICIENCY_DEBUG = false;
+    private static final boolean EFFICIENCY_DEBUG = true;
 
     /* Local vars */
     public boolean DISPLAY_2D = false;
@@ -188,7 +190,7 @@ public class CAMDP {
         CONTINUOUS_ACTIONS = _hsContAVars.isEmpty()? false: true;
         LINEAR_PROBLEM = parser.LINEARITY;
         maxImediateReward = parser.MAXREWARD;
-        
+
         // This helper class performs the regression
         _qfunHelper = new ComputeQFunction(_context, this);
         if ( !parser.get_initBVal().isEmpty() || !parser.get_initCVal().isEmpty() )_initialS = new State(parser.get_initCVal(), parser.get_initBVal());
@@ -250,14 +252,15 @@ public class CAMDP {
                 resetTimer(0);
                 int regr = _qfunHelper.regress(_valueDD, me.getValue());
                 if (EFFICIENCY_DEBUG) System.out.println("Regression Time for "+me.getKey()+" in iter "+_nCurIter+" = "+getElapsedTime(0));
-                regr = standardizeDD(regr); 
+                if (STANDARDIZE_DD) regr = standardizeDD(regr);
                 if (DISPLAY_POSTMAX_Q)
                     doDisplay(regr, "Q-" + me.getKey() + "^" + _nCurIter + makeApproxLabel());
 
                 // Maintain running max over different actions
                 resetTimer(0);
                 _maxDD = (_maxDD == null) ? regr : _context.apply(_maxDD, regr, XADD.MAX);
-                _maxDD = standardizeDD(_maxDD);
+                System.out.println("Num. Nodes: " + _context.getNodeCount(_maxDD));
+                if (STANDARDIZE_DD) _maxDD = standardizeDD(_maxDD); //UNCOMMENT THIS!
                 if (EFFICIENCY_DEBUG) System.out.println("Standardize MaxDD Time for "+me.getKey()+" in iter "+_nCurIter+" = "+getElapsedTime(0));
 
                 // Optional post-max approximation
@@ -267,7 +270,7 @@ public class CAMDP {
                     _maxDD = standardizeDD(_maxDD);
                     if (EFFICIENCY_DEBUG) System.out.println("Approx Always & Standardize Time for "+me.getKey()+" in iter "+_nCurIter+" = "+getElapsedTime(0));
                 }
-                
+
                 if (DISPLAY_MAX)
                     doDisplay(_maxDD, "QMax^" + _nCurIter + makeApproxLabel() );
                 _logStream.println("Running max in iter " + _nCurIter + ":" + _context.getString(_maxDD));
@@ -275,9 +278,11 @@ public class CAMDP {
             }
             // _maxDD should already be Canonical/LPpruned, check
             _valueDD = _maxDD;
-            checkStandardDD(_valueDD);
-            
+            System.out.println("Checking Standard");
+            if (STANDARDIZE_DD) checkStandardDD(_valueDD);
+
             resetTimer(0);
+            System.out.println("Approximating");
             _valueDD = approximateDD(_valueDD);
             if (EFFICIENCY_DEBUG && APPROX_PRUNING) System.out.println("Approximation Finish on iter " + _nCurIter +"  pruning took: " + getElapsedTime(0));
 
@@ -316,7 +321,7 @@ public class CAMDP {
             _logStream.println("Value function size @ end of iteration " + _nCurIter +
                     ": " + num_nodes[_nCurIter] + " nodes = " +
                     num_branches[_nCurIter] + " cases" + " in " + time[_nCurIter] + " ms");
-            
+
             //////////////////////////////////////////////////////////////////////////
             //Verify Early Convergence
             if (_prevDD.equals(_valueDD)) {
@@ -364,9 +369,26 @@ public class CAMDP {
 
     ////////// DD Property Tests /////////////////////////
     public int standardizeDD(int dd){
-        if (XADD.ROUND_PRECISION!= null) {dd = _context.reduceRound(dd); checkRound(dd);}
-        dd = _context.makeCanonical(dd); checkCanon(dd);//Always use Canonization
-        if (LINEAR_PROBLEM) {dd = _context.reduceLP(dd); while (!checkReduceLP(dd)) dd = _context.reduceLP(dd);}
+        if (XADD.ROUND_PRECISION!= null) {
+          //System.out.println("Reducing Round");
+          dd = _context.reduceRound(dd); checkRound(dd);
+        }
+        //System.out.println("Making Canonical");
+        dd = _context.makeCanonical(dd);
+        checkCanon(dd);//Always use Canonization
+        if (LINEAR_PROBLEM) {
+          dd = _context.reduceLP(dd);
+          //int max_itr = 1000;
+          //int itr = 0;
+          while (!checkReduceLP(dd)) {
+            dd = _context.reduceLP(dd);
+            // if (itr > max_itr) {
+            //   System.out.println("WARNING: Maximum Iterations Reached in standardizeDD.");
+            //   break;
+            // }
+            // itr++;
+          }
+        }
         checkStandardDD(dd);
         return dd;
     }
@@ -426,7 +448,7 @@ public class CAMDP {
             dd = _context.linPruneRel(dd, APPROX_ERROR);
         return dd;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Miscellaneous
     ////////////////////////////////////////////////////////////////////////////
@@ -440,7 +462,7 @@ public class CAMDP {
     }
     public Double evaluateState(int valueDD, State s){
         return _context.evaluate(valueDD, s._hmBoolVars, s._hmContVars);
-    }    
+    }
     public void flushCaches() {
         flushCaches(new ArrayList<Integer>());
     }
@@ -522,7 +544,7 @@ public class CAMDP {
         //    sb.append("- " + _context.getString(cons) + "\n");
         //}
         if (_initialS != null) {
-            sb.append("Initial State: " + _initialS + "\n");    
+            sb.append("Initial State: " + _initialS + "\n");
         }
         sb.append("Actions (" + _hmName2Action.size() + "):\n");
         for (CAction a : _hmName2Action.values()) {
@@ -574,7 +596,7 @@ public class CAMDP {
         String[] split = label.split("[\\\\/]");
         label = split[split.length - 1];
         label = label.replace(".csamdp", "").replace(".camdp", "").replace(".cmdp", "");
-    
+
         Graph g;
         int count;
         if (DONT_SHOW_HUGE_GRAPHS && (count = _context.getNodeCount(xadd_id)) > MAXIMUM_XADD_DISPLAY_SIZE){
@@ -723,8 +745,8 @@ public class CAMDP {
     public static long getElapsedTime(int n) {
         return System.currentTimeMillis() - _lTimers[n];
     }
-    
-    
+
+
     public static String memDisplay() {
         long total = RUNTIME.totalMemory();
         long free = RUNTIME.freeMemory();
@@ -767,7 +789,7 @@ public class CAMDP {
     }
 
     public static void usage() {
-        System.out.println("\nUsage: MDP-filename #iter display-2D? display-3D? [dApproxPrune]");
+        System.out.println("\nUsage: MDP-filename #iter display-2D? display-3D? Standardize? [dApproxPrune]");
         System.exit(1);
     }
 
@@ -799,17 +821,17 @@ public class CAMDP {
         CAMDP mdp = new CAMDP(filename);
         mdp.DISPLAY_2D = Boolean.parseBoolean(args[2]);
         mdp.DISPLAY_3D = Boolean.parseBoolean(args[3]);
-
+        mdp.STANDARDIZE_DD = Boolean.parseBoolean(args[4]);
         //aditional argument modifies
-        if (args.length == 5) {
-            mdp.APPROX_ERROR = Double.parseDouble(args[4]);
+        if (args.length == 6) {
+            mdp.APPROX_ERROR = Double.parseDouble(args[5]);
         }
         //System.out.println(mdp.toString(false, false));
         System.out.println(mdp.toString(false, false));
         //System.in.read();
 
         int iter_used = mdp.solve(iter);
-//        System.out.println("\nSolution complete, required " + 
+//        System.out.println("\nSolution complete, required " +
 //                iter_used + " / " + iter + " iterations.");
         //mdp._context.showCacheSize();
 //        mdp.flushCaches(true);
