@@ -1,0 +1,83 @@
+====================
+Assumptions and derivations that are listed in JBernstein for 
+the usage of sound error-estimates:
+
+Edit date: 2013.01.12
+====================
+
+CASE-1: Scenarios where we derive that there exists an error: 
+
+[A] Range-preserving transformation
+1. No explicit assumption. 
+
+[B] Transformation from polynomial basis into Bernstein basis
+1. No explicit assumption
+2. We assume that the maximum coefficient estimate by step 1 for unit polynomial 
+   is at most 128 times more than the actual coefficient (if it's greater than 1). 
+
+[C] Refinement via recursive subspace expansion
+1. The highest degree for each variable is below 6, which bring (binom 6, 3)= 20 < 2^5, and the number of additions <= 6. 
+2. Dividing number with 2^{k} only subtracts the exponent by k and is error free.
+3. The largest quantity of a coefficient (including the sum of error) is less than 32768 = 2^14.
+
+PROOF:
+By doing so, an error estimate when considering refinement is the following:
+The largest number is 2^{5}*2^{14} = 2^{19}. 
+Error appears when adding a value which is 2^{52} smaller. In this case, it is 2^{-33}.
+With at most 6 < 2^3 additions, we have accumulated error 2^{-30}.
+Each multiplication that happens before addition can independently lose precision at most 5 bits, we have accumulated error 2^{-25}.
+
+Therefore, in the solver we have a pre-set value: 2^{-25} as an estimate on the accumulated error for stage [C].
+
+---
+
+CASE-2: Scenarios where we derive that there exists no error: 
+
+Assumption: 
+1. The highest coefficient for every variable in the polynomial is below or equal to 2.
+2. All coefficients are integers or an integer multiple of 1/2.
+3. All bounds are integers or an integer multiple of 1/2.
+3. The number of variables are less than 6 [LET k3=6].
+4. Diving number with 2^{k} only subtracts the component by k and is error free.
+5. The maximum computed value following the approximation in CASE-1-[A] is bounded by 1024 = 2^10 [LET k1=10].
+
+PROOF:
+[A] Range-preserving transformation
+From 5, we know that every value is bounded by 2^10.
+From 2, 3 and 1 we know that the smallest unit that can appear below radix point is 0.
+As the total number of bits is 52, 10+0 = 10<52, the computation is error free.
+
+[B] Basis transformation
+6 variables can only divide a coefficient by 64.
+Therefore, the smallest number after division is 2^{-6}
+Therefore, the generated number can need 10+6 = 16 bits.
+The number of additions is bounded by 3^6 =729  < 2^10. 
+16+10 < 52, so it is safe.
+
+[C] Refinement via recursive subspace expansion
+Every refinement only involves two 3 terms that at most divide the number by 4.
+With 10 [let k2=10] refinements, a number can be divided at most 2^{-20}
+
+LET k4 = the number of variables that has lower bound 0.5
+LET k5 = the number of variables that has interval 0.5
+LET k6 = the number of variables that has lower bound 0.25
+LET k7 = the number of variables that has interval 0.25
+(in the solver, k6, k7 are not used)
+
+General formula for checking if no error is introduced at all:
+(k1+2*[k2]+ceil(log_{2}(3^{k3})) + {k4+k5}*2 + (k6+k7)*4) < 52) 
+
+General formula for checking if we can use error bound 2^{-25}
+(k1+ceil(log_{2}(3^{k3})) + {k4+k5}*2 + (k6+k7)*4) < 52) 
+
+---
+
+CASE-3: Scenarios where we derive that there exists no error in the range-preserving 
+        transformation: 
+
+Condition: similar to CASE-2, but without condition on the highest coefficient. 
+           Essentially, all lowerbounds and intervals for variables can be 
+           precisely represented in double.
+
+Effect: We use the actual computed value after range-preserving transformation
+        as the upperbound in the analysis of CASE-1-[A].

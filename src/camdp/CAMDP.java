@@ -821,7 +821,10 @@ public class CAMDP {
         CAMDP mdp = new CAMDP(filename);
         mdp.DISPLAY_2D = Boolean.parseBoolean(args[2]);
         mdp.DISPLAY_3D = Boolean.parseBoolean(args[3]);
-        mdp.STANDARDIZE_DD = Boolean.parseBoolean(args[4]);
+        mdp.STANDARDIZE_DD = true;
+        if (args.length >= 5) {
+          mdp.STANDARDIZE_DD = Boolean.parseBoolean(args[4]);
+        }
         //aditional argument modifies
         if (args.length == 6) {
             mdp.APPROX_ERROR = Double.parseDouble(args[5]);
