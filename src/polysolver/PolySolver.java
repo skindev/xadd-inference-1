@@ -13,6 +13,10 @@ import xadd.XADD;
  * Created by haroldsoh on 17/1/16.
  */
 public class PolySolver {
+    public static final int TRUE = 1;
+    public static final int FALSE = 0;
+    public static final int UNKNOWN = -1;
+
 
     private static final Logger log = Logger.getLogger(PolySolver.class.getPackage().getName());
 
@@ -235,7 +239,7 @@ public class PolySolver {
     }
 
 
-    public boolean testXADDExprDec(XADD.ExprDec dec, int rec_depth, XADD lxadd) {
+    public int testXADDExprDec(XADD.ExprDec dec, int rec_depth, XADD lxadd) {
 
         // get variables
         ArrayList<String> vars = lxadd.getContinuousVarList();
@@ -272,15 +276,36 @@ public class PolySolver {
         log.info(polystr);
 
         // get constraint relationship
-        int propop = Bernstein.GE;
-
+        int propop = -1;
+        ExprLib.CompOperation type = dec._expr._type;
+        switch (type) {
+            case GT:
+                propop = Bernstein.GT;
+                break;
+            case GT_EQ:
+                propop = Bernstein.GE;
+                break;
+            case LT:
+                propop = Bernstein.LT;
+                break;
+            case LT_EQ:
+                propop = Bernstein.LE;
+                break;
+            default:
+                log.severe("Unsupported comparison type.");
+                return this.UNKNOWN;
+        }
 
         // solve equation
         bernstein.Bernstein bern = new bernstein.Bernstein();
-        bern.solveSimpleConstraint(polystr, propop, rhs_val, rec_depth);
-
-
-        return true;
+        String truth_val = bern.solveSimpleConstraint(polystr, propop, rhs_val, rec_depth);
+        if (truth_val.equals("TRUE\n")) {
+            return this.TRUE;
+        } else if (truth_val.equals("FALSE\n")) {
+            return this.FALSE;
+        }
+        log.info("Unknown result");
+        return this.UNKNOWN; // default to returning false if unknown
     }
 
 
@@ -309,22 +334,22 @@ public class PolySolver {
 
         PolySolver ps = new PolySolver();
 
-        int maxk = 2;
+        int maxk = 3;
         int k = 0;
         int rec_depth=5;
         for (XADD.Decision dec : myxadd._alOrder) {
-            log.info(dec.toString());
             if (dec instanceof XADD.ExprDec) {
-                log.info("Is a decision expression.");
 
                 // need to transform this decision variable into
-                boolean test_value = ps.testXADDExprDec((XADD.ExprDec) dec, rec_depth, myxadd);
-                log.info("Test Value: " + Boolean.toString(test_value));
+                int test_value = ps.testXADDExprDec((XADD.ExprDec) dec, rec_depth, myxadd);
+
+                log.info(dec.toString());
+                log.info("Test Value: " + Integer.toString(test_value));
+
                 // break for now because we only want to do one
                 k++;
                 if (k > maxk) break;
             }
-
         }
 
     }
