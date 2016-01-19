@@ -48,7 +48,7 @@ public class LinearXADDMethod {
     /**
      * Linear Flags
      */
-    private static final boolean DEBUG_CONSTRAINTS = false;
+    private static final boolean DEBUG_CONSTRAINTS = true;
     private static final boolean ADD_EXPLICIT_BOUND_CONSTRAINTS_TO_LP = false; //Add bounds as explicit constraints (should not be necessary)
     private static final boolean WARN_INFEASIBLE_REGIONS = true; //Add bounds as explicit constraints (should not be necessary)
 
@@ -220,6 +220,8 @@ public class LinearXADDMethod {
             var[i] = 1;
             lp.addGeqConstraint(var, lb[i]);
             lp.addLeqConstraint(var, ub[i]);
+            System.out.println("LP Var Bounds : " + i + " " + lb[i] + ", " +
+                    ub[i]);
             var[i] = 0;
         }
     }

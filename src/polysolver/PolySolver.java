@@ -238,10 +238,13 @@ public class PolySolver {
         return pexpr;
     }
 
-    public int getXADDExprDecConstraintType(XADD.ExprDec dec) throws UnsupportedOperationException {
+    public int getXADDExprDecConstraintType(XADD.ExprDec dec, boolean flip_operator) throws UnsupportedOperationException {
         // get constraint relationship
         int propop = -1;
-        ExprLib.CompOperation type = dec._expr._type;
+        ExprLib.CompOperation type = flip_operator ?
+                ExprLib.CompExpr.flipCompOper(dec._expr._type) :
+                dec._expr._type;
+
         switch (type) {
             case GT:
                 propop = Bernstein.GT;
@@ -264,6 +267,10 @@ public class PolySolver {
 
 
     public int testXADDExprDec(XADD.ExprDec dec, int rec_depth, XADD lxadd) {
+        return testXADDExprDec(dec,  rec_depth, lxadd, false);
+    }
+
+    public int testXADDExprDec(XADD.ExprDec dec, int rec_depth, XADD lxadd, boolean flip_operator) {
 
         // get variables
         ArrayList<String> vars = lxadd.getContinuousVarList();
@@ -301,7 +308,7 @@ public class PolySolver {
         log.info(polystr);
 
         // get constraint type
-        int propop = getXADDExprDecConstraintType(dec);
+        int propop = getXADDExprDecConstraintType(dec, flip_operator);
 
         // solve equation
         bernstein.Bernstein bern = new bernstein.Bernstein();

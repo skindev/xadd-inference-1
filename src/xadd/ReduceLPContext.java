@@ -11,10 +11,7 @@
 
 package xadd;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 import logic.kb.prop.PropKbCNF;
 import lpsolve.LP;
@@ -33,6 +30,7 @@ import xadd.XADD.XADDINode;
 
 public class ReduceLPContext {
 
+
     //ReduceLP Flags
     private final static boolean DEFAULT_CHECK_REDUNDANCY = true; // Test only consistency or also redundancy
     private final static boolean USE_REDUCE_LPv1 = false;//false; //maplist, full redundancy older version
@@ -44,8 +42,20 @@ public class ReduceLPContext {
 
     private static final boolean ADD_EXPLICIT_BOUND_CONSTRAINTS_TO_LP = false; //Add bounds as explicit constraints (should not be necessary)
     //Debug Flags
-    public final static boolean DEBUG_CONSTRAINTS = false;
+    public final static boolean DEBUG_CONSTRAINTS = true;
     public final static boolean TEST2_INCONSIST_QUIET = true;
+
+    // Colors for easier debugging
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
 
     //Implication Caches
     //ReduceLPv1
@@ -446,6 +456,7 @@ public class ReduceLPContext {
         private boolean isTestImpliedv1(ArrayList<Integer> test_var,
                                         ArrayList<Boolean> test_dec, int var_id, boolean dec)  {
 
+
             if (test_var.size() == 0)
                 return false;
 
@@ -480,8 +491,14 @@ public class ReduceLPContext {
             silentSolvelp(lp);
 
             boolean implied = (lp._status == LpSolve.INFEASIBLE);
-            if (DEBUG_CONSTRAINTS)
+            if (DEBUG_CONSTRAINTS) {
                 System.out.println("Solution: " + LP.PrintVector(lp._x));
+                if (implied) {
+                    System.out.println("- RESULT: " + ANSI_GREEN + implied + ANSI_RESET);
+                } else {
+                    System.out.println("- RESULT: " + ANSI_RED + implied + ANSI_RESET);
+                }
+            }
             lp.free();
 
             // Since dec inverted, infeasibility implies that the implication is
@@ -643,14 +660,17 @@ public class ReduceLPContext {
             polysolver.PolySolver psolver = new polysolver.PolySolver();
             int rec_depth = 10;
 
-            for (Integer dec_int: test_dec) {
+            if (test_dec.size() <= 1) return false;
+
+            for (Integer constraint_id: test_dec) {
                 boolean truth_test = true; // check if statement is true or false
-                int constraint_id = dec_int;
-                if (dec_int < 0) {
+                if (constraint_id < 0) {
                     truth_test = false;
-                    constraint_id = -dec_int;
+                    constraint_id = -constraint_id;
                 }
+
                 // get the constraint
+
                 Decision d = context._alOrder.get(constraint_id);
                 if (d instanceof ExprDec) {
                     ExprDec e = (ExprDec) d;
@@ -660,7 +680,14 @@ public class ReduceLPContext {
                             ((truth_val == polysolver.PolySolver.TRUE) && truth_test) ||
                                     ((truth_val == polysolver.PolySolver.FALSE) && !truth_test);
 
-                    if (!test_passed) return false;
+                    System.out.println("=== Testing : " + e.toString());
+                    System.out.println("=== Testing for: " + truth_test);
+                    System.out.println("=== Polysolver gave: " + truth_val);
+                    System.out.println("=== Test passed? " + test_passed);
+                    System.out.println("   ~~~~~~~~~~~~~~~~~~ ");
+
+                    //implied &= test_passed;
+                    if (test_passed) return false;
 
                 } else {
                     throw new UnsupportedOperationException("Unsupported Decision Type");
@@ -668,6 +695,47 @@ public class ReduceLPContext {
             }
 
             return true;
+        }
+
+        private boolean isImpliedPoly2(HashSet<Integer> test_dec)
+                throws UnsupportedOperationException {
+            boolean implied = true;
+            boolean all_true = true;
+            boolean one_true = false;
+            polysolver.PolySolver psolver = new polysolver.PolySolver();
+            int rec_depth = 10;
+
+            if (test_dec.size() <= 1) return false;
+
+            for (Integer constraint_id: test_dec) {
+                boolean flip_operator = false; // check if statement is true or false
+                if (constraint_id < 0) {
+                    flip_operator = true;
+                    constraint_id = -constraint_id;
+                }
+
+                // get the constraint
+                Decision d = context._alOrder.get(constraint_id);
+                if (d instanceof ExprDec) {
+                    ExprDec e = (ExprDec) d;
+                    int truth_val = psolver.testXADDExprDec(e, rec_depth, context, flip_operator);
+
+                    boolean test_passed = (truth_val == polysolver.PolySolver.TRUE);
+                    System.out.println("=== Testing : " + e.toString());
+                    System.out.println("=== Polysolver gave: " + truth_val);
+                    System.out.println("   ~~~~~~~~~~~~~~~~~~ ");
+
+                    //implied &= test_passed;
+                    all_true &= test_passed;
+                    if (test_passed) one_true = true;
+
+                } else {
+                    throw new UnsupportedOperationException("Unsupported Decision Type");
+                }
+            }
+            if (one_true && !all_true) return true;
+
+            return false;
         }
 
 
@@ -686,8 +754,10 @@ public class ReduceLPContext {
             LP lp = new LP(nvars, assign2Local(context.lowerBounds, true), assign2Local(context.upperBounds, true), obj_coef, LP.MAXIMIZE);
 
             // Now add all constraints
+            System.out.println();
+            System.out.println("----------------------------------");
+            System.out.println("Decision value: " + test_dec);
             for (Integer decision : test_dec) {
-                System.out.println("Decision value: " + test_dec);
                 addDecision(lp, decision);
             }
 
@@ -697,23 +767,35 @@ public class ReduceLPContext {
             double soln[] = silentSolvelp(lp);
 
             if (lp._status == LpSolve.INFEASIBLE) {
-                if (DEBUG_CONSTRAINTS) {
-                    System.out.println("Infeasible: " + test_dec);
-                }
                 infeasible = true;
             }
+            if (DEBUG_CONSTRAINTS) {
+                System.out.println("Infeasible: " + test_dec);
+                if (infeasible) {
+                    System.out.println("- RESULT: " + ANSI_GREEN + infeasible + ANSI_RESET);
+                } else {
+                    System.out.println("- RESULT: " + ANSI_RED + infeasible + ANSI_RESET);
+                }
+            }
+
             lp.free();
 
             // testing polynomial version
-            boolean implied = isImpliedPoly(test_dec);
-            if (implied != infeasible) {
-                System.out.println("ERROR! Is not the same. Polysolver gave " + implied);
-            } else {
-                System.out.println("TEST PASSED! Polysolver gave " + implied);
-            }
+            //boolean implied = isImpliedPoly2(test_dec);
+//            if (implied != infeasible) {
+//                System.out.println(">>>>>>>>>>>>>>>>  ERROR! Is not the same. Polysolver gave " + implied);
+//                //System.exit(-1);
+//                Scanner reader = new Scanner(System.in);
+//                System.out.println("PRESS Enter to continue: ");
+//                int n = reader.nextInt(); // Scans the next token of the input as an int.
+//            } else {
+//                System.out.println(">>>>>>>>>>>>>>>>  PASSED! Polysolver gave " + implied);
+//            }
+
+
 
             // test
-            //infeasible = implied;
+            // infeasible = implied;
 
             if (infeasible || SKIP_TEST2) return infeasible;
 

@@ -1,0 +1,33 @@
+Decision value: [1, 9, 26, -34, -2]
+Adding constraint id [1] = true
+- adding > cons: 1.0 + [ x_0=-0.1 x_1=0 ] <=> (1 + (-0.1 * location)) > 0
+Adding constraint id [9] = true
+- adding > cons: 1.0 + [ x_0=-0.2 x_1=0 ] <=> (1 + (-0.2 * location)) > 0
+Adding constraint id [26] = true
+- adding > cons: 0.0 + [ x_0=-1 x_1=0 ] <=> (-1 * location) > 0
+Adding constraint id [34] = false
+- adding <= cons: 1.0 + [ x_0=0.1 x_1=-0.216 ] <=> !(1 + (-0.21606648 * w2) + (0.1 * location)) > 0
+Adding constraint id [2] = false
+- adding <= cons: 0.0 + [ x_0=0 x_1=-1 ] <=> !(-1 * w2) > 0
+Infeasible: [1, 9, 26, -34, -2]
+- RESULT: false
+===================
+isTestImpliedv2 Checking if 33 (1 + (-0.10796221 * w2) + (0.1025641 * location)) > 0 = true implied by:
+Showing decisions [1, 2, -9]
+dec = 1 : (1 + (-0.1 * location)) > 0
+dec = 2 : (-1 * w2) > 0
+dec = -9 : (1 + (-0.2 * location)) > 0
+
+----------------------------------
+Decision value: [1, 2, -9, -33]
+Adding constraint id [1] = true
+- adding > cons: 1.0 + [ x_0=-0.1 x_1=0 ] <=> (1 + (-0.1 * location)) > 0
+Adding constraint id [2] = true
+- adding > cons: 0.0 + [ x_0=0 x_1=-1 ] <=> (-1 * w2) > 0
+Adding constraint id [9] = false
+- adding <= cons: 1.0 + [ x_0=-0.2 x_1=0 ] <=> !(1 + (-0.2 * location)) > 0
+Adding constraint id [33] = false
+- adding <= cons: 1.0 + [ x_0=0.103 x_1=-0.108 ] <=> !(1 + (-0.10796221 * w2) + (0.1025641 * location)) > 0
+Infeasible: [1, 2, -9, -33]
+- RESULT: true
+===================
