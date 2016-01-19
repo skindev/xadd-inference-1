@@ -238,6 +238,30 @@ public class PolySolver {
         return pexpr;
     }
 
+    public int getXADDExprDecConstraintType(XADD.ExprDec dec) throws UnsupportedOperationException {
+        // get constraint relationship
+        int propop = -1;
+        ExprLib.CompOperation type = dec._expr._type;
+        switch (type) {
+            case GT:
+                propop = Bernstein.GT;
+                break;
+            case GT_EQ:
+                propop = Bernstein.GE;
+                break;
+            case LT:
+                propop = Bernstein.LT;
+                break;
+            case LT_EQ:
+                propop = Bernstein.LE;
+                break;
+            default:
+                log.severe("Unsupported comparison type.");
+                throw new UnsupportedOperationException("Unsupported comparison type");
+        }
+        return propop;
+    }
+
 
     public int testXADDExprDec(XADD.ExprDec dec, int rec_depth, XADD lxadd) {
 
@@ -258,6 +282,7 @@ public class PolySolver {
         double rhs_val = rhs._dConstVal;
 
         // convert to Bernstein string format
+        // TODO: instead of converting to string format, directly create Bernstein polynomial.
         String polystr =  pexpr.toBernsteinString(vars);
 
         // get local bounds
@@ -275,36 +300,20 @@ public class PolySolver {
         // print bounds
         log.info(polystr);
 
-        // get constraint relationship
-        int propop = -1;
-        ExprLib.CompOperation type = dec._expr._type;
-        switch (type) {
-            case GT:
-                propop = Bernstein.GT;
-                break;
-            case GT_EQ:
-                propop = Bernstein.GE;
-                break;
-            case LT:
-                propop = Bernstein.LT;
-                break;
-            case LT_EQ:
-                propop = Bernstein.LE;
-                break;
-            default:
-                log.severe("Unsupported comparison type.");
-                return this.UNKNOWN;
-        }
+        // get constraint type
+        int propop = getXADDExprDecConstraintType(dec);
 
         // solve equation
         bernstein.Bernstein bern = new bernstein.Bernstein();
         String truth_val = bern.solveSimpleConstraint(polystr, propop, rhs_val, rec_depth);
-        if (truth_val.equals("TRUE\n")) {
+        log.info("polysolver truth value: " + truth_val);
+        if (truth_val.startsWith("T")) {
             return this.TRUE;
-        } else if (truth_val.equals("FALSE\n")) {
+        } else if (truth_val.startsWith("F")) {
             return this.FALSE;
+        } else {
+            log.info("Unknown result");
         }
-        log.info("Unknown result");
         return this.UNKNOWN; // default to returning false if unknown
     }
 
@@ -341,8 +350,10 @@ public class PolySolver {
             if (dec instanceof XADD.ExprDec) {
 
                 // need to transform this decision variable into
+                final long startTime = System.currentTimeMillis();
                 int test_value = ps.testXADDExprDec((XADD.ExprDec) dec, rec_depth, myxadd);
-
+                final long endTime = System.currentTimeMillis();
+                log.info("Total execution time: " + (endTime - startTime) + "ms");
                 log.info(dec.toString());
                 log.info("Test Value: " + Integer.toString(test_value));
 

@@ -17,4 +17,4 @@ for i in ${libDir}/*.jar ; do
     echo @
 done
 
-java -Djava.library.path="/opt/local/lib" -Xms100M -Xmx1024M -classpath $CP $1 $2 $3 $4 $5 $6 $7 $8 $9
+java -Djava.library.path="/usr/lib" -Xms100M -Xmx1024M -classpath $CP $1 $2 $3 $4 $5 $6 $7 $8 $9

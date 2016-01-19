@@ -37,7 +37,7 @@ public class ReduceLPContext {
     private final static boolean DEFAULT_CHECK_REDUNDANCY = true; // Test only consistency or also redundancy
     private final static boolean USE_REDUCE_LPv1 = false;//false; //maplist, full redundancy older version
     private final static boolean USE_REDUCE_LPv2 = true;//true; //hashSet, result implied redundancy new version
-    private final static boolean SKIP_TEST2 = false; //Skip Minimal region removal. Currenty test2 is very effective in reducing size even at very small slack.
+    private final static boolean SKIP_TEST2 = true; //Skip Minimal region removal. Currenty test2 is very effective in reducing size even at very small slack.
     private static final double IMPLIED_PRECISION_T2 = 1e-40;// XADD.PRECISION;//1e-4; //Precision for removing unreliably feasible constraints
 
     public static final boolean SINGLE_PATH_IMPLIED_RESULT = false; //Stop search if need to check more than one path
@@ -277,14 +277,11 @@ public class ReduceLPContext {
 
             // Check for implied branches before doing a full reduce on both branches
             if (var_implication == Boolean.TRUE) {
-
                 ret = reduceLPv1(inode._high, test_var, test_dec);
             } else if (var_implication == Boolean.FALSE) {
-
                 ret = reduceLPv1(inode._low, test_var, test_dec);
 
             } else {
-
                 test_var.add(inode._var);
                 test_dec.set(inode._var, false);
                 int low = reduceLPv1(inode._low, test_var, test_dec);
@@ -601,6 +598,7 @@ public class ReduceLPContext {
             return false; //if TNode, only the == check can make it true
         }
 
+
         private boolean isTestImpliedv2(HashSet<Integer> test_dec, int dec)  {
 
             if (!(context._alOrder.get(Math.abs(dec)) instanceof ExprDec)) return false;
@@ -639,6 +637,40 @@ public class ReduceLPContext {
             return implied;
         }
 
+        private boolean isImpliedPoly(HashSet<Integer> test_dec)
+                throws UnsupportedOperationException {
+
+            polysolver.PolySolver psolver = new polysolver.PolySolver();
+            int rec_depth = 10;
+
+            for (Integer dec_int: test_dec) {
+                boolean truth_test = true; // check if statement is true or false
+                int constraint_id = dec_int;
+                if (dec_int < 0) {
+                    truth_test = false;
+                    constraint_id = -dec_int;
+                }
+                // get the constraint
+                Decision d = context._alOrder.get(constraint_id);
+                if (d instanceof ExprDec) {
+                    ExprDec e = (ExprDec) d;
+                    int truth_val = psolver.testXADDExprDec(e, rec_depth, context);
+
+                    boolean test_passed =
+                            ((truth_val == polysolver.PolySolver.TRUE) && truth_test) ||
+                                    ((truth_val == polysolver.PolySolver.FALSE) && !truth_test);
+
+                    if (!test_passed) return false;
+
+                } else {
+                    throw new UnsupportedOperationException("Unsupported Decision Type");
+                }
+            }
+
+            return true;
+        }
+
+
         private boolean isInfeasible(HashSet<Integer> test_dec)  {
 
             boolean infeasible = false;
@@ -655,6 +687,7 @@ public class ReduceLPContext {
 
             // Now add all constraints
             for (Integer decision : test_dec) {
+                System.out.println("Decision value: " + test_dec);
                 addDecision(lp, decision);
             }
 
@@ -670,6 +703,17 @@ public class ReduceLPContext {
                 infeasible = true;
             }
             lp.free();
+
+            // testing polynomial version
+            boolean implied = isImpliedPoly(test_dec);
+            if (implied != infeasible) {
+                System.out.println("ERROR! Is not the same. Polysolver gave " + implied);
+            } else {
+                System.out.println("TEST PASSED! Polysolver gave " + implied);
+            }
+
+            // test
+            //infeasible = implied;
 
             if (infeasible || SKIP_TEST2) return infeasible;
 
@@ -705,15 +749,15 @@ public class ReduceLPContext {
                 try {
                     constC = setCoefficientsLocal(exp, constrCoef2);
                     if (Double.isNaN(constC)) {
-                      lp2.free();
-                      return false;
+                        lp2.free();
+                        return false;
                     }
                 } catch (UnsupportedConstraintException e) {
-                  if (DEBUG_CONSTRAINTS) {
-                    e.printStackTrace();
-										lp2.free();
-                  }
-										return false;
+                    if (DEBUG_CONSTRAINTS) {
+                        e.printStackTrace();
+                        lp2.free();
+                    }
+                    return false;
                 }
                 if ( (greaterComp && decision > 0) || (!greaterComp && decision < 0) ) {
                     constrCoef2[nvars] = -1; // c + f*x > 0 => f*x - S > -c

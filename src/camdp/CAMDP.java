@@ -57,7 +57,7 @@ public class CAMDP {
     public int DISCRETE_NUMBER = 11;
     public int GLOBAL_LB = -9;
     public int GLOBAL_UB = 9;
-    public boolean STANDARDIZE_DD = false;
+    public boolean STANDARDIZE_DD = true;
 
 
     //Optimal solution maintenance
