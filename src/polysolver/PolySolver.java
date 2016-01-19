@@ -44,6 +44,19 @@ public class PolySolver {
             return Double.toString(this.coeff) + varstr;
         }
 
+        public String toBernsteinString(ArrayList<String> varorder) {
+            if (varorder.size() == 0) {
+                return "";
+            }
+            String varstr = "COEF (";
+            varstr += Integer.toString(this.vars.get(varorder.get(0)));
+            for (int i=1; i<varorder.size(); i++) {
+                varstr += "," + Integer.toString(this.vars.get(varorder.get(i)));
+            }
+            varstr += ") " + Double.toString(this.coeff);
+            return varstr;
+        }
+
         // compares two PolyElem to see if they have identical variables
         // but possibly different coefficients
         // e.g., 3*x^2 is equalVars to 4*x^2 but NOT equalVars to 3*x^3
@@ -87,6 +100,21 @@ public class PolySolver {
 
             return exprstr;
         }
+
+        public String toBernsteinString(ArrayList<String> varorder) {
+            if (varorder.size() == 0) {
+                return "";
+            }
+            // get number of variables.
+            String varstr = "VAR " + Integer.toString(varorder.size()) + "\n";
+            // get coefficients
+            for (int i=0; i<this.elems.size(); i++) {
+                varstr += this.elems.get(i).toBernsteinString(varorder) + "\n";
+            }
+
+            return varstr;
+        }
+
 
         public void addToExpr(PolyElem elem) {
             // go through current elements to see if we find a match
@@ -224,7 +252,16 @@ public class PolySolver {
         double rhs_val = rhs._dConstVal;
 
         // convert to Bernstein string format
-        String polystr = "";
+        ArrayList<String> varorder = new ArrayList<String>(vars.size());
+        int i=0;
+        for (java.util.HashMap.Entry<String, Integer> entry : vars.entrySet())
+        {
+            varorder.add(i, entry.getKey());
+            i++;
+        }
+
+        String polystr =  pexpr.toBernsteinString(varorder);
+        log.info(polystr);
         int propop = Bernstein.GE;
 
         // solve equation
