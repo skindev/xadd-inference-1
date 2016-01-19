@@ -22,8 +22,11 @@ public class PolySolver {
         public PolyElem() {
             vars = new java.util.HashMap<String,Integer>();
         }
-        public PolyElem(java.util.HashMap<String,Integer> variables) {
-            vars = new java.util.HashMap<String,Integer>(variables);
+        public PolyElem(ArrayList<String> variables) {
+            vars = new java.util.HashMap<String,Integer>();
+            for (String key: variables) {
+                vars.put(key, 0);
+            }
         }
         public PolyElem(PolyElem rhs) {
             vars = new java.util.HashMap<String,Integer>(rhs.vars);
@@ -178,7 +181,7 @@ public class PolySolver {
 
 
     public PolyExpr parseXADDArithExpr(ExprLib.ArithExpr expr,
-                                       java.util.HashMap<String,Integer> vars) {
+                                       ArrayList<String> vars) {
         PolyExpr pexpr = new PolyExpr();
 
         // check type of expression
@@ -187,42 +190,42 @@ public class PolySolver {
             // Currently only product and sum arithmetic operations are supported
             if (o._type == ExprLib.ArithOperation.PROD) {
                 // handle products
-                log.info("handling prod");
+                // log.info("handling prod");
                 PolyElem one = new PolyElem();
                 one.coeff = 1.0;
                 pexpr.addToExpr(one);
                 for (ExprLib.ArithExpr aexpr : o._terms) {
-                    log.info("prod term: " + aexpr.toString());
+                    // log.info("prod term: " + aexpr.toString());
                     PolyExpr term_expr = parseXADDArithExpr(aexpr, vars);
                     pexpr.prodToExpr(term_expr);
-                    log.info("prod result: " + pexpr.toString());
+                    // log.info("prod result: " + pexpr.toString());
                 }
 
             } else if (o._type == ExprLib.ArithOperation.SUM) {
                 // handle sum
-                log.info("handling sum");
+                // log.info("handling sum");
                 for (ExprLib.ArithExpr aexpr : o._terms) {
-                    log.info("sum term: " + aexpr.toString());
+                    // log.info("sum term: " + aexpr.toString());
                     PolyExpr term_expr = parseXADDArithExpr(aexpr, vars);
                     pexpr.addToExpr(term_expr);
-                    log.info("add result: " + pexpr.toString());
+                    // log.info("add result: " + pexpr.toString());
                 }
             }
         } else if (expr instanceof ExprLib.DoubleExpr) {
             // simply assign the coefficient since it is a constant
             PolyElem pelem = new PolyElem(vars);
-            log.info("double term: " + expr.toString());
+            // log.info("double term: " + expr.toString());
             pelem.coeff = ((ExprLib.DoubleExpr) expr)._dConstVal;
             pexpr.addToExpr(pelem);
-            log.info("In doublexpr: " + pexpr.toString());
+            // log.info("In doublexpr: " + pexpr.toString());
         } else if (expr instanceof ExprLib.VarExpr) {
             // assign variable ename
             PolyElem pelem = new PolyElem(vars);
-            log.info("var term: " + expr.toString());
+            // log.info("var term: " + expr.toString());
             pelem.coeff = 1.0;
             pelem.vars.put(((ExprLib.VarExpr) expr)._sVarName, 1);
             pexpr.addToExpr(pelem);
-            log.info("In varexpr: " + pexpr.toString());
+            // log.info("In varexpr: " + pexpr.toString());
         } else {
             log.severe("Unexpected LHS of Expression");
         }
@@ -232,10 +235,10 @@ public class PolySolver {
     }
 
 
+    public boolean testXADDExprDec(XADD.ExprDec dec, int rec_depth, XADD lxadd) {
 
-
-    public boolean testXADDExprDec(XADD.ExprDec dec, int rec_depth,
-                                     java.util.HashMap<String,Integer> vars) {
+        // get variables
+        ArrayList<String> vars = lxadd.getContinuousVarList();
 
         // make into canonical form
         XADD.Decision d = dec.makeCanonical();
@@ -244,7 +247,6 @@ public class PolySolver {
         // get expression on the lhs
         ExprLib.ArithExpr lhs = dec._expr._lhs;
         PolyExpr pexpr = parseXADDArithExpr(lhs, vars);
-        log.info("Canonical form: " + d.toString());
         log.info(pexpr.toString());
 
         // get expression on the rhs
@@ -252,17 +254,26 @@ public class PolySolver {
         double rhs_val = rhs._dConstVal;
 
         // convert to Bernstein string format
-        ArrayList<String> varorder = new ArrayList<String>(vars.size());
+        String polystr =  pexpr.toBernsteinString(vars);
+
+        // get local bounds
+        String bounds = "";
         int i=0;
-        for (java.util.HashMap.Entry<String, Integer> entry : vars.entrySet())
-        {
-            varorder.add(i, entry.getKey());
+        for (String v : vars) {
+            bounds += "BOUND x" + Integer.toString(i) + " [" +
+                    lxadd.lowerBounds[ lxadd._cvar2ID.get(v) ] + "," +
+                    lxadd.upperBounds[ lxadd._cvar2ID.get(v) ] + "]\n";
             i++;
         }
 
-        String polystr =  pexpr.toBernsteinString(varorder);
+        polystr += "\n" + bounds;
+
+        // print bounds
         log.info(polystr);
+
+        // get constraint relationship
         int propop = Bernstein.GE;
+
 
         // solve equation
         bernstein.Bernstein bern = new bernstein.Bernstein();
@@ -307,7 +318,7 @@ public class PolySolver {
                 log.info("Is a decision expression.");
 
                 // need to transform this decision variable into
-                boolean test_value = ps.testXADDExprDec((XADD.ExprDec) dec, rec_depth, vars);
+                boolean test_value = ps.testXADDExprDec((XADD.ExprDec) dec, rec_depth, myxadd);
                 log.info("Test Value: " + Boolean.toString(test_value));
                 // break for now because we only want to do one
                 k++;
