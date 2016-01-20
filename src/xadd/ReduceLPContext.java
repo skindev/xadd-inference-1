@@ -31,6 +31,9 @@ import xadd.XADD.XADDINode;
 
 public class ReduceLPContext {
 
+    //Polysolver flag
+    static boolean USE_POLYSOLVER = true;
+    static int REC_DEPTH = 1;
 
     //ReduceLP Flags
     private final static boolean DEFAULT_CHECK_REDUNDANCY = true; // Test only consistency or also redundancy
@@ -43,7 +46,7 @@ public class ReduceLPContext {
 
     private static final boolean ADD_EXPLICIT_BOUND_CONSTRAINTS_TO_LP = false; //Add bounds as explicit constraints (should not be necessary)
     //Debug Flags
-    public final static boolean DEBUG_CONSTRAINTS = true;
+    public final static boolean DEBUG_CONSTRAINTS = false;
     public final static boolean TEST2_INCONSIST_QUIET = true;
 
     // Colors for easier debugging
@@ -534,6 +537,7 @@ public class ReduceLPContext {
             }
 
             // Full branch implication test
+            System.out.println("Testing node: " + node_id);
             if (isTestImpliedv2(test_dec, inode._var)) {
                 return reduceLPv2(inode._high, test_dec, redundancy);
             } else if (isTestImpliedv2(test_dec, -1 * inode._var)) {
@@ -618,10 +622,9 @@ public class ReduceLPContext {
 
 
         private boolean isTestImpliedPoly(HashSet<Integer> test_dec_ids, int dec_id) {
-            polysolver.PolySolver psolver = new PolySolver();
-            int rec_depth = 4;
-            int test_val = psolver.testXADDImplication(test_dec_ids, dec_id, rec_depth, context );
 
+            polysolver.PolySolver psolver = new PolySolver();
+            int test_val = psolver.testXADDImplication(test_dec_ids, dec_id, REC_DEPTH, context );
             if (test_val == PolySolver.TRUE) {
                 return true;
             }
@@ -640,22 +643,26 @@ public class ReduceLPContext {
             if (nonImpliedSet != null && nonImpliedSet.contains(dec)) return false;
 
             // polynomial solver test
-            boolean poly_test_val = isTestImpliedPoly(test_dec, dec);
-            // end test code
-
-
-            if (DEBUG_CONSTRAINTS) {
-                System.out.println("===================\nisTestImpliedv2 " + "Checking if " + dec + " " + context._alOrder.get(Math.abs(dec)) + " = " + (dec > 0 ? "true" : "false") + " implied by:");
-                showDecList(test_dec);
+            boolean implied = false;
+            if (USE_POLYSOLVER) {
+                final long startTime = System.currentTimeMillis();
+                implied = isTestImpliedPoly(test_dec, dec);
+                final long endTime = System.currentTimeMillis();
+                System.out.println("Poly Implication execution time: " + (endTime - startTime) + "ms");
             }
+            else {
+                if (DEBUG_CONSTRAINTS) {
+                    System.out.println("===================\nisTestImpliedv2 " + "Checking if " + dec + " " + context._alOrder.get(Math.abs(dec)) + " = " + (dec > 0 ? "true" : "false") + " implied by:");
+                    showDecList(test_dec);
+                }
 
-            if (!test_dec.add(-dec))
-                System.err.println("Warning: checking if decision implies its negation! - " + test_dec);
+                if (!test_dec.add(-dec))
+                    System.err.println("Warning: checking if decision implies its negation! - " + test_dec);
 
 
-            boolean implied = isInfeasible(test_dec);
-            test_dec.remove(-dec);
-
+                implied = isInfeasible(test_dec);
+                test_dec.remove(-dec);
+            }
             if (implied) {
                 if (impliedSet == null) {
                     impliedSet = new HashSet<Integer>();
@@ -670,14 +677,6 @@ public class ReduceLPContext {
                 nonImpliedSet.add(dec);
             }
 
-            // testing
-            if (poly_test_val == implied) {
-                System.out.println("- Test: " + ANSI_GREEN + "PASSED" + ANSI_RESET);
-            } else {
-                System.out.println("- Test: " + ANSI_RED + "FAILED" + ANSI_RESET);
-            }
-
-            implied = poly_test_val;
             return implied;
         }
 

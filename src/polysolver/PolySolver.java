@@ -420,7 +420,7 @@ public class PolySolver {
             teststr += "\n######\n";
             k++;
         }
-        System.out.println("DEC_ID: " + dec_id);
+        //System.out.println("DEC_ID: " + dec_id);
         teststr += getDecIdString(dec_id, "G0 ", vars, lxadd, false);
 
         // get local bounds
@@ -435,12 +435,12 @@ public class PolySolver {
         teststr += "\n" + bounds;
 
         // print teststr
-        log.info(teststr);
+        //log.info(teststr);
 
         // solve
         bernstein.Bernstein bern = new bernstein.Bernstein();
         String truth_val = bern.solveAssumeGuaranteeConstraints(teststr, rec_depth);
-        log.info("Bernstein Result: " + truth_val);
+        //log.info("Bernstein Result: " + truth_val);
         if (truth_val.equals("TRUE for the constraint system \n")) {
             return PolySolver.TRUE;
         } else if (truth_val.startsWith("F")) {

@@ -569,7 +569,7 @@ public class Bernstein {
                 return "UNKNOWN (the property is not guaranteed due to "
                         + "the use of double, error too large)\n";
             } else if (errorExponent == MAX_PRECISION) {
-                System.out.println("Overall computation using double is precise");
+                //System.out.println("Overall computation using double is precise");
                 for (int i = 0; i < numberOfDisjunctiveConstraints; i++) {
                     propertyValuesUpper[i] = propertyValues[i];
                     propertyValuesLower[i] = propertyValues[i];
@@ -587,7 +587,7 @@ public class Bernstein {
                     0, recursionDepth, 0);
 
             if (result == TRUE) {
-                System.out.println("TRUE for constraint " + constraintIndex);
+                //System.out.println("TRUE for constraint " + constraintIndex);
                 continue;
             } else if (result == FALSE) {
                 return "FALSE for constraint " + constraintIndex + "\n" + printCounterWitness();
