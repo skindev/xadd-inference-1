@@ -407,7 +407,16 @@ public class PolySolver {
         }
 
         // get variables
-        ArrayList<String> vars = lxadd.getContinuousVarList();
+        ArrayList<String> all_vars = lxadd.getContinuousVarList();
+        // strip next state variables
+        ArrayList<String> vars = new ArrayList<String>();
+        int kv = 0;
+        for (String s : all_vars) {
+            if (!s.endsWith("'")) {
+                vars.add(kv, s);
+                kv++;
+            }
+        }
 
         String teststr = "VAR " + Integer.toString(vars.size()) + "\n";
         teststr += "CONJUNCTION 1\n";
@@ -442,11 +451,13 @@ public class PolySolver {
         String truth_val = bern.solveAssumeGuaranteeConstraints(teststr, rec_depth);
         //log.info("Bernstein Result: " + truth_val);
         if (truth_val.equals("TRUE for the constraint system \n")) {
+            log.info("True");
             return PolySolver.TRUE;
         } else if (truth_val.startsWith("F")) {
+            log.info("False");
             return PolySolver.FALSE;
         } else {
-            log.info("Unknown result");
+            log.info("Unknown");
         }
         return PolySolver.UNKNOWN; // default to returning false if unknown
     }

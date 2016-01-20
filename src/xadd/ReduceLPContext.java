@@ -33,7 +33,7 @@ public class ReduceLPContext {
 
     //Polysolver flag
     static boolean USE_POLYSOLVER = true;
-    static int REC_DEPTH = 1;
+    static int REC_DEPTH = 4;
 
     //ReduceLP Flags
     private final static boolean DEFAULT_CHECK_REDUNDANCY = true; // Test only consistency or also redundancy
@@ -538,6 +538,7 @@ public class ReduceLPContext {
 
             // Full branch implication test
             System.out.println("Testing node: " + node_id);
+
             if (isTestImpliedv2(test_dec, inode._var)) {
                 return reduceLPv2(inode._high, test_dec, redundancy);
             } else if (isTestImpliedv2(test_dec, -1 * inode._var)) {
