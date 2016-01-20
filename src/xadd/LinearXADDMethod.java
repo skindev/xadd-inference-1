@@ -14,6 +14,8 @@ package xadd;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lpsolve.LP;
 import lpsolve.LpSolve;
@@ -52,6 +54,8 @@ public class LinearXADDMethod {
     private static final boolean ADD_EXPLICIT_BOUND_CONSTRAINTS_TO_LP = false; //Add bounds as explicit constraints (should not be necessary)
     private static final boolean WARN_INFEASIBLE_REGIONS = true; //Add bounds as explicit constraints (should not be necessary)
 
+    private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+
     public LinearXADDMethod(int localRoot, XADD global) {
         context = global;
         globalContinuousVarList = context.getContinuousVarList();
@@ -73,6 +77,8 @@ public class LinearXADDMethod {
             cVarID2localID[context._cvar2ID.get(var)] = i;
             i++;
         }
+
+        LOGGER.setLevel(Level.ALL);
     }
 
     public double[] assign2Local(double assign[]) {
@@ -136,7 +142,9 @@ public class LinearXADDMethod {
     protected void addConstraint(LP lp, int constraint_id, boolean dec) {
 
 //	      if (DEBUG_CONSTRAINTS)
-	          System.out.println("Adding constraint id [" + constraint_id+ "] = " + dec);
+        LOGGER.entering(Thread.currentThread().getStackTrace()[0].getClassName(), "addConstraint", constraint_id);
+//                "Adding constraint id [" + constraint_id+ "] = " + dec);
+//	          System.out.println("Adding constraint id [" + constraint_id+ "] = " + dec);
 
         Decision d = context._alOrder.get(constraint_id);
         if (d instanceof ExprDec) {
@@ -170,9 +178,13 @@ public class LinearXADDMethod {
             CompOperation type = dec ? e._expr._type : CompExpr.flipCompOper(e._expr._type);
 
 //	          if (DEBUG_CONSTRAINTS){
-	              System.out.println("- adding "+type+" cons: " + const_coef + " + "
-	                      + LP.PrintVector(coefs) + " <=> "
-	                      + (dec ? "" : "!") + e._expr);
+            LOGGER.fine("- adding "+type+" cons: " + const_coef + " + "
+                    + LP.PrintVector(coefs) + " <=> "
+                    + (dec ? "" : "!") + e._expr);
+
+//	              System.out.println("- adding "+type+" cons: " + const_coef + " + "
+//	                      + LP.PrintVector(coefs) + " <=> "
+//	                      + (dec ? "" : "!") + e._expr);
 //	          }
 
             switch (type) {
@@ -472,6 +484,17 @@ public class LinearXADDMethod {
         System.out.println("Showing decisions " + test_dec);
         for (Integer dec : test_dec)
             showDec(dec);
+    }
+
+    protected String showLoggerDecList(HashSet<Integer> test_dec) {
+        String decisionList = "";//"Showing decisions " + test_dec;
+
+        for (Integer dec : test_dec) {
+            Decision temp = context._alOrder.get(Math.abs(dec));
+            decisionList = decisionList.concat("dec = " + dec + " : " + temp);
+        }
+
+        return decisionList;
     }
 
     private void showDecEval(int dec, double soln[]) {

@@ -11,35 +11,31 @@
 
 package xadd;
 
+import logic.kb.prop.PropKbCNF;
+import lpsolve.LP;
+import lpsolve.LpSolve;
+import util.MapList;
+import xadd.ExprLib.ArithExpr;
+import xadd.ExprLib.CompExpr;
+import xadd.XADD.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-
-import logic.kb.prop.PropKbCNF;
-import lpsolve.LP;
-import lpsolve.LpSolve;
-
-import util.MapList;
-import xadd.ExprLib.ArithExpr;
-import xadd.XADD.BoolDec;
-import xadd.ExprLib.CompExpr;
-import xadd.XADD.Decision;
-import xadd.XADD.ExprDec;
-import xadd.XADD.XADDNode;
-import xadd.XADD.XADDTNode;
-import xadd.XADD.XADDINode;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class ReduceLPContext {
-	
+
     //ReduceLP Flags
     private final static boolean DEFAULT_CHECK_REDUNDANCY = true; // Test only consistency or also redundancy
     private final static boolean USE_REDUCE_LPv1 = false;//false; //maplist, full redundancy older version
     private final static boolean USE_REDUCE_LPv2 = true;//true; //hashSet, result implied redundancy new version
     private final static boolean SKIP_TEST2 = false; //Skip Minimal region removal. Currenty test2 is very effective in reducing size even at very small slack.
     private static final double IMPLIED_PRECISION_T2 = 1e-40;// XADD.PRECISION;//1e-4; //Precision for removing unreliably feasible constraints
-  
+
     public static final boolean SINGLE_PATH_IMPLIED_RESULT = false; //Stop search if need to check more than one path
 
     private static final boolean ADD_EXPLICIT_BOUND_CONSTRAINTS_TO_LP = false; //Add bounds as explicit constraints (should not be necessary)
@@ -61,15 +57,20 @@ public class ReduceLPContext {
 
     private XADD LPcontext = null;
 
+    private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+
     public ReduceLPContext(XADD global) {
         LPcontext = global;
+
+        // All messages below Level.FINE are not logged
+        LOGGER.setLevel(Level.ALL);
     }
 
     public int reduceLP(int node_id) {
         return reduceLP(node_id, DEFAULT_CHECK_REDUNDANCY);
     }
 
-    public int reduceLP(int node_id, boolean redun)  {
+    public int reduceLP(int node_id, boolean redun) {
         LocalReduceLP RLP = new LocalReduceLP(node_id);
         return RLP.reduceLP(node_id, redun);
     }
@@ -135,11 +136,12 @@ public class ReduceLPContext {
         }
 
         // Consistency and Redundancy Checking - ReduceLP
-        public int reduceLP(int node_id, boolean performRedundancy)  {
+        public int reduceLP(int node_id, boolean performRedundancy) {
 
             if (USE_REDUCE_LPv2) {
                 node_id = reduceLPv2(node_id, new HashSet<Integer>(), performRedundancy);
             }
+
             if (USE_REDUCE_LPv1) {
                 //System.out.print("using LP1!");
                 node_id = reduceLPv1(node_id, performRedundancy);
@@ -150,7 +152,7 @@ public class ReduceLPContext {
 
         //ReduceLPVersion 1- Indirect Redundancy Check
         @SuppressWarnings("rawtypes")
-        private int reduceLPv1(int node_id, boolean performRedundancy)  {
+        private int reduceLPv1(int node_id, boolean performRedundancy) {
             ArrayList<Integer> test_var = new ArrayList<Integer>();
             ArrayList<Boolean> test_dec = new ArrayList<Boolean>();
             _mlImplicationsChild = new MapList();
@@ -252,7 +254,7 @@ public class ReduceLPContext {
             return ret;
         }
 
-        private int reduceLPv1(int node_id, ArrayList<Integer> test_var, ArrayList<Boolean> test_dec)  {
+        private int reduceLPv1(int node_id, ArrayList<Integer> test_var, ArrayList<Boolean> test_dec) {
 
             Integer ret = null;
             XADDNode n = context.getExistNode(node_id);
@@ -447,7 +449,7 @@ public class ReduceLPContext {
         }
 
         private boolean isTestImpliedv1(ArrayList<Integer> test_var,
-                                        ArrayList<Boolean> test_dec, int var_id, boolean dec)  {
+                                        ArrayList<Boolean> test_dec, int var_id, boolean dec) {
 
             if (test_var.size() == 0)
                 return false;
@@ -496,7 +498,7 @@ public class ReduceLPContext {
         //ReduceLPVersion 2- Only direct Redundancy Check
 
         //ReduceLPVersion 2- Direct Redundancy Check
-        private int reduceLPv2(int node_id, HashSet<Integer> test_dec, boolean redundancy)  {
+        private int reduceLPv2(int node_id, HashSet<Integer> test_dec, boolean redundancy) {
             XADDNode n = context.getExistNode(node_id);
 
             // A terminal node should be reduced (and cannot be restricted)
@@ -561,7 +563,7 @@ public class ReduceLPContext {
         //Call to check if given the test_dec decisions subtree always reaches "goal", which means that
         // if the node above the subtree is chosing between subtree or goal, we can leave subtree in its place (it will reach still
         // reach goal whenever the first decision would take it to goal.
-        private boolean isResultImplied(HashSet<Integer> test_dec, int subtree, int goal)  {
+        private boolean isResultImplied(HashSet<Integer> test_dec, int subtree, int goal) {
 
             if (subtree == goal) return true;
 
@@ -601,7 +603,10 @@ public class ReduceLPContext {
             return false; //if TNode, only the == check can make it true
         }
 
-        private boolean isTestImpliedv2(HashSet<Integer> test_dec, int dec)  {
+        private boolean isTestImpliedv2(HashSet<Integer> test_dec, int dec) {
+
+//            Object[] params = new Object[2];
+            LOGGER.entering(Thread.currentThread().getStackTrace()[0].getClassName(), "isTestImpliedv2", test_dec);
 
             if (!(context._alOrder.get(Math.abs(dec)) instanceof ExprDec)) return false;
 
@@ -611,13 +616,12 @@ public class ReduceLPContext {
             HashSet<Integer> nonImpliedSet = _hmNonImplications.get(test_dec);
             if (nonImpliedSet != null && nonImpliedSet.contains(dec)) return false;
 
-            if (DEBUG_CONSTRAINTS) {
-                System.out.println("===================\nisTestImpliedv2 " + "Checking if " + dec + " " + context._alOrder.get(Math.abs(dec)) + " = " + (dec > 0 ? "true" : "false") + " implied by:");
-                showDecList(test_dec);
-            }
+            String decisionList = showLoggerDecList(test_dec);
+            LOGGER.fine("Checking if " + dec + " " + context._alOrder.get(Math.abs(dec)) + " = " +
+                    (dec > 0 ? "true" : "false") + " implied by:\n" + decisionList);
 
             if (!test_dec.add(-dec))
-                System.err.println("Warning: checking if decision implies its negation! - " + test_dec);
+                LOGGER.fine("Warning: checking if decision implies its negation! - " + test_dec);
 
             boolean implied = isInfeasible(test_dec);
             test_dec.remove(-dec);
@@ -636,22 +640,27 @@ public class ReduceLPContext {
                 nonImpliedSet.add(dec);
             }
 
+            LOGGER.exiting(Thread.currentThread().getStackTrace()[0].getClassName(), "isTestImpliedv2", implied);
             return implied;
         }
 
-        private boolean isInfeasible(HashSet<Integer> test_dec)  {
-
+        private boolean isInfeasible(HashSet<Integer> test_dec) {
             boolean infeasible = false;
-
             int nvars = nLocalCVars;
             double[] obj_coef = new double[nvars];
+
+            LOGGER.entering(Thread.currentThread().getStackTrace()[0].getClassName(), "isInfeasible", test_dec);
+
             //Test 1:
             // Test 1 is unrealiable, somehow many reportedly feasible do not pass test 2
             //A => B iff A^~B is infeasible) -maximize arbitrary 1 function
 
             // Setup LP
-            for (int i = 0; i < nvars; i++) obj_coef[i] = 1;
-            LP lp = new LP(nvars, assign2Local(context.lowerBounds, true), assign2Local(context.upperBounds, true), obj_coef, LP.MAXIMIZE);
+            for (int i = 0; i < nvars; i++)
+                obj_coef[i] = 1;
+
+            LP lp = new LP(nvars, assign2Local(context.lowerBounds, true), assign2Local(context.upperBounds, true),
+                    obj_coef, LP.MAXIMIZE);
 
             // Now add all constraints
             for (Integer decision : test_dec) {
@@ -664,14 +673,15 @@ public class ReduceLPContext {
             double soln[] = silentSolvelp(lp);
 
             if (lp._status == LpSolve.INFEASIBLE) {
-                if (DEBUG_CONSTRAINTS) {
-                    System.out.println("Infeasible: " + test_dec);
-                }
+                LOGGER.fine("Infeasible: " + test_dec);
                 infeasible = true;
             }
             lp.free();
 
-            if (infeasible || SKIP_TEST2) return infeasible;
+            if (infeasible || SKIP_TEST2) {
+                LOGGER.exiting(Thread.currentThread().getStackTrace()[0].getClassName(), "isInfeasible", infeasible);
+                return infeasible;
+            }
 
             //Test 2 - strict feasibility
             // for each constraint c + f*x > 0 the slack is the greatest value S>0 s.t. c + f*x - S >= 0
@@ -686,6 +696,7 @@ public class ReduceLPContext {
                 lower2[i] = context.lowerBounds[localID2cVarID[i]];
                 upper2[i] = context.upperBounds[localID2cVarID[i]];
             }
+
             objCoef2[nvars] = 1;
             lower2[nvars] = 0; //S >0
             upper2[nvars] = XADD.DEFAULT_UPPER_BOUND;
@@ -695,19 +706,24 @@ public class ReduceLPContext {
             double constrCoef2[] = new double[nvars + 1];
             double constC = 0d;
             for (Integer decision : test_dec) {
-                for (int k = 0; k < nvars + 1; k++) constrCoef2[k] = 0d;
+                for (int k = 0; k < nvars + 1; k++)
+                    constrCoef2[k] = 0d;
 
                 Decision d = context._alOrder.get(Math.abs(decision));
-                if (!(d instanceof ExprDec)) continue;
+                if (!(d instanceof ExprDec))
+                    continue;
+
                 CompExpr compar = ((ExprDec) d)._expr;
-                boolean greaterComp = compar.isGreater();  
+                boolean greaterComp = compar.isGreater();
+
                 ArithExpr exp = ((ExprDec) d)._expr._lhs;
                 try {
                     constC = setCoefficientsLocal(exp, constrCoef2);
                 } catch (UnsupportedConstraintException e) {
                     e.printStackTrace();
                 }
-                if ( (greaterComp && decision > 0) || (!greaterComp && decision < 0) ) {
+
+                if ((greaterComp && decision > 0) || (!greaterComp && decision < 0)) {
                     constrCoef2[nvars] = -1; // c + f*x > 0 => f*x - S > -c
                     lp2.addGeqConstraint(constrCoef2, -constC);
                 } else {
@@ -720,24 +736,28 @@ public class ReduceLPContext {
             soln2 = silentSolvelp(lp2);
             double maxSlack = lp2._dObjValue;
 
-            
             if (lp2._status == LpSolve.INFEASIBLE) {
-                if (!TEST2_INCONSIST_QUIET){
-                	System.err.println("Infeasible at test 2? should have failed the first test!");
-                	showDecListEval(test_dec, soln);
+                if (!TEST2_INCONSIST_QUIET) {
+//                    System.err.println("Infeasible at test 2? should have failed the first test!");
+                    LOGGER.severe("Infeasible at test 2? should have failed the first test!");
+                    showDecListEval(test_dec, soln);
                 }
                 infeasible = true;
             } else if (lp2._status != LpSolve.UNBOUNDED && maxSlack < IMPLIED_PRECISION_T2) {
-                if (DEBUG_CONSTRAINTS) {
-                    System.out.println("Implied only by test 2: Slack = " + soln2[nvars]);
-                    //remove slack from soln2 to be a local assign sol
-                    double sol[] = new double[nvars];
-                    for (int k = 0; k < nvars; k++) sol[k] = soln2[k];
-                    showDecListEval(test_dec, sol);
+                LOGGER.fine("Implied only by test 2: Slack = " + soln2[nvars]);
+
+                double sol[] = new double[nvars];
+                for(int k = 0; k < nvars; k++) {
+                    sol[k] = soln2[k];
                 }
+
+                showDecListEval(test_dec, sol);
                 infeasible = true;
             }
+
             lp2.free();
+
+            LOGGER.exiting(Thread.currentThread().getStackTrace()[0].getClassName(), "isInfeasible", infeasible);
             return infeasible;
         }
     }

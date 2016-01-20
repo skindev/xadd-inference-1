@@ -1,13 +1,15 @@
 package camdp;
 
+import xadd.ExprLib.ArithExpr;
+import xadd.ExprLib.DoubleExpr;
+import xadd.XADD;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import xadd.XADD;
-import xadd.ExprLib.ArithExpr;
-import xadd.ExprLib.DoubleExpr;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ParseCAMDP {
 
@@ -31,14 +33,18 @@ public class ParseCAMDP {
     Integer iterations;
     boolean LINEARITY;
     double MAXREWARD;
-    
+
     HashMap<String, Double> _initCVal = new HashMap<String, Double>();
     HashMap<String, Boolean> _initBVal = new HashMap<String, Boolean>();
 
     HashMap<String, CAction> _name2Action = new HashMap<String, CAction>();
 
+    private static final Logger LOGGER = Logger.getLogger(ParseCAMDP.class.getName());
+
     public ParseCAMDP(CAMDP camdp) {
         _camdp = camdp;
+
+        LOGGER.setLevel(Level.ALL);
     }
 
     public void buildCAMDP(ArrayList input) {
@@ -56,12 +62,15 @@ public class ParseCAMDP {
         if (!(o instanceof String) || !((String) o).equalsIgnoreCase("cvariables")) {
             exit("Missing cvariable declarations: " + o);
         }
+
         o = i.next();
         CVars = (ArrayList<String>) ((ArrayList) o).clone();
+
         o = i.next();
         if (!(o instanceof String) || !((String) o).equalsIgnoreCase("min-values")) {
             exit("Missing min-values declarations: " + o);
         }
+
         o = i.next();
         for (int index = 0; index < CVars.size(); index++) {
             String var = CVars.get(index);
@@ -74,10 +83,12 @@ public class ParseCAMDP {
                 exit("\nIllegal min-value: " + var + " = " + val + " @ index " + index);
             }
         }
+
         o = i.next();
         if (!(o instanceof String) || !((String) o).equalsIgnoreCase("max-values")) {
             exit("Missing max-values declarations: " + o);
         }
+
         o = i.next();
         for (int index = 0; index < CVars.size(); index++) {
             String var = CVars.get(index);
@@ -90,10 +101,12 @@ public class ParseCAMDP {
                 exit("\nIllegal max-value: " + var + " = " + val + " @ index " + index);
             }
         }
+
         o = i.next();
         if (!(o instanceof String) || !((String) o).equalsIgnoreCase("bvariables")) {
             exit("Missing bvariable declarations: " + o);
         }
+
         o = i.next();
         //System.out.println(o);
 
@@ -111,7 +124,8 @@ public class ParseCAMDP {
             NoiseVars = (ArrayList<String>) ((ArrayList) o).clone();
             o = i.next();
         } else {
-            System.out.println("Missing nvariable declarations after state vars... assuming only discrete noise on continuous transitions.");
+//            System.out.println("Missing nvariable declarations after state vars... assuming only discrete noise on continuous transitions.");
+            LOGGER.warning("Missing nvariable declarations after state vars... assuming only discrete noise on continuous transitions.");
             NoiseVars = new ArrayList<String>();
         }
 
@@ -122,19 +136,24 @@ public class ParseCAMDP {
             o = i.next();
             if (!((ArrayList) o).isEmpty())
                 exit("Cannot handle non-empty ivariable declarations " + o + ": must use ibvariables or icvariables to indicate type.");
-            System.err.println("WARNING: use of ivariables declaration has now been replaced with ibvariables and icvariables, ignoring since empty.");
+
+//            System.err.println("WARNING: use of ivariables declaration has now been replaced with ibvariables and icvariables, ignoring since empty.");
+            LOGGER.warning("Use of ivariables declaration has now been replaced with ibvariables and icvariables, ignoring since empty.");
         } else {
 
             // Expect icvariables, min-values, max-values, ibvariables
             if (!(o instanceof String) || !((String) o).equalsIgnoreCase("icvariables")) {
                 exit("Missing icvariable declarations: " + o);
             }
+
             o = i.next();
             ICVars = (ArrayList<String>) ((ArrayList) o).clone();
+
             o = i.next();
             if (!(o instanceof String) || !((String) o).equalsIgnoreCase("min-values")) {
                 exit("Missing min-values declarations: " + o);
             }
+
             o = i.next();
             for (int index = 0; index < ICVars.size(); index++) {
                 String var = ICVars.get(index);
@@ -146,10 +165,12 @@ public class ParseCAMDP {
                     exit("\nIllegal min-value: " + var + " = " + val + " @ index " + index);
                 }
             }
+
             o = i.next();
             if (!(o instanceof String) || !((String) o).equalsIgnoreCase("max-values")) {
                 exit("Missing max-values declarations: " + o);
             }
+
             o = i.next();
             for (int index = 0; index < ICVars.size(); index++) {
                 String var = ICVars.get(index);
@@ -161,10 +182,12 @@ public class ParseCAMDP {
                     exit("\nIllegal max-value: " + var + " = " + val + " @ index " + index);
                 }
             }
+
             o = i.next();
             if (!(o instanceof String) || !((String) o).equalsIgnoreCase("ibvariables")) {
                 exit("Missing ibvariable declarations: " + o);
             }
+
             o = i.next();
             //System.out.println(o);
 
@@ -178,7 +201,8 @@ public class ParseCAMDP {
         o = i.next();
         Object push_back = null;
         if (!(o instanceof String) || !((String) o).equalsIgnoreCase("avariables")) {
-            System.out.println("Missing avariable declarations before " + o + "... assuming there are no continuously parameterized actions.");
+            LOGGER.warning("Missing avariable declarations before " + o + "... assuming there are no continuously parameterized actions.");
+//            System.out.println("Missing avariable declarations before " + o + "... assuming there are no continuously parameterized actions.");
             AVars = new ArrayList<String>();
             push_back = o;
         } else {
@@ -295,15 +319,15 @@ public class ParseCAMDP {
             System.exit(1);
         }
         discount = ((BigDecimal) i.next());
-        
+
         // Initial State declarations are optional
         o = i.next();
         push_back = null;
         if (!(o instanceof String) || !((String) o).equalsIgnoreCase("initialState")) {
-            System.out.println("Missing initial State declaration before " + o + "... assuming complete solution is intended.");
+//            System.out.println("Missing initial State declaration before " + o + "... assuming complete solution is intended.");
+            LOGGER.warning("Missing initial State declaration before " + o + "... assuming complete solution is intended.");
             push_back = o;
-        } 
-        else {
+        } else {
             o = i.next();
             for (int index = 0; index < CVars.size(); index++) {
                 String var = CVars.get(index);
@@ -323,44 +347,47 @@ public class ParseCAMDP {
                 else if (val.trim().equalsIgnoreCase("false")) _initBVal.put(var, false);
                 else exit("\nIllegal initial-bvalue: " + var + " = " + val + " @ index " + index);
             }
-        }        
+        }
+
         o = push_back == null ? i.next() : push_back; // Could have a saved object if init values declaration was missing
         if (!(o instanceof String)
                 || !((String) o).equalsIgnoreCase("iterations")) {
             System.out.println("Missing iterations declaration: " + o);
             System.exit(1);
         }
+
         iterations = (new Integer((String) i.next()));
-        if (i.hasNext()){
-        	o=i.next(); 
-        	if (!(o instanceof String)
-                || !( ((String) o).equalsIgnoreCase("LINEAR") || ((String) o).equalsIgnoreCase("NONLINEAR")) ) {
-            System.err.println("Missing linearity declaration: " + o);
-            LINEARITY = true;    
-        	}
-        	else{
-        		LINEARITY = ((String)o).equalsIgnoreCase("LINEAR");
-        	}
+        if (i.hasNext()) {
+            o = i.next();
+            if (!(o instanceof String)
+                    || !(((String) o).equalsIgnoreCase("LINEAR") || ((String) o).equalsIgnoreCase("NONLINEAR"))) {
+//            System.err.println("Missing linearity declaration: " + o);
+                LOGGER.warning("Missing linearity declaration: " + o);
+                LINEARITY = true;
+            } else {
+                LINEARITY = ((String) o).equalsIgnoreCase("LINEAR");
+            }
+        } else {
+//            System.out.println("Missing linearity declaration, assumes linear.");
+            LOGGER.warning("Missing linearity declaration, assumes linear.");
+            LINEARITY = true;
         }
-        else{
-            System.out.println("Missing linearity declaration, assumes linear.");
-            LINEARITY = true;    
-        }
-        if (i.hasNext()){
-        	o=i.next(); 
-        	if (!(o instanceof String)
-                || !((String) o).equalsIgnoreCase("MAXREWARD") || !i.hasNext()) {
-        		 System.out.println("Missing Max Imediate Reward declaration, assumes 0.");
-        		 MAXREWARD = 0.0;    
-        	}
-        	else{
-        		o=i.next();
-        		MAXREWARD = Double.parseDouble(o.toString());
-        	}
-        }
-        else{
-            System.out.println("Missing Max Imediate Reward declaration, assumes 0.");
-            MAXREWARD = 0.0;    
+
+        if (i.hasNext()) {
+            o = i.next();
+            if (!(o instanceof String)
+                    || !((String) o).equalsIgnoreCase("MAXREWARD") || !i.hasNext()) {
+//        		 System.out.println("Missing Max Imediate Reward declaration, assumes 0.");
+                LOGGER.warning("Missing Max Imediate Reward declaration, assumes 0.");
+                MAXREWARD = 0.0;
+            } else {
+                o = i.next();
+                MAXREWARD = Double.parseDouble(o.toString());
+            }
+        } else {
+            LOGGER.warning("Missing Max Imediate Reward declaration, assumes 0.");
+//            System.out.println("Missing Max Imediate Reward declaration, assumes 0.");
+            MAXREWARD = 0.0;
         }
     }
 
@@ -383,6 +410,7 @@ public class ParseCAMDP {
     public HashMap<String, Double> get_initCVal() {
         return _initCVal;
     }
+
     public void set_initCVal(HashMap<String, Double> initCVal) {
         this._initCVal = initCVal;
     }
@@ -390,11 +418,11 @@ public class ParseCAMDP {
     public HashMap<String, Boolean> get_initBVal() {
         return _initBVal;
     }
-    
+
     public void set_initBVal(HashMap<String, Boolean> _initBVal) {
         this._initBVal = _initBVal;
     }
-    
+
     private void parseActionParam(ArrayList<String> params) {
         // All actions required to have bounds, e.g.
         // [0, <, =, a1, <, =, 200, ^, 0, <, =, a2, <, =, 200]
@@ -410,7 +438,8 @@ public class ParseCAMDP {
     }
 
     public void exit(String msg) {
-        System.err.println(msg);
+//        System.err.println(msg);
+        LOGGER.severe(msg);
         System.exit(1);
     }
 
@@ -469,5 +498,5 @@ public class ParseCAMDP {
     public HashMap<String, CAction> getHashmap() {
         return _name2Action;
     }
-    
+
 }
