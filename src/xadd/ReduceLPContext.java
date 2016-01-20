@@ -640,7 +640,7 @@ public class ReduceLPContext {
             if (nonImpliedSet != null && nonImpliedSet.contains(dec)) return false;
 
             // polynomial solver test
-            boolean poly_test_val = isTestImpliedPoly(test_dec, -dec);
+            boolean poly_test_val = isTestImpliedPoly(test_dec, dec);
             // end test code
 
 
