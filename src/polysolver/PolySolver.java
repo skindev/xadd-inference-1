@@ -1,5 +1,6 @@
 package polysolver;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.*;
@@ -51,17 +52,22 @@ public class PolySolver {
             return Double.toString(this.coeff) + varstr;
         }
 
-        public String toBernsteinString(ArrayList<String> varorder) {
+        public String toBernsteinString(ArrayList<String> varorder, String coeff_suffix) {
             if (varorder.size() == 0) {
                 return "";
             }
-            String varstr = "COEF (";
+            String varstr = "COEF " + coeff_suffix + "(";
             varstr += Integer.toString(this.vars.get(varorder.get(0)));
             for (int i=1; i<varorder.size(); i++) {
                 varstr += "," + Integer.toString(this.vars.get(varorder.get(i)));
             }
             varstr += ") " + Double.toString(this.coeff);
             return varstr;
+        }
+
+
+        public String toBernsteinString(ArrayList<String> varorder) {
+            return toBernsteinString(varorder, "");
         }
 
         // compares two PolyElem to see if they have identical variables
@@ -121,6 +127,24 @@ public class PolySolver {
 
             return varstr;
         }
+
+        public String toBernsteinString(ArrayList<String> varorder, String coeff_suffix, boolean show_nvar) {
+            if (varorder.size() == 0) {
+                return "";
+            }
+            // get number of variables.
+            String varstr = "";
+            if (show_nvar) {
+                varstr = "VAR " + Integer.toString(varorder.size()) + "\n";
+            }
+            // get coefficients
+            for (int i=0; i<this.elems.size(); i++) {
+                varstr += this.elems.get(i).toBernsteinString(varorder, coeff_suffix) + "\n";
+            }
+
+            return varstr;
+        }
+
 
 
         public void addToExpr(PolyElem elem) {
@@ -322,6 +346,109 @@ public class PolySolver {
             log.info("Unknown result");
         }
         return this.UNKNOWN; // default to returning false if unknown
+    }
+
+
+    public String getDecIdString(Integer dec_id, String coef_suffix, ArrayList<String> vars, XADD lxadd, boolean assump) {
+
+        boolean flip_operator = false;
+        if (dec_id < 0) {
+            flip_operator = true;
+            dec_id = -dec_id;
+        }
+
+        XADD.Decision dec = lxadd._alOrder.get(dec_id);
+        if (dec instanceof XADD.ExprDec) {
+
+            // make into canonical form
+            XADD.ExprDec d = (XADD.ExprDec) dec.makeCanonical();
+            //log.info("Canonical form: " + d.toString());
+
+            // get expression on the lhs
+            ExprLib.ArithExpr lhs = d._expr._lhs;
+            PolyExpr pexpr = parseXADDArithExpr(lhs, vars);
+
+            // get expression on the rhs
+            ExprLib.DoubleExpr rhs = (ExprLib.DoubleExpr) d._expr._rhs;
+            double rhs_val = rhs._dConstVal;
+
+            // convert to Bernstein string format
+            // TODO: instead of converting to string format, directly create Bernstein polynomial.
+            String polystr =  pexpr.toBernsteinString(vars, coef_suffix, false);
+
+            // add Sign
+            polystr += "\n";
+            polystr += "SIGN " + coef_suffix;
+            int propop = getXADDExprDecConstraintType(d, flip_operator);
+            switch (propop) {
+                case Bernstein.GT:
+                    polystr += "GT\n";
+                    break;
+                case Bernstein.GE:
+                    polystr += "GE\n";
+                    break;
+                case Bernstein.LT:
+                    polystr += "LT\n";
+                    break;
+                case Bernstein.LE:
+                    polystr += "LE\n";
+                    break;
+            }
+            polystr += "VALUE " + coef_suffix + Double.toString(rhs_val) + "\n";
+            return polystr;
+        } else {
+            throw new UnsupportedOperationException("Unsupported expression type");
+        }
+    }
+
+    public int testXADDImplication(HashSet<Integer> assump_dec_ids, int dec_id, int rec_depth, XADD lxadd ) {
+        if (assump_dec_ids.size() == 0) {
+            return  PolySolver.UNKNOWN;
+        }
+
+        // get variables
+        ArrayList<String> vars = lxadd.getContinuousVarList();
+
+        String teststr = "VAR " + Integer.toString(vars.size()) + "\n";
+        teststr += "CONJUNCTION 1\n";
+        teststr += "ASSUMP 0 " + Integer.toString(assump_dec_ids.size()) + "\n";
+        teststr += "\n######\n";
+        int k = 0;
+        for (Integer id : assump_dec_ids) {
+            String coeff_suffix = "A0_" + Integer.toString(k) + " ";
+            teststr += getDecIdString(id, coeff_suffix, vars, lxadd, true);
+            teststr += "\n######\n";
+            k++;
+        }
+        System.out.println("DEC_ID: " + dec_id);
+        teststr += getDecIdString(dec_id, "G0 ", vars, lxadd, false);
+
+        // get local bounds
+        String bounds = "";
+        int i=0;
+        for (String v : vars) {
+            bounds += "BOUND x" + Integer.toString(i) + " [" +
+                    lxadd.lowerBounds[ lxadd._cvar2ID.get(v) ] + "," +
+                    lxadd.upperBounds[ lxadd._cvar2ID.get(v) ] + "]\n";
+            i++;
+        }
+        teststr += "\n" + bounds;
+
+        // print teststr
+        log.info(teststr);
+
+        // solve
+        bernstein.Bernstein bern = new bernstein.Bernstein();
+        String truth_val = bern.solveAssumeGuaranteeConstraints(teststr, rec_depth);
+        log.info("Bernstein Result: " + truth_val);
+        if (truth_val.equals("TRUE for the constraint system \n")) {
+            return PolySolver.TRUE;
+        } else if (truth_val.startsWith("F")) {
+            return PolySolver.FALSE;
+        } else {
+            log.info("Unknown result");
+        }
+        return PolySolver.UNKNOWN; // default to returning false if unknown
     }
 
 

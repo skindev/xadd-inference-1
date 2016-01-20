@@ -1,5 +1,5 @@
 cvariables ( location w2)
-min-values ( -100.0 0)
+min-values ( -100.0 -10.0)
 max-values ( 100 100.0)
 bvariables ( )
 ivariables ( )
