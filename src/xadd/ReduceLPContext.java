@@ -17,6 +17,7 @@ import logic.kb.prop.PropKbCNF;
 import lpsolve.LP;
 import lpsolve.LpSolve;
 
+import polysolver.PolySolver;
 import util.MapList;
 import xadd.ExprLib.ArithExpr;
 import xadd.XADD.BoolDec;
@@ -656,7 +657,7 @@ public class ReduceLPContext {
 
         private boolean isImpliedPoly(HashSet<Integer> test_dec)
                 throws UnsupportedOperationException {
-
+            boolean implied = true;
             polysolver.PolySolver psolver = new polysolver.PolySolver();
             int rec_depth = 10;
 
@@ -686,15 +687,20 @@ public class ReduceLPContext {
                     System.out.println("=== Test passed? " + test_passed);
                     System.out.println("   ~~~~~~~~~~~~~~~~~~ ");
 
-                    //implied &= test_passed;
-                    if (test_passed) return false;
+                    implied &= test_passed;
+                    //if (test_passed) return false;
+
+                    //take care of unknowns
+                    if (truth_val == PolySolver.UNKNOWN) {
+                        return false; // implication is false if unknown.
+                    }
 
                 } else {
                     throw new UnsupportedOperationException("Unsupported Decision Type");
                 }
             }
 
-            return true;
+            return !implied;
         }
 
         private boolean isImpliedPoly2(HashSet<Integer> test_dec)
@@ -781,7 +787,7 @@ public class ReduceLPContext {
             lp.free();
 
             // testing polynomial version
-            //boolean implied = isImpliedPoly2(test_dec);
+            boolean implied = isImpliedPoly(test_dec);
 //            if (implied != infeasible) {
 //                System.out.println(">>>>>>>>>>>>>>>>  ERROR! Is not the same. Polysolver gave " + implied);
 //                //System.exit(-1);

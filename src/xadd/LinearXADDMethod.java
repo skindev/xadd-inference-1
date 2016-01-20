@@ -85,6 +85,7 @@ public class LinearXADDMethod {
             int ind = cVarID2localID[i];
             if (ind >= 0) {
                 local[ind] = assign[i];
+                System.out.println(">Bound: " + ind + ": " + local[ind]);
             } else if (Math.abs(assign[i]) > XADD.PRECISION && !ignore) {
                 System.err.println("Warning: Transforming assign to local ignores some nonzero variables!");
             }
