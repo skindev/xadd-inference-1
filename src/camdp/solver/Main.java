@@ -2,8 +2,8 @@ package camdp.solver;
 
 import camdp.CAMDP;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.IOException;
+import java.util.logging.*;
 
 /**
  * Main Executable class for Continuous State and Action MDP (CAMDP)
@@ -40,8 +40,19 @@ public class Main {
      */
     public static void main(String args[]) {
 
-        LOGGER.setLevel(Level.ALL);
-        LOGGER.entering(Main.class.getName(), "main");
+        try {
+            FileHandler fileHander = new FileHandler("./camdp.log");
+            fileHander.setLevel(Level.ALL);
+
+            LOGGER.addHandler(fileHander);
+        } catch(IOException exception) {
+            LOGGER.severe("Unable to create log file.");
+        }
+
+        Handler[] handlers = Logger.getLogger("").getHandlers();
+        for ( int index = 0; index < handlers.length; index++ ) {
+            handlers[index].setLevel(Level.ALL);
+        }
 
         int nargs = args.length;
         if (nargs < 5 || nargs > 8) {
@@ -63,7 +74,6 @@ public class Main {
             display = Integer.parseInt(args[3]);
             trials = Integer.parseInt(args[4]);
         } catch (NumberFormatException nfe) {
-//            System.err.println("\nIllegal integer parameters \n");
             LOGGER.severe("Illegal integer parameters");
             Usage();
         }
@@ -81,22 +91,12 @@ public class Main {
         LOGGER.info("Solving " + filename + " with solver " + solvers[solution] + " for " + iter + " iterations and " + trials + " trials.");
         LOGGER.fine("Approximation Allowed Error: " + APPROX);
 
-//        if (VERBOSE >= 0) {
-//            System.out.println("Main Solution Start: Solving " + filename + " with solver " + solvers[solution] + " for " + iter + " iterations and " + trials + " trials.");
-//            if (APPROX > 0)
-//                System.out.println("Approximation Allowed Error: " + APPROX);
-//        }
-
         // Build a CAMDP, display, solve
         CAMDP mdp = new CAMDP(filename);
+        LOGGER.config(mdp.toString(false, false));
 
         mdp.DISPLAY_2D = (display == 2);
         mdp.DISPLAY_3D = (display == 3);
-
-        LOGGER.config(mdp.toString(false, false));
-//        if (VERBOSE > 2) {
-//            System.out.println(mdp.toString(false, false));
-//        }
 
         CAMDPsolver solver = null;
         String methodName = "";
@@ -142,15 +142,7 @@ public class Main {
             solver.saveResults();
         }
 
-        if (PRINT_RESULTS) {
-            solver.printResults();
-        }
-
-        LOGGER.info("MAIN-FINISH");
-        LOGGER.exiting(Thread.currentThread().getStackTrace()[0].getClassName(), "main");
-
-//        if (VERBOSE >= 0)
-//            System.out.println("MAIN-FINISH");
+        LOGGER.info(solver.printSummary());
     }
 
     /**

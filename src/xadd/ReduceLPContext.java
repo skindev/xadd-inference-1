@@ -57,13 +57,13 @@ public class ReduceLPContext {
 
     private XADD LPcontext = null;
 
-    private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+    private static final Logger LOGGER = Logger.getLogger(ReduceLPContext.class.getName());
 
     public ReduceLPContext(XADD global) {
         LPcontext = global;
 
         // All messages below Level.FINE are not logged
-        LOGGER.setLevel(Level.ALL);
+//        LOGGER.setLevel(Level.ALL);
     }
 
     public int reduceLP(int node_id) {
@@ -751,7 +751,8 @@ public class ReduceLPContext {
                     sol[k] = soln2[k];
                 }
 
-                showDecListEval(test_dec, sol);
+//                showDecListEval(test_dec, sol);
+                showLoggerDecListEval(test_dec, soln);
                 infeasible = true;
             }
 

@@ -44,7 +44,7 @@ public class ParseCAMDP {
     public ParseCAMDP(CAMDP camdp) {
         _camdp = camdp;
 
-        LOGGER.setLevel(Level.ALL);
+//        LOGGER.setLevel(Level.ALL);
     }
 
     public void buildCAMDP(ArrayList input) {

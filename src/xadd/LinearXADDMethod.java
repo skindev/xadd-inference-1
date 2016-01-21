@@ -54,7 +54,7 @@ public class LinearXADDMethod {
     private static final boolean ADD_EXPLICIT_BOUND_CONSTRAINTS_TO_LP = false; //Add bounds as explicit constraints (should not be necessary)
     private static final boolean WARN_INFEASIBLE_REGIONS = true; //Add bounds as explicit constraints (should not be necessary)
 
-    private static final Logger LOGGER = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+    private static final Logger LOGGER = Logger.getLogger(LinearXADDMethod.class.getName());
 
     public LinearXADDMethod(int localRoot, XADD global) {
         context = global;
@@ -78,7 +78,7 @@ public class LinearXADDMethod {
             i++;
         }
 
-        LOGGER.setLevel(Level.ALL);
+//        LOGGER.setLevel(Level.ALL);
     }
 
     public double[] assign2Local(double assign[]) {
@@ -178,8 +178,7 @@ public class LinearXADDMethod {
             CompOperation type = dec ? e._expr._type : CompExpr.flipCompOper(e._expr._type);
 
 //	          if (DEBUG_CONSTRAINTS){
-            LOGGER.fine("- adding "+type+" cons: " + const_coef + " + "
-                    + LP.PrintVector(coefs) + " <=> "
+            LOGGER.fine("- adding "+type+" cons: " + const_coef + " + " + LP.PrintVector(coefs) + " <=> "
                     + (dec ? "" : "!") + e._expr);
 
 //	              System.out.println("- adding "+type+" cons: " + const_coef + " + "
@@ -307,9 +306,10 @@ public class LinearXADDMethod {
         // This error is really important to flag... should not disable.
         // If it occurs, the resulting constraint could be used improperly.
         if (error > 0) {
-            System.err.println("WARNING: XADD.SetCoefPrunVar ERROR [" + error + "] -- unexpected LHS constraint term: "
-                    + e);
-            System.err.println("BOGUS CONSTRAINT MAY BE RETURNED");
+            LOGGER.warning("XADD.SetCoefPrunVar ERROR [" + error + "] -- unexpected LHS constraint term: " + e + "BOGUS CONSTRAINT MAY BE RETURNED");
+//            System.err.println("WARNING: XADD.SetCoefPrunVar ERROR [" + error + "] -- unexpected LHS constraint term: "
+//                    + e);
+//            System.err.println("BOGUS CONSTRAINT MAY BE RETURNED");
         }
 
         return accum;
@@ -499,10 +499,12 @@ public class LinearXADDMethod {
 
     private void showDecEval(int dec, double soln[]) {
         Decision temp = context._alOrder.get(Math.abs(dec));
+
         System.out.print("dec = " + dec + " : " + temp);
         if (temp instanceof ExprDec)
             System.out.println(", LHS evals to :" + localEvaluateExpr(((ExprDec) temp)._expr._lhs, soln));
-        else System.out.println();
+        else
+            System.out.println();
     }
 
     protected void showDecListEval(HashSet<Integer> test_dec, double soln[]) {
@@ -510,6 +512,26 @@ public class LinearXADDMethod {
         System.out.println("Showing decisions " + test_dec + " evaluated at " + assignment);
         for (Integer dec : test_dec)
             showDecEval(dec, soln);
+    }
+
+    protected String showLoggerDecListEval(HashSet<Integer> test_dec, double soln[]) {
+        String decisionListEval;
+        String assignment = getExprFromCoefficientsLocal(0, soln).toString().replace('*', '=');
+        decisionListEval = "Showing decisions " + test_dec + " evaluated at " + assignment;
+
+        Decision temp;
+        for (Integer dec : test_dec) {
+            temp = context._alOrder.get(Math.abs(dec));
+            decisionListEval = decisionListEval.concat("dec = " + dec + " : " + temp);
+
+            if (temp instanceof ExprDec)
+                decisionListEval = decisionListEval.concat(", LHS evals to :" +
+                        localEvaluateExpr(((ExprDec) temp)._expr._lhs, soln) + "\n");
+            else
+                decisionListEval = decisionListEval.concat("\n");
+        }
+
+        return decisionListEval;
     }
 
     //Helper Class for optimization problems
