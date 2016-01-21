@@ -53,7 +53,7 @@ public class VI extends CAMDPsolver {
         dApproxError = approxError;
         setupResults();
 
-        LOGGER.setLevel(Level.FINE);
+//        LOGGER.setLevel(Level.FINE);
     }
 
     /*///////////////////
@@ -443,6 +443,41 @@ public class VI extends CAMDPsolver {
 
         LOGGER.info(outputString);
     }
+
+    public String printSummary() {
+        String outputString = "";
+
+        outputString = "Results for Value Iteration: " + finalIter + " iterations:\n";
+        outputString = outputString.concat("Time: ");
+
+//        debugOutput.println("Results for Value Iteration: " + finalIter + " iterations:");
+//        debugOutput.print("Time:");
+
+        for (int i = 1; i <= finalIter; i++)
+//            debugOutput.print(solutionTimeList[i] + " ");
+            outputString = outputString.concat(solutionTimeList[i] + " ");
+
+//        debugOutput.println(";");
+
+//        debugOutput.print("Nodes:");
+        outputString = outputString.concat("Nodes: ");
+        for (int i = 1; i <= finalIter; i++)
+//            debugOutput.print(solutionNodeList[i] + " ");
+            outputString = outputString.concat(solutionNodeList[i] + " ");
+
+//        debugOutput.println(";");
+//        debugOutput.print("Initial S Value:");
+        outputString = outputString.concat("Initial S Value: ");
+
+        for (int i = 1; i <= finalIter; i++)
+//            debugOutput.print(solutionInitialSValueList[i] + " ");
+            outputString = outputString.concat(solutionInitialSValueList[i] + " ");
+
+//        debugOutput.println(";");
+
+        return outputString;
+    }
+
 
     public void exportSolutionToFile() {
         for (int i = 1; i <= finalIter; i++) context.exportXADDToFile(solutionNodeList[i], makeResultFile(i));

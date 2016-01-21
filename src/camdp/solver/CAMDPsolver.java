@@ -299,6 +299,8 @@ public abstract class CAMDPsolver {
 
     public abstract void printResults();
 
+    public abstract String printSummary();
+
     public abstract void saveResults();
 
     ////////////Result Storage Methods /////////////////////

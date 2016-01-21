@@ -75,7 +75,11 @@ public class CRTDPFH extends CAMDPsolver {
         makeResultStream();
         setupResults();
     }
-    
+
+    public String printSummary() {
+        return null;
+    }
+
     private int getValueDD(){
         return valueDDList[nIter];
     }
