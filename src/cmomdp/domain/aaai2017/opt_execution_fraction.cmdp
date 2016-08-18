@@ -1,0 +1,27 @@
+cvariables (s0 price inventory w1 a)
+min-values (0 0 0 0 0)
+max-values (100 100 1000 100.0 1.0)
+bvariables (eps)
+nvariables ()
+ivariables ()
+
+action temp
+    s0' ([s0])
+    eps' (  eps
+                ([1.0])
+                ([0.0])
+    )
+    price' (    eps
+            ([price + (0.165 * 0.1) + 0.27])
+            ([price + (0.165 * 0.1) - 0.27])
+        )
+    inventory' ([inventory - (inventory * a)])
+    w1' ([w1])
+    a' ([a])
+reward
+ ([w1 * ((a * inventory) * price - (inventory * s0))])
+endaction
+
+discount 0.95
+InitialState (10.0 10.0 200.0 1.0 0.0) (true)
+iterations 5
