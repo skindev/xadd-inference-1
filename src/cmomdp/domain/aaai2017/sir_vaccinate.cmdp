@@ -1,14 +1,13 @@
-cvariables ( s i r )
-min-values ( 0.0 0.0 0.0 )
-max-values ( 100 100 100 )
+cvariables ( s i r vaccinate )
+min-values ( 0.0 0.0 0.0 0.0 )
+max-values ( 100 100 100 1.0 )
 bvariables ( )
 icvariables()
 min-values ()
 max-values ()
 ibvariables()
-avariables ( vaccinate )
 
-action vaccinate (0 <= vaccinate <= 1)
+action vaccinate
     s' (    [   (s * i)  > 0   ]
             (   [s + (0.23 * r) - (0.0165 * s * i) - (vaccinate * s)]  )
             (   [s + (0.23 * r)]  )
@@ -21,6 +20,7 @@ action vaccinate (0 <= vaccinate <= 1)
             (   [r + (0.27 * i) - (0.23 * r)]   )
             (   [r + (0.27 * i)]    )
     )
+    vaccinate' ([vaccinate])
 reward
     (   [i > 0]
         ([1.0 * -95.0 * i])
