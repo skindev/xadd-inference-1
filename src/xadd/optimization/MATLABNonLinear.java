@@ -68,8 +68,9 @@ public class MATLABNonLinear implements IOptimisationTechnique {
     public double run(String objective, Set<String> variables, Collection<String> constraints, Collection<String> lowerBounds,
                       Collection<String> upperBounds) {
 
-        double valueObjectiveFunction = 0.0;
-        double solutionX;
+        double maxValue = 0.0;
+        double argMax;
+        double cpuTime;
 
         // convert the variables Set into a HashMap
         ArrayList<HashMap<String, Object>> variableList = new ArrayList<HashMap<String, Object>>();
@@ -91,14 +92,18 @@ public class MATLABNonLinear implements IOptimisationTechnique {
         try {
 
             this.proxy.eval("cd('/Users/skin/repository/xadd-inference-1/src/cmomdp/')");
-//            this.proxy.eval("res = fmincon(@sir_path_2_h3, [0 0], [], [], [], [], [0 0], [100 0.1], @sir_path_2_h3_constraints)");
+
+            this.proxy.eval("start_time = cputime");
             this.proxy.eval("res = fmincon(@obj_test, [0 0 0 0], [], [], [], [], [-10000 -10000 -10000 -10000], [10000 10000 10000 10000], @constraints_test)");
+            this.proxy.eval("exec_time = cputime - start_time;");
 
             // Returns the value of the objective function FUN at the solution X.
-            valueObjectiveFunction = ((double[]) proxy.getVariable("res"))[0];
-            solutionX = ((double[]) proxy.getVariable("res"))[1];
+            maxValue = ((double[]) proxy.getVariable("res"))[0];
+            argMax = ((double[]) proxy.getVariable("res"))[1];
 
-            System.out.println("Result: " + valueObjectiveFunction + " at x = " + solutionX);
+            cpuTime = ((double[]) proxy.getVariable("exec_time"))[0];
+
+            System.out.println("Result: " + maxValue + " at x = " + argMax);
 
             this.proxy.exit();
             this.proxy.disconnect();
@@ -107,7 +112,7 @@ public class MATLABNonLinear implements IOptimisationTechnique {
             e.printStackTrace();
         }
 
-        return valueObjectiveFunction;
+        return maxValue;
     }
 
     /**
