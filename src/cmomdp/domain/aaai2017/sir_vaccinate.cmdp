@@ -1,0 +1,39 @@
+cvariables ( s i r )
+min-values ( 0.0 0.0 0.0 )
+max-values ( 100 100 100 )
+bvariables ( )
+icvariables()
+min-values ()
+max-values ()
+ibvariables()
+avariables ( vaccinate )
+
+action vaccinate (0 <= vaccinate <= 1)
+    s' (    [   (s * i)  > 0   ]
+            (   [s + (0.23 * r) - (0.0165 * s * i) - (vaccinate * s)]  )
+            (   [s + (0.23 * r)]  )
+    )
+    i' (    [i > 0]
+            ([i + (0.0165 * s * i) - (0.27 * i)])
+            ([i + (0.0165 * s * i)])
+    )
+    r' (    [   r > 0 ]
+            (   [r + (0.27 * i) - (0.23 * r)]   )
+            (   [r + (0.27 * i)]    )
+    )
+reward
+    (   [i > 0]
+        ([1.0 * -95.0 * i])
+        ([0])
+    )
+    +
+    (   [s > 0]
+        ([1.0 * -33.0 * vaccinate * s])
+        ([0])
+    )
+endaction
+
+
+discount 0.95
+iterations 5
+NONLINEAR
