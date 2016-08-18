@@ -5,9 +5,11 @@ function [c, ceq] = xadd_constraints(args)
 	</#list>
 
 	<#if constraints??>
-	<#list constraints as constraint>
-	c(${constraint.index}) = ${constraint.function};
-	</#list>
+    <#list constraints as constraint>
+    c(${constraint.index}) = ${constraint.function};
+    </#list>
+	<#else>
+    c = [];
 	</#if>
 
     ceq = [];
