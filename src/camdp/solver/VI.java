@@ -10,6 +10,8 @@ import xadd.ExprLib.DoubleExpr;
 import xadd.LinearXADDMethod.NamedOptimResult;
 import xadd.XADD;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -19,6 +21,7 @@ public class VI extends CAMDPsolver {
     public Integer finalIter;   // Last Iteration in case of early Convergence
     public Integer maxDD; //Current Max during a Bellman Backup
 
+    HashMap<String, ArrayList<Double>> solutionStatistics;
 
     //////////////////Methods /////////////////////////////////
 
@@ -38,6 +41,8 @@ public class VI extends CAMDPsolver {
         nIter = iter;
         dApproxError = approxError;
         setupResults();
+
+        this.solutionStatistics = new HashMap<String, ArrayList<Double>>();
     }
 
 
@@ -65,6 +70,10 @@ public class VI extends CAMDPsolver {
             bellmanBackup();
 
             checkLinearApprox(); //Approximation at the end of Iter
+
+            this.updateSolutionStatistics("time", new Double(CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? this.solutionTimeList[curIter - 1] : 0)));
+            this.updateSolutionStatistics("node_count", new Double(context.getNodeCount(valueDD)));
+            this.updateSolutionStatistics("branch_count", new Double(context.getBranchCount(valueDD)));
 
             solutionDDList[curIter] = valueDD;
             solutionTimeList[curIter] = CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? solutionTimeList[curIter - 1] : 0);
@@ -140,7 +149,7 @@ public class VI extends CAMDPsolver {
         return new ParametrizedAction(greedyAction, greedyParams);
     }
 
-    private void checkLinearApprox() {
+    protected void checkLinearApprox() {
         int RUN_DEPTH = 2;
         if (mdp.LINEAR_PROBLEM && APPROXIMATION) {
             CAMDP.resetTimer(RUN_DEPTH);
@@ -161,7 +170,7 @@ public class VI extends CAMDPsolver {
         }
     }
 
-    private void bellmanBackup() {
+    protected void bellmanBackup() {
         int RUN_DEPTH = 2;
 
         maxDD = null;
@@ -194,7 +203,7 @@ public class VI extends CAMDPsolver {
             }
             //Optional post-max approximation, can be used if overall error is being monitored 
             if (APPROX_ALWAYS) maxDD = mdp.approximateDD(maxDD);
-            flushCaches();
+            this.flushCaches();
         }
         valueDD = maxDD;
     }
@@ -397,17 +406,47 @@ public class VI extends CAMDPsolver {
     public void exportSolutionToFile() {
         for (int i = 1; i <= finalIter; i++) {
             context.exportXADDToFile(solutionNodeList[i], makeResultFile(i));
+        }
     }
-}
 
     /**
      *
-     * @param xaddID
-     * @param plotTitle
+     * @param categoryName
+     * @param value
      */
-    public void plotXADD(Integer xaddID, String plotTitle) {
-        Graph gc = context.getGraph(xaddID);
-        gc.launchViewer(plotTitle);
+    private void updateSolutionStatistics(String categoryName, Double value) {
+
+        if(!this.solutionStatistics.containsKey(categoryName)) {
+            this.solutionStatistics.put(categoryName, new ArrayList<Double>());
+        }
+
+        ArrayList<Double> values = this.solutionStatistics.get(categoryName);
+        values.add(value);
+    }
+
+    /**
+     *
+     * @param out
+     */
+    public void writeSolutionStatistics(PrintStream out) {
+
+        if(out == null) {
+            out = System.out;
+        }
+
+        PrintWriter writer = new PrintWriter(out);
+
+        writer.println("Horizon,Time,Nodes,Branches");
+
+        for(Integer index = 0; index < finalIter; index++) {
+            Double numNodes = this.solutionStatistics.get("node_count").get(index);
+            Double numBranches = this.solutionStatistics.get("branch_count").get(index);
+            Double time = this.solutionStatistics.get("time").get(index);
+
+            writer.println(index+1 + "," + time + "," + numNodes + "," + numBranches);
+        }
+
+        writer.close();
     }
 
 }
