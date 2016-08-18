@@ -79,7 +79,10 @@ public class VI extends CAMDPsolver {
             solutionTimeList[curIter] = CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? solutionTimeList[curIter - 1] : 0);
             solutionNodeList[curIter] = context.getNodeCount(valueDD);
             //if (mdp.LINEAR_PROBLEM) solutionMaxValueList[curIter] = context.linMaxVal(valueDD);
-            if (mdp._initialS != null) solutionInitialSValueList[curIter] = mdp.evaluateInitialS(valueDD);
+
+            if (mdp._initialS != null) {
+                solutionInitialSValueList[curIter] = mdp.evaluateInitialS(valueDD);
+            }
 
             if (DEBUG_DEPTH > RUN_DEPTH) {
                 debugOutput.println("Iter:" + curIter + " Complete");
@@ -100,7 +103,24 @@ public class VI extends CAMDPsolver {
         }
 
         plotXADD(valueDD, "valueDD: H " + curIter);
-        mdp.display3D(valueDD, "");
+
+        // Take the derivative of the valueDD w.r.t. the weight
+//        Integer derivValueDD = context.computeDerivative(valueDD, "w1");
+//        plotXADD(derivValueDD, "deriv: H " + curIter);
+
+        if(mdp.DISPLAY_3D) {
+            mdp.display3D(valueDD, "");
+
+//            mdp.display2D(derivValueDD, "deriv");
+        } else if(mdp.DISPLAY_2D) {
+            mdp.display2D(valueDD, "");
+        }
+//
+//        if(mdp.DISPLAY_3D) {
+//            mdp.display3D(derivValueDD, "deriv");
+//        } else if(mdp.DISPLAY_2D) {
+//            mdp.display2D(derivValueDD, "deriv");
+//        }
 
         flushCaches();
         finalIter = curIter;
@@ -186,12 +206,15 @@ public class VI extends CAMDPsolver {
                         CAMDP.getElapsedTime(RUN_DEPTH));
                 debugShow(regr, "DD of regressing " + me.getKey() + "^" + curIter, true);
             }
+
+            maxDD = regr;
+
             // Maintain running max over different actions
-            maxDD = (maxDD == null) ? regr : context.apply(maxDD, regr, XADD.MAX);
+//            maxDD = (maxDD == null) ? regr : context.apply(maxDD, regr, XADD.MAX);
 //            plotXADD(maxDD, "Max DD After " + me.getKey() + "^" + curIter);
 
             // MakeCanonical and ReduceLP pruning.
-            maxDD = mdp.standardizeDD(maxDD);
+//            maxDD = mdp.standardizeDD(maxDD);
 
             if (DEBUG_DEPTH > RUN_DEPTH) {
                 debugOutput.println("Bellman Backup " + curIter + " Action " + me.getKey() + " Regr Time = " + CAMDP.getElapsedTime(RUN_DEPTH));
@@ -202,7 +225,10 @@ public class VI extends CAMDPsolver {
                 }
             }
             //Optional post-max approximation, can be used if overall error is being monitored 
-            if (APPROX_ALWAYS) maxDD = mdp.approximateDD(maxDD);
+            if (APPROX_ALWAYS) {
+                maxDD = mdp.approximateDD(maxDD);
+            }
+
             this.flushCaches();
         }
         valueDD = maxDD;
