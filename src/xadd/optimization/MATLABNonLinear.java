@@ -95,6 +95,7 @@ public class MATLABNonLinear implements IOptimisationTechnique {
 
             this.proxy.eval("cd('/Users/skin/repository/xadd-inference-1/src/cmomdp/')");
 
+            this.proxy.eval("clear all");
             this.proxy.eval("start_time = cputime");
             this.proxy.eval("res = fmincon(@obj_test, [0 0 0 0], [], [], [], [], [-10000 -10000 -10000 -10000], [10000 10000 10000 10000], @constraints_test)");
             this.proxy.eval("exec_time = cputime - start_time;");
