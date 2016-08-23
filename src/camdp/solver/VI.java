@@ -440,7 +440,7 @@ public class VI extends CAMDPsolver {
      * @param categoryName
      * @param value
      */
-    private void updateSolutionStatistics(String categoryName, Double value) {
+    protected void updateSolutionStatistics(String categoryName, Double value) {
 
         if(!this.solutionStatistics.containsKey(categoryName)) {
             this.solutionStatistics.put(categoryName, new ArrayList<Double>());
@@ -454,7 +454,7 @@ public class VI extends CAMDPsolver {
      *
      * @param out
      */
-    public void writeSolutionStatistics(PrintStream out) {
+    public void writeSolutionStatistics(PrintStream out, Integer finalIter) {
 
         if(out == null) {
             out = System.out;
