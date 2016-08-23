@@ -46,7 +46,9 @@ public class Main {
         Optimise.RegisterOptimisationMethod(new MATLABNonLinear());
 
         VI viSolver = new VI(camdp, numIterations);
-        Integer valueFunc = viSolver.solve(numIterations, false);
+
+        Boolean runNonlinearOptimiser = true;
+        Integer valueFunc = viSolver.solve(numIterations, runNonlinearOptimiser);
 
         viSolver.plotFunction(valueFunc, "");
 

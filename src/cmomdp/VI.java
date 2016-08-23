@@ -1,8 +1,7 @@
 package cmomdp;
 
 import camdp.CAMDP;
-import xadd.ExprLib;
-import xadd.optimization.IOptimisationTechnique;
+import xadd.optimization.OptimisationResult;
 import xadd.optimization.Optimise;
 
 import java.util.HashMap;
@@ -72,12 +71,10 @@ public class VI extends camdp.solver.VI {
             }
 
             if(optimiseValueFunction) {
-
                 int tempXADD = context.substituteBoolVars(valueDD, subsMap);
-                Double optimalValue = Optimise.optimisePaths(context, tempXADD, null, null);
-                System.out.println("Optimal value " + optimalValue.toString());
+                OptimisationResult optimalValue = Optimise.optimisePaths(context, tempXADD, null, null);
+                super.updateSolutionStatistics("cpu_time", optimalValue.getCpuTime());
             }
-
 
             if (_prevDD.equals(valueDD)) {
                 break;

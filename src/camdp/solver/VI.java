@@ -469,7 +469,15 @@ public class VI extends CAMDPsolver {
             Double numBranches = this.solutionStatistics.get("branch_count").get(index);
             Double time = this.solutionStatistics.get("time").get(index);
 
-            writer.println(index+1 + "," + time + "," + numNodes + "," + numBranches);
+            String writeString = index+1 + "," + time + "," + numNodes + "," + numBranches;
+
+            Double cpuTime;
+            if(this.solutionStatistics.containsKey("cpu_time")) {
+                cpuTime = this.solutionStatistics.get("cpu_time").get(index);
+                writeString += "," + cpuTime;
+            }
+
+            writer.println(writeString);
         }
 
         writer.close();
