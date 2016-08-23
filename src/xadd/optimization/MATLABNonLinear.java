@@ -65,12 +65,14 @@ public class MATLABNonLinear implements IOptimisationTechnique {
      * @return
      */
     @Override
-    public double run(String objective, Set<String> variables, Collection<String> constraints, Collection<String> lowerBounds,
+    public OptimisationResult run(String objective, Set<String> variables, Collection<String> constraints, Collection<String> lowerBounds,
                       Collection<String> upperBounds) {
 
         double maxValue = 0.0;
-        double argMax;
-        double cpuTime;
+        Double argMax = null;
+        Double cpuTime = null;
+
+        OptimisationResult result = null;
 
         // convert the variables Set into a HashMap
         ArrayList<HashMap<String, Object>> variableList = new ArrayList<HashMap<String, Object>>();
@@ -101,18 +103,18 @@ public class MATLABNonLinear implements IOptimisationTechnique {
             maxValue = ((double[]) proxy.getVariable("res"))[0];
             argMax = ((double[]) proxy.getVariable("res"))[1];
 
+            // The CPU time taken to calculate the result
             cpuTime = ((double[]) proxy.getVariable("exec_time"))[0];
 
-            System.out.println("Result: " + maxValue + " at x = " + argMax);
-
-            this.proxy.exit();
-            this.proxy.disconnect();
+//            System.out.println("Result: " + maxValue + " at x = " + argMax);
+//            this.proxy.exit();
+//            this.proxy.disconnect();
 
         } catch (MatlabInvocationException e) {
             e.printStackTrace();
         }
 
-        return maxValue;
+        return new OptimisationResult(maxValue, argMax, cpuTime);
     }
 
     /**

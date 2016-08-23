@@ -16,6 +16,6 @@ public interface IOptimisationTechnique {
      * @param lowerBounds
      * @param upperBounds
      */
-    public double run(String objective, Set<String> variables, Collection<String> constraints,
-                         Collection<String> lowerBounds, Collection<String> upperBounds);
+    OptimisationResult run(String objective, Set<String> variables, Collection<String> constraints,
+                                     Collection<String> lowerBounds, Collection<String> upperBounds);
 }

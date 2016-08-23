@@ -22,14 +22,14 @@ public class Optimise {
         Optimise.optimisers.add(optimiser);
     }
 
-    /**
-     *
-     * @param objective
-     * @param constraints
-     * @param lowerBounds
-     * @param upperBounds
-     * @return
-     */
+//    /**
+//     *
+//     * @param objective
+//     * @param constraints
+//     * @param lowerBounds
+//     * @param upperBounds
+//     * @return
+//     */
 //    private static HashMap<IOptimisationTechnique, Double> RunOptimisationMethod(String objective, Set<String> variables,
 //                                             Collection<String> constraints, Collection<String> lowerBounds,
 //                                                                                 Collection<String> upperBounds) {
@@ -56,18 +56,20 @@ public class Optimise {
      * @param upperBounds
      * @return
      */
-    private static Double RunOptimisationMethod(String objective, Set<String> variables,
+    private static OptimisationResult RunOptimisationMethod(String objective, Set<String> variables,
                                                  Collection<String> constraints, Collection<String> lowerBounds,
                                                                                  Collection<String> upperBounds) {
 
         Double optimalValue = null;
+        OptimisationResult result = null;
+
         for(IOptimisationTechnique optimiser : Optimise.optimisers) {
 
-            optimalValue = optimiser.run(objective, variables, constraints, lowerBounds, upperBounds);
-            System.out.println("optimalValue: " + optimalValue);
+            result = optimiser.run(objective, variables, constraints, lowerBounds, upperBounds);
+//            System.out.println("optimalValue: " + result.getMaxValue());
         }
 
-        return optimalValue;
+        return result;
     }
 
     /**
@@ -78,11 +80,13 @@ public class Optimise {
      * @param constraintsMap
      * @return
      */
-    public static double optimisePaths(XADD context, Integer xaddID, HashSet<String> varSet,
+    public static OptimisationResult optimisePaths(XADD context, Integer xaddID, HashSet<String> varSet,
                                        HashMap<Integer, String> constraintsMap) {
 
         double lowM = XADD.DEFAULT_LOWER_BOUND;;
         double highM = XADD.DEFAULT_LOWER_BOUND;;
+        OptimisationResult lowMResult = null;
+        OptimisationResult highMResult = null;
 
         XADD.XADDNode rootNode = context.getExistNode(xaddID);
         if(constraintsMap == null) {
@@ -102,7 +106,8 @@ public class Optimise {
             // If the expression is a DoubleExpr, then return the _dConstVal and skip
             // evaluating the mathematical program
             if(expression instanceof ExprLib.DoubleExpr) {
-                return ((ExprLib.DoubleExpr) expression)._dConstVal;
+                return new OptimisationResult(((ExprLib.DoubleExpr) expression)._dConstVal);
+//                return ((ExprLib.DoubleExpr) expression)._dConstVal;
             }
 
             HashSet<String> lowerBounds = new HashSet<String>();
@@ -124,8 +129,9 @@ public class Optimise {
 //            resultsMap = Optimise.RunOptimisationMethod(expression.toString(), varSet, constraintsMap.values(),
 //                    lowerBounds, upperBounds);
 
-            return Optimise.RunOptimisationMethod(expression.toString(), varSet, constraintsMap.values(),
+            OptimisationResult result = Optimise.RunOptimisationMethod(expression.toString(), varSet, constraintsMap.values(),
                     lowerBounds, upperBounds);
+            return result;
         } else {
             XADD.XADDINode iNode = (XADD.XADDINode) rootNode;
 
@@ -150,12 +156,12 @@ public class Optimise {
 
                 // Low branch
                 constraintsMap.put(iNodeVar, "-1 * " + iNodeDecisionStr);
-                lowM = Optimise.optimisePaths(context, iNodeLow, varSet, constraintsMap);
+                lowMResult = Optimise.optimisePaths(context, iNodeLow, varSet, constraintsMap);
                 constraintsMap.remove(iNodeVar);
 
                 // High branch
                 constraintsMap.put(iNodeVar, iNodeDecisionStr);
-                highM = Optimise.optimisePaths(context, iNodeHigh, varSet, constraintsMap);
+                highMResult = Optimise.optimisePaths(context, iNodeHigh, varSet, constraintsMap);
                 constraintsMap.remove(iNodeVar);
 
             } else {
@@ -164,7 +170,15 @@ public class Optimise {
 
         }
 
-        return Math.max(lowM, highM);
+//        try {
+//            return lowMResult.getMaxValue() > highMResult.getMaxValue() ? lowMResult : highMResult;
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//            System.exit(1);
+//        }
+//        return Math.max(lowM, highM);
+
+        return lowMResult.getMaxValue() > highMResult.getMaxValue() ? lowMResult : highMResult;
     }
 
     public static void main(String[] args) {
@@ -174,6 +188,10 @@ public class Optimise {
 
         // Register the MATLABNonLinear optimiser with the class
         Optimise.RegisterOptimisationMethod(new MATLABNonLinear());
-        double optimalValue = Optimise.optimisePaths(xadd_context, ixadd, null, null);
+        OptimisationResult result = Optimise.optimisePaths(xadd_context, ixadd, null, null);
+        System.out.println(result.getMaxValue());
+        System.out.println(result.getArgMax());
+        System.out.println(result.getCpuTime());
+
     }
 }
