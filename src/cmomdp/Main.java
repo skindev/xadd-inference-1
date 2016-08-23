@@ -1,7 +1,7 @@
 package cmomdp;
 
 import camdp.CAMDP;
-import camdp.solver.VI;
+//import camdp.solver.VI;
 import xadd.optimization.MATLABNonLinear;
 import xadd.optimization.Optimise;
 
@@ -46,7 +46,9 @@ public class Main {
         Optimise.RegisterOptimisationMethod(new MATLABNonLinear());
 
         VI viSolver = new VI(camdp, numIterations);
-        viSolver.solve();
+        Integer valueFunc = viSolver.solve(numIterations, false);
+
+        viSolver.plotFunction(valueFunc, "");
 
         try {
 
@@ -54,7 +56,7 @@ public class Main {
             System.out.println(f.getName());
 
             FileOutputStream fOut = new FileOutputStream(f.getParent() + File.separator + f.getName() + "_stats.csv");
-            viSolver.writeSolutionStatistics(new PrintStream(fOut));
+            viSolver.writeSolutionStatistics(new PrintStream(fOut), numIterations);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
