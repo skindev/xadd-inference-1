@@ -2,6 +2,8 @@ package cmomdp;
 
 import camdp.CAMDP;
 //import camdp.solver.VI;
+import camdp.CAction;
+import xadd.ExprLib;
 import xadd.optimization.MATLABNonLinear;
 import xadd.optimization.Optimise;
 
@@ -9,6 +11,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by skin on 2016-08-18.
@@ -42,14 +46,19 @@ public class Main {
         camdp.DISPLAY_2D = displayDimension == 2;
         camdp.DISPLAY_3D = displayDimension == 3;
 
+        Boolean runNonlinearOptimiser = true;
+        HashMap<String, Boolean> subsMapBoolean = new HashMap<String, Boolean>();
+        HashMap<String, ExprLib.ArithExpr> subsMap = new HashMap<String, ExprLib.ArithExpr>();
+
+//        subsMapBoolean.put("eps", Boolean.TRUE);
+//        subsMap.put("i", new ExprLib.DoubleExpr(100.0));
+//        subsMap.put("r", new ExprLib.DoubleExpr(0.01));
+
         // Initialise a connection to the Non-linear solver
         Optimise.RegisterOptimisationMethod(new MATLABNonLinear());
 
         VI viSolver = new VI(camdp, numIterations);
-
-        Boolean runNonlinearOptimiser = true;
-        Integer valueFunc = viSolver.solve(numIterations, runNonlinearOptimiser);
-
+        Integer valueFunc = viSolver.solve(numIterations, runNonlinearOptimiser, subsMap, subsMapBoolean);
         viSolver.plotFunction(valueFunc, "");
 
         try {
