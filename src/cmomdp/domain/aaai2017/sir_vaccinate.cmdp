@@ -8,32 +8,29 @@ max-values ()
 ibvariables()
 
 action vaccinate
-    s' (    [   (s * i)  > 0   ]
-            (   [s + (0.23 * r) - (0.0165 * s * i) - (vaccinate * s)]  )
-            (   [s + (0.23 * r)]  )
-    )
-    i' (    [i > 0]
-            ([i + (0.0165 * s * i) - (0.27 * i)])
-            ([i + (0.0165 * s * i)])
-    )
-    r' (    [   r > 0 ]
-            (   [r + (0.27 * i) - (0.23 * r)]   )
-            (   [r + (0.27 * i)]    )
-    )
+    s' ([s - (0.02 * s * i)/1100 - (vaccinate * s)])
+    i' ([i + (0.02 * s * i)/1100 - (0.01 * i)])
+    r' ([r + (0.01 * i) + (0.15 * s)])
     vaccinate' ([vaccinate])
 reward
     (   [i > 0]
-        ([1.0 * -95.0 * i])
-        ([0])
+        ([-5250.0 * i])
+        ([-Infinity])
     )
     +
     (   [s > 0]
-        ([1.0 * -33.0 * vaccinate * s])
-        ([0])
+        ([-4.45 * (vaccinate * s)])
+        ([-Infinity])
     )
+    +
+    (   [r > 0]
+        ([5250.0 * r])
+        ([-Infinity])
+    )
+
 endaction
 
-
 discount 0.95
+InitialState (1000.0 100.0 0.01 0.0) ()
 iterations 5
 NONLINEAR
