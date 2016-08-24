@@ -1,6 +1,7 @@
 package cmomdp;
 
 import camdp.CAMDP;
+import xadd.ExprLib;
 import xadd.optimization.OptimisationResult;
 import xadd.optimization.Optimise;
 
@@ -30,7 +31,8 @@ public class VI extends camdp.solver.VI {
      * @param optimiseValueFunction
      * @return
      */
-    public Integer solve(Integer numIterations, Boolean optimiseValueFunction) {
+    public Integer solve(Integer numIterations, Boolean optimiseValueFunction, HashMap<String, ExprLib.ArithExpr> subsMap,
+                         HashMap<String, Boolean> subsMapBoolean) {
         int RUN_DEPTH = 1;
 
         Integer _prevDD = null;
@@ -41,9 +43,6 @@ public class VI extends camdp.solver.VI {
         //Initialize value function to zero
         valueDD = context.ZERO;
 
-        HashMap<String, Boolean> subsMap = new HashMap<String, Boolean>();
-        subsMap.put("eps", Boolean.TRUE);
-
         // Perform value iteration for specified number of iterations, or until convergence detected
         while (curIter < numIterations) {
             
@@ -52,6 +51,8 @@ public class VI extends camdp.solver.VI {
 
             // Prime diagram
             _prevDD = valueDD;
+
+//            valueDD = context.substitute(valueDD, subsMap);
 
             super.bellmanBackup();
 
@@ -71,7 +72,11 @@ public class VI extends camdp.solver.VI {
             }
 
             if(optimiseValueFunction) {
-                int tempXADD = context.substituteBoolVars(valueDD, subsMap);
+//                plotXADD(valueDD, "valueDD: H " + curIter);
+                int tempXADD = context.substituteBoolVars(valueDD, subsMapBoolean);
+                tempXADD = context.substitute(tempXADD, subsMap);
+//                plotXADD(tempXADD, "Optimise: " + curIter);
+
                 OptimisationResult optimalValue = Optimise.optimisePaths(context, tempXADD, null, null);
                 super.updateSolutionStatistics("cpu_time", optimalValue.getCpuTime());
             }
