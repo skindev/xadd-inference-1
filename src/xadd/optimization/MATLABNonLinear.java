@@ -7,15 +7,35 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import matlabcontrol.*;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
+
+// TODO: 1. Singleton for the MatlabProxy
 
 public class MATLABNonLinear implements IOptimisationTechnique {
 
-    private Configuration cfg;
+    private static String TEMPLATE_DIRECTORY = "/Users/skin/repository/xadd-inference-1/src/xadd/optimization/templates";
+
+    private static String MATLAB_LOWER_BOUND = "realmin";
+    private static String MATLAB_UPPER_BOUND = "realmax";
+    private static String MATLAB_INITIAL_VALUE = "0";
+
+    private static String OBJECTIVE_FILE_NAME = "xadd_obj";
+    private static String CONSTRAINTS_FILE_NAME = "xadd_constraints";
+
     private static MatlabProxyFactory factory;
+    private Configuration cfg;
     private MatlabProxy proxy;
 
+    /**
+     *
+     */
     public MATLABNonLinear() {
 
         // TODO: Should we just use an instance of the Optimise class instead of registering this with the entire class?
@@ -25,8 +45,7 @@ public class MATLABNonLinear implements IOptimisationTechnique {
 
         // Load the template directory
         try {
-            this.cfg.setDirectoryForTemplateLoading(new
-                    File("/Users/skin/repository/xadd-inference-1/src/xadd/optimization/templates"));
+            this.cfg.setDirectoryForTemplateLoading(new File(MATLABNonLinear.TEMPLATE_DIRECTORY));
             this.cfg.setOutputFormat(PlainTextOutputFormat.INSTANCE);
             this.cfg.setDefaultEncoding("UTF-8");
             this.cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
@@ -65,8 +84,8 @@ public class MATLABNonLinear implements IOptimisationTechnique {
      * @return
      */
     @Override
-    public OptimisationResult run(String objective, Set<String> variables, Collection<String> constraints, Collection<String> lowerBounds,
-                      Collection<String> upperBounds) {
+    public OptimisationResult run(String objective, Set<String> variables, Collection<String> constraints,
+                                  Collection<String> lowerBounds, Collection<String> upperBounds) {
 
         double maxValue = 0.0;
         Double argMax = null;
@@ -97,25 +116,47 @@ public class MATLABNonLinear implements IOptimisationTechnique {
 
             this.proxy.eval("clear all");
             this.proxy.eval("start_time = cputime");
-            this.proxy.eval("res = fmincon(@obj_test, [0 0 0 0], [], [], [], [], [-10000 -10000 -10000 -10000], [10000 10000 10000 10000], @constraints_test)");
+
+            String functionCall = this.buildMATLABFunctionCall(variableList.size());
+            this.proxy.eval(functionCall);
             this.proxy.eval("exec_time = cputime - start_time;");
 
             // Returns the value of the objective function FUN at the solution X.
-            maxValue = ((double[]) proxy.getVariable("res"))[0];
-            argMax = ((double[]) proxy.getVariable("res"))[1];
+            argMax = ((double[]) proxy.getVariable("res"))[0];
+            maxValue = ((double[]) proxy.getVariable("fval"))[0];
 
             // The CPU time taken to calculate the result
             cpuTime = ((double[]) proxy.getVariable("exec_time"))[0];
-
-//            System.out.println("Result: " + maxValue + " at x = " + argMax);
-//            this.proxy.exit();
-//            this.proxy.disconnect();
 
         } catch (MatlabInvocationException e) {
             e.printStackTrace();
         }
 
         return new OptimisationResult(maxValue, argMax, cpuTime);
+    }
+
+    /**
+     * Returns the MATLAB function call
+     *
+     * @param numObjectiveVariables
+     * @return
+     */
+    private String buildMATLABFunctionCall(Integer numObjectiveVariables) {
+        String initialValues = "";
+        String minValues = "";
+        String maxValues = "";
+
+        for(Integer i = 0; i < numObjectiveVariables; i++) {
+            initialValues += MATLABNonLinear.MATLAB_INITIAL_VALUE + " ";
+            minValues += MATLABNonLinear.MATLAB_LOWER_BOUND + " ";
+            maxValues += MATLABNonLinear.MATLAB_UPPER_BOUND + " ";
+        }
+
+        String functionCall = String.format("[res, fval] = fmincon(@%s, [%s], [], [], [], [], [%s], [%s], @%s);",
+                MATLABNonLinear.OBJECTIVE_FILE_NAME, initialValues.trim(), minValues.trim(), maxValues.trim(),
+                MATLABNonLinear.CONSTRAINTS_FILE_NAME);
+
+        return functionCall;
     }
 
     /**
@@ -163,12 +204,10 @@ public class MATLABNonLinear implements IOptimisationTechnique {
         data.put("objective", objective);
         data.put("variables", variableList);
 
-
-
 //        ArrayList<HashMap<String, Integer>> constantList = new ArrayList<HashMap<String, Integer>>();
 //        data.put("constants", constantList);
 
-        this.writeDataToTemplateFile(data, "MATLAB_objective.ftlh", "obj_test.m");
+        this.writeDataToTemplateFile(data, "MATLAB_objective.ftlh", MATLABNonLinear.OBJECTIVE_FILE_NAME + ".m");
     }
 
     /**
@@ -216,6 +255,6 @@ public class MATLABNonLinear implements IOptimisationTechnique {
 
         data.put("constraints", constraintList);
 
-        this.writeDataToTemplateFile(data, "MATLAB_constraints.ftlh", "constraints_test.m");
+        this.writeDataToTemplateFile(data, "MATLAB_constraints.ftlh", MATLABNonLinear.CONSTRAINTS_FILE_NAME + ".m");
     }
 }
