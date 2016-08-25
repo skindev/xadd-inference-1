@@ -462,7 +462,7 @@ public class VI extends CAMDPsolver {
 
         PrintWriter writer = new PrintWriter(out);
 
-        writer.println("Horizon,Time,Nodes,Branches");
+        writer.println("Horizon,SDPTime,Nodes,Branches,OptTime");
 
         for(Integer index = 0; index < finalIter; index++) {
             Double numNodes = this.solutionStatistics.get("node_count").get(index);
