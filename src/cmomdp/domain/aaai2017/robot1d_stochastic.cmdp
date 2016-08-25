@@ -4,14 +4,14 @@ max-values ( 20.0 100.0 )
 bvariables ( eps )
 ivariables ( )
 
-action right
+action move
     eps' (  eps
             ([0.8])
             ([0.2])
     )
     w2' ([w2])
     location' ( eps
-                ([location + 5.0])
+                ([location - 0.0])
                 ([location])
     )
 reward
@@ -20,7 +20,10 @@ reward
         (   [location * 1.0] )
     )
 +
-    (   [-1.0  * w2])
+    (   [location < location']
+        ([-10.0  * w2 * (location' - location)])
+        ([-10.0  * w2 * (location - location')])
+    )
 endaction
 
 discount 0.95
