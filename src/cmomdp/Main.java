@@ -43,9 +43,6 @@ public class Main {
         // Build a CAMDP, display, solve
         CAMDP camdp = new CAMDP(filename);
 
-        camdp.DISPLAY_2D = displayDimension == 2;
-        camdp.DISPLAY_3D = displayDimension == 3;
-
         Boolean runNonlinearOptimiser = true;
         HashMap<String, Boolean> subsMapBoolean = new HashMap<String, Boolean>();
         HashMap<String, ExprLib.ArithExpr> subsMap = new HashMap<String, ExprLib.ArithExpr>();
@@ -67,7 +64,12 @@ public class Main {
         Integer valueFunc = viSolver.solve(numIterations, runNonlinearOptimiser, subsMap, subsMapBoolean);
 
         viSolver.plotXADD(valueFunc, "");
-        viSolver.plotFunction(valueFunc, "");
+        viSolver.plotFunction(valueFunc, "", displayDimension);
+
+        // Take the derivative of the valueDD w.r.t. the weight
+//        Integer derivValueDD = viSolver.context.computeDerivative(valueFunc, "perm_price");
+//        viSolver.plotXADD(derivValueDD, "deriv");
+//        viSolver.plotFunction(derivValueDD, "", displayDimension - 1);
 
         try {
 

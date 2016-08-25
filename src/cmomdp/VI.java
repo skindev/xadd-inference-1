@@ -102,11 +102,11 @@ public class VI extends camdp.solver.VI {
      * @param xaddID
      * @param plotTitle
      */
-    public void plotFunction(Integer xaddID, String plotTitle) {
+    public void plotFunction(Integer xaddID, String plotTitle, Integer displayDimension) {
 
-        if(mdp.DISPLAY_3D) {
+        if(displayDimension == 3) {
             mdp.display3D(xaddID, plotTitle);
-        } else if(mdp.DISPLAY_2D) {
+        } else if(displayDimension == 2) {
             mdp.display2D(xaddID, plotTitle);
         }
     }
