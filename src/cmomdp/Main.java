@@ -54,16 +54,19 @@ public class Main {
         subsMapBoolean.put("eta", Boolean.TRUE);
         subsMap.put("i", new ExprLib.DoubleExpr(100.0));
         subsMap.put("r", new ExprLib.DoubleExpr(0.01));
+
         subsMap.put("perm_price", new ExprLib.DoubleExpr(0.01));
-        subsMap.put("temp_price", new ExprLib.DoubleExpr(0.01));
-        subsMap.put("inventory", new ExprLib.DoubleExpr(0.01));
-        subsMap.put("capture", new ExprLib.DoubleExpr(0.01));
+//        subsMap.put("temp_price", new ExprLib.DoubleExpr(0.01));
+//        subsMap.put("inventory", new ExprLib.DoubleExpr(500.0));
+//        subsMap.put("capture", new ExprLib.DoubleExpr(0.01));
 
         // Initialise a connection to the Non-linear solver
         Optimise.RegisterOptimisationMethod(new MATLABNonLinear());
 
         VI viSolver = new VI(camdp, numIterations);
         Integer valueFunc = viSolver.solve(numIterations, runNonlinearOptimiser, subsMap, subsMapBoolean);
+
+        viSolver.plotXADD(valueFunc, "");
         viSolver.plotFunction(valueFunc, "");
 
         try {
