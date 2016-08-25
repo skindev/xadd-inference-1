@@ -10,7 +10,7 @@ ibvariables()
 action vaccinate
     s' ([s - (0.02 * s * i)/1100 - (vaccinate * s)])
     i' ([i + (0.02 * s * i)/1100 - (0.01 * i)])
-    r' ([r + (0.01 * i) + (0.15 * s)])
+    r' ([r + (0.01 * i) + (vaccinate * s)])
     vaccinate' ([vaccinate])
 reward
     (   [i > 0]
@@ -24,7 +24,7 @@ reward
     )
     +
     (   [r > 0]
-        ([5250.0 * r])
+        ([525.0 * r])
         ([-Infinity])
     )
 
