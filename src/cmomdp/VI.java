@@ -86,7 +86,7 @@ public class VI extends camdp.solver.VI {
             }
         }
 
-        plotXADD(valueDD, "valueDD: H " + curIter);
+//        plotXADD(valueDD, "valueDD: H " + curIter);
 
         // Take the derivative of the valueDD w.r.t. the weight
 //        Integer derivValueDD = context.computeDerivative(valueDD, "w1");
