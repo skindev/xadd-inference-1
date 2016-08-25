@@ -1,7 +1,8 @@
-var w1 0.0 1 100.0
-var a 0.0 0.1 1.0
+var inventory 0.0 1 1000.0
+var perm_price 0.0 1 1000.0
 
-cassign inventory 200.0
-cassign s0 10.0
-cassign price 20.0
+cassign capture 20.0
+cassign temp_price 36.0
+
 bassign eps true
+bassign eta true

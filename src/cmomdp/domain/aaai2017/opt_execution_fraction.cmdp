@@ -1,27 +1,41 @@
-cvariables (s0 price inventory w1 a)
-min-values (0 0 0 0 0)
-max-values (100 100 1000 100.0 1.0)
-bvariables (eps)
+cvariables (perm_price temp_price capture inventory)
+min-values (-1000 -10000 0 0)
+max-values (1000 1000 1000.0 1000)
+bvariables (eps eta)
 nvariables ()
 ivariables ()
 
-action temp
-    s0' ([s0])
+action sell
     eps' (  eps
-                ([1.0])
-                ([0.0])
+                ([0.9])
+                ([0.1])
     )
-    price' (    eps
-            ([price + (0.165 * 0.1) + 0.27])
-            ([price + (0.165 * 0.1) - 0.27])
-        )
-    inventory' ([inventory - (inventory * a)])
-    w1' ([w1])
-    a' ([a])
+
+    eta' (  eta
+                ([0.7])
+                ([0.3])
+    )
+
+    perm_price' (   eps
+                    ([perm_price - (0.165 * (inventory * 0.3333)) + 0.01])
+                    ([perm_price - (0.165 * (inventory * 0.3333)) - 0.01])
+    )
+
+    temp_price' (   eta
+                    ([0.5 * perm_price + 0.01])
+                    ([0.5 * perm_price - 0.01])
+    )
+
+    capture'    ([capture + (temp_price' * (inventory * 0.3333))])
+
+    inventory' ([inventory - (inventory * 0.3333)])
+
 reward
- ([w1 * ((a * inventory) * price - (inventory * s0))])
+    (   [inventory > 0.01]
+        ([1000 * 35.75 - capture])
+        ([-Infinity])
+    )
 endaction
 
 discount 0.95
-InitialState (10.0 10.0 200.0 1.0 0.0) (true)
 iterations 5
