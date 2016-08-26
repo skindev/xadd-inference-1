@@ -29,13 +29,15 @@ public class VI extends camdp.solver.VI {
      * 
      * @param numIterations
      * @param optimiseValueFunction
+     * @param subsMap
+     * @param subsMapBoolean
      * @return
      */
     public Integer solve(Integer numIterations, Boolean optimiseValueFunction, HashMap<String, ExprLib.ArithExpr> subsMap,
                          HashMap<String, Boolean> subsMapBoolean) {
         int RUN_DEPTH = 1;
 
-        Integer _prevDD = null;
+        Integer _prevDD;
 
         //Iteration counter
         curIter = 0;
@@ -51,8 +53,6 @@ public class VI extends camdp.solver.VI {
 
             // Prime diagram
             _prevDD = valueDD;
-
-//            valueDD = context.substitute(valueDD, subsMap);
 
             super.bellmanBackup();
 
@@ -72,25 +72,27 @@ public class VI extends camdp.solver.VI {
             }
 
             if(optimiseValueFunction) {
-//                plotXADD(valueDD, "valueDD: H " + curIter);
-                int tempXADD = context.substituteBoolVars(valueDD, subsMapBoolean);
-                tempXADD = context.substitute(tempXADD, subsMap);
-//                plotXADD(tempXADD, "Optimise: " + curIter);
 
-                OptimisationResult optimalValue = Optimise.optimisePaths(context, tempXADD, null, null);
-                super.updateSolutionStatistics("cpu_time", optimalValue.getCpuTime());
+                // Substitute variables in the valueDD to make the optimisation easier
+                int optXADD = context.substituteBoolVars(valueDD, subsMapBoolean);
+                optXADD = context.substitute(optXADD, subsMap);
+
+                OptimisationResult optimalValue;
+
+                // If on the first iteration of VI, then run the optimisation method twice and discard start-up time
+                Integer numOpts = curIter == 1 ? 2 : 1;
+                for(Integer n = 1; n <= numOpts; n++) {
+                    optimalValue = Optimise.optimisePaths(context, optXADD, null, null);
+                    if(n.equals(numOpts)) {
+                        super.updateSolutionStatistics("cpu_time", optimalValue.getCpuTime());
+                    }
+                }
             }
 
             if (_prevDD.equals(valueDD)) {
                 break;
             }
         }
-
-//        plotXADD(valueDD, "valueDD: H " + curIter);
-
-        // Take the derivative of the valueDD w.r.t. the weight
-//        Integer derivValueDD = context.computeDerivative(valueDD, "w1");
-//        plotXADD(derivValueDD, "deriv: H " + curIter);
 
         flushCaches();
         
