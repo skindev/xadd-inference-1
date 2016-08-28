@@ -13,18 +13,18 @@ action vaccinate
     r' ([r + (0.01 * i) + (vaccinate * s)])
     vaccinate' ([vaccinate])
 reward
-    (   [i > 0]
-        ([-5250.0 * i])
+    (   [s > 0]
+        ([-40.45 * (vaccinate * s)])
         ([-Infinity])
     )
     +
-    (   [s > 0]
-        ([-4.45 * (vaccinate * s)])
+    (   [i > 0]
+        ([-52.0 * i])
         ([-Infinity])
     )
     +
     (   [r > 0]
-        ([525.0 * r])
+        ([1.0 * r])
         ([-Infinity])
     )
 
