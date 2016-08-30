@@ -1,7 +1,7 @@
-cvariables (perm_price temp_price capture inventory)
-min-values (-1000 -10000 0 0)
-max-values (1000 1000 1000.0 1000)
-bvariables (eps eta)
+cvariables (perm_price capture inventory sell_prop)
+min-values (-10000 0 0 0)
+max-values (10000 1000.0 1000 1.0)
+bvariables (eps)
 nvariables ()
 ivariables ()
 
@@ -11,27 +11,18 @@ action sell
                 ([0.1])
     )
 
-    eta' (  eta
-                ([0.7])
-                ([0.3])
-    )
-
     perm_price' (   eps
-                    ([perm_price - (0.165 * (inventory * 0.3333)) + 0.01])
-                    ([perm_price - (0.165 * (inventory * 0.3333)) - 0.01])
+                    ([perm_price - (0.165 * (inventory * sell_prop)) + 0.01])
+                    ([perm_price - (0.165 * (inventory * sell_prop)) - 0.01])
     )
 
-    temp_price' (   eta
-                    ([0.5 * perm_price + 0.01])
-                    ([0.5 * perm_price - 0.01])
-    )
+    inventory' ([inventory - (inventory * sell_prop)])
 
-    capture'    ([capture + (temp_price' * (inventory * 0.3333))])
+    capture'    ([capture + (perm_price' * (inventory * sell_prop))])
 
-    inventory' ([inventory - (inventory * 0.3333)])
-
+    sell_prop' ([sell_prop])
 reward
-    (   [inventory > 0.01]
+    (   [inventory > 0.0]
         ([1000 * 35.75 - capture])
         ([-Infinity])
     )

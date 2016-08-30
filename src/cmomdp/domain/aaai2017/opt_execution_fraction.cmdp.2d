@@ -1,5 +1,7 @@
-var a 0 0.005 1.0
-cassign price 20.0
-cassign s0 10.0
-cassign inventory 200.0
+var sell_prop 0.0 0.1 1.0
+
+cassign inventory 500
+cassign perm_price  55.0
+cassign capture     100.0
+
 bassign eps true
