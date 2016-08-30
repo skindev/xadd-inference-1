@@ -214,7 +214,7 @@ public class VI extends CAMDPsolver {
 //            plotXADD(maxDD, "Max DD After " + me.getKey() + "^" + curIter);
 
             // MakeCanonical and ReduceLP pruning.
-//            maxDD = mdp.standardizeDD(maxDD);
+            maxDD = mdp.standardizeDD(maxDD);
 
             if (DEBUG_DEPTH > RUN_DEPTH) {
                 debugOutput.println("Bellman Backup " + curIter + " Action " + me.getKey() + " Regr Time = " + CAMDP.getElapsedTime(RUN_DEPTH));
