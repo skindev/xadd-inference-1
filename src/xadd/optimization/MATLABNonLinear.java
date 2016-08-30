@@ -227,18 +227,22 @@ public class MATLABNonLinear implements IOptimisationTechnique {
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("variables", variableList);
 
-        // Constraints
-        ArrayList<HashMap<String, Object>> constraintList = new ArrayList<HashMap<String, Object>>();
-        Integer constraintCounter = 1;
+        if(!constraints.isEmpty()) {
+            // Constraints
+            ArrayList<HashMap<String, Object>> constraintList = new ArrayList<HashMap<String, Object>>();
+            Integer constraintCounter = 1;
 
-        for(String constraint : constraints) {
-            HashMap<String, Object> tmpMap = new HashMap<String, Object>();
+            for(String constraint : constraints) {
+                HashMap<String, Object> tmpMap = new HashMap<String, Object>();
 
-            tmpMap.put("index", constraintCounter);
-            tmpMap.put("function", "-1 * (" + constraint + ")");
+                tmpMap.put("index", constraintCounter);
+                tmpMap.put("function", "-1 * (" + constraint + ")");
 
-            constraintList.add(tmpMap);
-            constraintCounter++;
+                constraintList.add(tmpMap);
+                constraintCounter++;
+            }
+
+            data.put("constraints", constraintList);
         }
 
 //        lowerBounds.addAll(upperBounds);
@@ -252,8 +256,6 @@ public class MATLABNonLinear implements IOptimisationTechnique {
 //            constraintList.add(tmpMap);
 //            constraintCounter++;
 //        }
-
-        data.put("constraints", constraintList);
 
         this.writeDataToTemplateFile(data, "MATLAB_constraints.ftlh", MATLABNonLinear.CONSTRAINTS_FILE_NAME + ".m");
     }
