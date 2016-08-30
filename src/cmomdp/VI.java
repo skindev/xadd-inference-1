@@ -56,7 +56,7 @@ public class VI extends camdp.solver.VI {
 
             super.bellmanBackup();
 
-//            checkLinearApprox(); //Approximation at the end of Iter
+            checkLinearApprox(); //Approximation at the end of Iter
 
             super.updateSolutionStatistics("time", new Double(CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? super.solutionTimeList[curIter - 1] : 0)));
             super.updateSolutionStatistics("node_count", new Double(context.getNodeCount(valueDD)));
@@ -68,14 +68,18 @@ public class VI extends camdp.solver.VI {
             //if (mdp.LINEAR_PROBLEM) solutionMaxValueList[curIter] = context.linMaxVal(valueDD);
 
             if (mdp._initialS != null) {
-                solutionInitialSValueList[curIter] = mdp.evaluateInitialS(valueDD);
+                Double val = mdp.evaluateInitialS(valueDD);
+                System.out.println("evaluateInitialS: " + val);
+                solutionInitialSValueList[curIter] = val;
             }
 
             if(optimiseValueFunction) {
 
+//                this.plotXADD(valueDD, "before opt subs");
                 // Substitute variables in the valueDD to make the optimisation easier
                 int optXADD = context.substituteBoolVars(valueDD, subsMapBoolean);
                 optXADD = context.substitute(optXADD, subsMap);
+//                this.plotXADD(valueDD, "after opt subs");
 
                 OptimisationResult optimalValue;
 
@@ -103,6 +107,7 @@ public class VI extends camdp.solver.VI {
      *
      * @param xaddID
      * @param plotTitle
+     * @param displayDimension
      */
     public void plotFunction(Integer xaddID, String plotTitle, Integer displayDimension) {
 
