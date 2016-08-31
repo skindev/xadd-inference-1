@@ -41,8 +41,6 @@ public class VI extends CAMDPsolver {
         nIter = iter;
         dApproxError = approxError;
         setupResults();
-
-        this.solutionStatistics = new HashMap<String, ArrayList<Double>>();
     }
 
 
@@ -71,10 +69,6 @@ public class VI extends CAMDPsolver {
 
             checkLinearApprox(); //Approximation at the end of Iter
 
-            this.updateSolutionStatistics("time", new Double(CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? this.solutionTimeList[curIter - 1] : 0)));
-            this.updateSolutionStatistics("node_count", new Double(context.getNodeCount(valueDD)));
-            this.updateSolutionStatistics("branch_count", new Double(context.getBranchCount(valueDD)));
-
             solutionDDList[curIter] = valueDD;
             solutionTimeList[curIter] = CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? solutionTimeList[curIter - 1] : 0);
             solutionNodeList[curIter] = context.getNodeCount(valueDD);
@@ -101,27 +95,6 @@ public class VI extends CAMDPsolver {
                 break;
             }
         }
-
-        plotXADD(valueDD, "valueDD: H " + curIter);
-
-        // Take the derivative of the valueDD w.r.t. the weight
-//        Integer derivValueDD = context.computeDerivative(valueDD, "w1");
-//        plotXADD(derivValueDD, "deriv: H " + curIter);
-
-        if(mdp.DISPLAY_3D) {
-            mdp.display3D(valueDD, "");
-
-//            mdp.display2D(derivValueDD, "deriv");
-        } else if(mdp.DISPLAY_2D) {
-            mdp.display2D(valueDD, "");
-        }
-//
-//        if(mdp.DISPLAY_3D) {
-//            mdp.display3D(derivValueDD, "deriv");
-//        } else if(mdp.DISPLAY_2D) {
-//            mdp.display2D(derivValueDD, "deriv");
-//        }
-
         flushCaches();
         finalIter = curIter;
         return finalIter;
@@ -433,54 +406,6 @@ public class VI extends CAMDPsolver {
         for (int i = 1; i <= finalIter; i++) {
             context.exportXADDToFile(solutionNodeList[i], makeResultFile(i));
         }
-    }
-
-    /**
-     *
-     * @param categoryName
-     * @param value
-     */
-    protected void updateSolutionStatistics(String categoryName, Double value) {
-
-        if(!this.solutionStatistics.containsKey(categoryName)) {
-            this.solutionStatistics.put(categoryName, new ArrayList<Double>());
-        }
-
-        ArrayList<Double> values = this.solutionStatistics.get(categoryName);
-        values.add(value);
-    }
-
-    /**
-     *
-     * @param out
-     */
-    public void writeSolutionStatistics(PrintStream out, Integer finalIter) {
-
-        if(out == null) {
-            out = System.out;
-        }
-
-        PrintWriter writer = new PrintWriter(out);
-
-        writer.println("Horizon,SDPTime,Nodes,Branches,OptTime");
-
-        for(Integer index = 0; index < finalIter; index++) {
-            Double numNodes = this.solutionStatistics.get("node_count").get(index);
-            Double numBranches = this.solutionStatistics.get("branch_count").get(index);
-            Double time = this.solutionStatistics.get("time").get(index);
-
-            String writeString = index+1 + "," + time + "," + numNodes + "," + numBranches;
-
-            Double cpuTime;
-            if(this.solutionStatistics.containsKey("cpu_time")) {
-                cpuTime = this.solutionStatistics.get("cpu_time").get(index);
-                writeString += "," + cpuTime;
-            }
-
-            writer.println(writeString);
-        }
-
-        writer.close();
     }
 
 }

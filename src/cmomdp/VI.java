@@ -5,6 +5,9 @@ import xadd.ExprLib;
 import xadd.optimization.OptimisationResult;
 import xadd.optimization.Optimise;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,13 +15,11 @@ import java.util.HashMap;
  */
 public class VI extends camdp.solver.VI {
 
+    private HashMap<String, ArrayList<Double>> solutionStatistics;
 
-    public VI(CAMDP camdp, int iter) {
-        super(camdp, iter);
-    }
-
-    public VI(CAMDP camdp, int iter, double approxError) {
-        super(camdp, iter, approxError);
+    public VI(CAMDP camdp, Integer numIterations) {
+        super(camdp, numIterations);
+        this.solutionStatistics = new HashMap<String, ArrayList<Double>>();
     }
 
     public int solve() {
@@ -45,6 +46,8 @@ public class VI extends camdp.solver.VI {
         //Initialize value function to zero
         valueDD = context.ZERO;
 
+        super.setupResults();
+
         // Perform value iteration for specified number of iterations, or until convergence detected
         while (curIter < numIterations) {
             
@@ -58,28 +61,21 @@ public class VI extends camdp.solver.VI {
 
             checkLinearApprox(); //Approximation at the end of Iter
 
-            super.updateSolutionStatistics("time", new Double(CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? super.solutionTimeList[curIter - 1] : 0)));
-            super.updateSolutionStatistics("node_count", new Double(context.getNodeCount(valueDD)));
-            super.updateSolutionStatistics("branch_count", new Double(context.getBranchCount(valueDD)));
+            this.updateSolutionStatistics("time", new Double(CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? super.solutionTimeList[curIter - 1] : 0)));
+            this.updateSolutionStatistics("node_count", new Double(context.getNodeCount(valueDD)));
+            this.updateSolutionStatistics("branch_count", new Double(context.getBranchCount(valueDD)));
 
             super.solutionDDList[curIter] = valueDD;
-            super.solutionTimeList[curIter] = CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? solutionTimeList[curIter - 1] : 0);
-            super.solutionNodeList[curIter] = context.getNodeCount(valueDD);
-            //if (mdp.LINEAR_PROBLEM) solutionMaxValueList[curIter] = context.linMaxVal(valueDD);
 
             if (mdp._initialS != null) {
                 Double val = mdp.evaluateInitialS(valueDD);
                 System.out.println("evaluateInitialS: " + val);
-                solutionInitialSValueList[curIter] = val;
             }
 
             if(optimiseValueFunction) {
-
-//                this.plotXADD(valueDD, "before opt subs");
                 // Substitute variables in the valueDD to make the optimisation easier
                 int optXADD = context.substituteBoolVars(valueDD, subsMapBoolean);
                 optXADD = context.substitute(optXADD, subsMap);
-//                this.plotXADD(valueDD, "after opt subs");
 
                 OptimisationResult optimalValue;
 
@@ -88,7 +84,7 @@ public class VI extends camdp.solver.VI {
                 for(Integer n = 1; n <= numOpts; n++) {
                     optimalValue = Optimise.optimisePaths(context, optXADD, null, null);
                     if(n.equals(numOpts)) {
-                        super.updateSolutionStatistics("cpu_time", optimalValue.getCpuTime());
+                        this.updateSolutionStatistics("cpu_time", optimalValue.getCpuTime());
                     }
                 }
             }
@@ -101,6 +97,55 @@ public class VI extends camdp.solver.VI {
         flushCaches();
         
         return valueDD;        
+    }
+
+    /**
+     *
+     * @param categoryName
+     * @param value
+     */
+    protected void updateSolutionStatistics(String categoryName, Double value) {
+
+        if(!this.solutionStatistics.containsKey(categoryName)) {
+            this.solutionStatistics.put(categoryName, new ArrayList<Double>());
+        }
+
+        ArrayList<Double> values = this.solutionStatistics.get(categoryName);
+        values.add(value);
+    }
+
+    /**
+     *
+     * @param out
+     */
+    public void writeSolutionStatistics(PrintStream out) {
+
+        if(out == null) {
+            out = System.out;
+        }
+
+        PrintWriter writer = new PrintWriter(out);
+
+        Integer finalIter = this.solutionStatistics.get("node_count").size();
+
+        writer.println("Horizon,SDPTime,Nodes,Branches,OptTime");
+        for(Integer index = 0; index < finalIter; index++) {
+            Double numNodes = this.solutionStatistics.get("node_count").get(index);
+            Double numBranches = this.solutionStatistics.get("branch_count").get(index);
+            Double time = this.solutionStatistics.get("time").get(index);
+
+            String writeString = index+1 + "," + time + "," + numNodes + "," + numBranches;
+
+            Double cpuTime;
+            if(this.solutionStatistics.containsKey("cpu_time")) {
+                cpuTime = this.solutionStatistics.get("cpu_time").get(index);
+                writeString += "," + cpuTime;
+            }
+
+            writer.println(writeString);
+        }
+
+        writer.close();
     }
 
     /**
