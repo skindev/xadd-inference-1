@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 
 /**
+ * Experiments for AAAI 2017
  * Created by skin on 2016-08-31.
  */
 public class Experiment {
