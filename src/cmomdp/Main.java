@@ -1,18 +1,10 @@
 package cmomdp;
 
 import camdp.CAMDP;
-//import camdp.solver.VI;
-import camdp.CAction;
-import xadd.ExprLib;
 import xadd.optimization.MATLABNonLinear;
 import xadd.optimization.Optimise;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by skin on 2016-08-18.
@@ -21,11 +13,24 @@ public class Main {
 
     private static Integer NUM_ARGUMENTS = 3;
 
+    private static MATLABNonLinear instance = null;
+
+    /**
+     * @return  Instance of MATLABNonLinear
+     */
+    private static MATLABNonLinear GetMATLABInstance() {
+        if (instance == null) {
+            instance = new MATLABNonLinear();
+        }
+
+        return instance;
+    }
+
     /**
      *
      */
     public static void Usage() {
-        System.out.println("\nUsage: MDP-filename #iter #Ddisplay(2or3)");
+        System.out.println("\nUsage: MDP-filepath #iter #Ddisplay(2or3)");
         System.exit(1);
     }
 
@@ -35,52 +40,36 @@ public class Main {
             Main.Usage();
         }
 
-        // Parse problem filename
-        String filename = args[0];
-        Integer numIterations = Integer.parseInt(args[1]);
-        Integer displayDimension = Integer.parseInt(args[2]);
+        // Parse problem filepath
+        File file = new File(args[0]);
+        Integer experimentNumber = Integer.parseInt(args[1]);
+        Integer numIterations = Integer.parseInt(args[2]);
 
-        // Build a CAMDP, display, solve
-        CAMDP camdp = new CAMDP(filename);
 
-        Boolean runNonlinearOptimiser = true;
-        HashMap<String, Boolean> subsMapBoolean = new HashMap<String, Boolean>();
-        HashMap<String, ExprLib.ArithExpr> subsMap = new HashMap<String, ExprLib.ArithExpr>();
-
-        subsMapBoolean.put("eps", Boolean.TRUE);
-        subsMapBoolean.put("eta", Boolean.TRUE);
-        subsMap.put("i", new ExprLib.DoubleExpr(100.0));
-        subsMap.put("r", new ExprLib.DoubleExpr(0.01));
-
-        subsMap.put("perm_price", new ExprLib.DoubleExpr(0.01));
-//        subsMap.put("temp_price", new ExprLib.DoubleExpr(0.01));
-//        subsMap.put("inventory", new ExprLib.DoubleExpr(500.0));
-//        subsMap.put("capture", new ExprLib.DoubleExpr(0.01));
+        // Build a CAMDP
+        CAMDP camdp = new CAMDP(file.getAbsoluteFile().getAbsolutePath());
 
         // Initialise a connection to the Non-linear solver
-        Optimise.RegisterOptimisationMethod(new MATLABNonLinear());
+        Optimise.RegisterOptimisationMethod(Main.GetMATLABInstance());
 
+        // Instantiate VI with the camdp
         VI viSolver = new VI(camdp, numIterations);
-        Integer valueFunc = viSolver.solve(numIterations, runNonlinearOptimiser, subsMap, subsMapBoolean);
 
-        viSolver.plotXADD(valueFunc, "");
-        viSolver.plotFunction(valueFunc, "", displayDimension);
-
-        // Take the derivative of the valueDD w.r.t. the weight
-//        Integer derivValueDD = viSolver.context.computeDerivative(valueFunc, "perm_price");
-//        viSolver.plotXADD(derivValueDD, "deriv");
-//        viSolver.plotFunction(derivValueDD, "", displayDimension - 1);
-
-        try {
-
-            File f = new File(filename);
-            System.out.println(f.getName());
-
-            FileOutputStream fOut = new FileOutputStream(f.getParent() + File.separator + f.getName() + "_stats.csv");
-            viSolver.writeSolutionStatistics(new PrintStream(fOut), numIterations);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        switch (experimentNumber) {
+            case 1:
+                Experiment.Robot1D(camdp, viSolver, numIterations);
+                break;
+            case 2:
+                Experiment.OptimalExecution(camdp, viSolver, numIterations);
+                break;
+            case 3:
+                Experiment.SIR(camdp, viSolver, numIterations);
+                break;
+            default:
+                System.err.println("Unrecognised Experiment Number: " + experimentNumber);
         }
+
+//        System.exit(0);
 
     }
 }
