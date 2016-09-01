@@ -10,5 +10,5 @@ function val = xadd_objective_func(args)
     </#list>
     </#if>
 
-    val = ${objective};
+    val = ${direction} * ${objective};
 end
