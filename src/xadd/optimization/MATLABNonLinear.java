@@ -23,8 +23,8 @@ public class MATLABNonLinear implements IOptimisationTechnique {
 
     private static String TEMPLATE_DIRECTORY = "/Users/skin/repository/xadd-inference-1/src/xadd/optimization/templates";
 
-    private static String DEFAULT_MATLAB_LOWER_BOUND = "realmin";
-    private static String DEFAULT_MATLAB_UPPER_BOUND = "realmax";
+    private static String DEFAULT_MATLAB_LOWER_BOUND = "0.0"; //"realmin";
+    private static String DEFAULT_MATLAB_UPPER_BOUND = "500.0"; //"realmax";
     private static String DEFAULT_MATLAB_INITIAL_VALUE = "0";
 
     private static String OBJECTIVE_FILE_NAME = "xadd_obj";
@@ -131,7 +131,7 @@ public class MATLABNonLinear implements IOptimisationTechnique {
         try {
 
             String functionCall = this.buildMATLABFunctionCall(variableList.size());
-            System.out.println(functionCall);
+//            System.out.println(functionCall);
 
             // Change to the domain file directory
             // TODO: Pass in the directory as a parameter
@@ -146,6 +146,10 @@ public class MATLABNonLinear implements IOptimisationTechnique {
             // Returns the value of the objective function FUN at the solution X.
             argMax = ((double[]) this.matlabProxy.getVariable("res"))[0];
             maxValue = ((double[]) this.matlabProxy.getVariable("fval"))[0];
+
+            if(maxMin == OptimisationDirection.MAXIMISE) {
+                maxValue = -1 * maxValue;
+            }
 
             // The CPU time taken to calculate the result
             cpuTime = ((double[]) this.matlabProxy.getVariable("exec_time"))[0];
