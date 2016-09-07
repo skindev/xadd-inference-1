@@ -2,6 +2,7 @@ package cmomdp;
 
 import camdp.CAMDP;
 import xadd.ExprLib;
+import xadd.optimization.OptimisationDirection;
 import xadd.optimization.OptimisationResult;
 import xadd.optimization.Optimise;
 
@@ -34,7 +35,7 @@ public class VI extends camdp.solver.VI {
      * @param subsMapBoolean
      * @return
      */
-    public Integer solve(Integer numIterations, Boolean optimiseValueFunction, HashMap<String, ExprLib.ArithExpr> subsMap,
+    public Integer solve(Integer numIterations, Boolean optimiseValueFunction, OptimisationDirection maxMin, HashMap<String, ExprLib.ArithExpr> subsMap,
                          HashMap<String, Boolean> subsMapBoolean) {
         int RUN_DEPTH = 1;
 
@@ -50,7 +51,7 @@ public class VI extends camdp.solver.VI {
 
         // Perform value iteration for specified number of iterations, or until convergence detected
         while (curIter < numIterations) {
-            
+            System.out.println("VI iteration " + curIter + "/" + numIterations);
             ++curIter;
             CAMDP.resetTimer(RUN_DEPTH);
 
@@ -82,7 +83,8 @@ public class VI extends camdp.solver.VI {
                 // If on the first iteration of VI, then run the optimisation method twice and discard start-up time
                 Integer numOpts = curIter == 1 ? 2 : 1;
                 for(Integer n = 1; n <= numOpts; n++) {
-                    optimalValue = Optimise.optimisePaths(context, optXADD, null, null);
+                    System.out.println("\tOptimising");
+                    optimalValue = Optimise.optimisePaths(maxMin, context, optXADD, null, null);
                     if(n.equals(numOpts)) {
                         this.updateSolutionStatistics("cpu_time", optimalValue.getCpuTime());
                     }
@@ -128,7 +130,7 @@ public class VI extends camdp.solver.VI {
 
         Integer finalIter = this.solutionStatistics.get("node_count").size();
 
-        writer.println("Horizon,SDPTime,Nodes,Branches,OptTime");
+        writer.println("horizon,sdp_time,nodes,branches,opt_time");
         for(Integer index = 0; index < finalIter; index++) {
             Double numNodes = this.solutionStatistics.get("node_count").get(index);
             Double numBranches = this.solutionStatistics.get("branch_count").get(index);
