@@ -60,10 +60,10 @@ public class Main {
                 Experiment.Robot1D(camdp, viSolver, numIterations);
                 break;
             case 2:
-                Experiment.OptimalExecution(camdp, viSolver, numIterations);
+                Experiment.SIR(camdp, viSolver, numIterations);
                 break;
             case 3:
-                Experiment.SIR(camdp, viSolver, numIterations);
+                Experiment.OptimalExecution(camdp, viSolver, numIterations);
                 break;
             default:
                 System.err.println("Unrecognised Experiment Number: " + experimentNumber);
