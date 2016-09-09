@@ -1,0 +1,7 @@
+var location -20 0.1 20
+var w  0.0 10. 1000.0
+
+cassign budget -10.0
+
+bassign eps true
+bassign eta true
