@@ -1,7 +1,9 @@
 package cmomdp;
 
 import camdp.CAMDP;
+import camdp.CAction;
 import xadd.ExprLib;
+import xadd.XADD;
 import xadd.optimization.OptimisationDirection;
 import xadd.optimization.OptimisationResult;
 import xadd.optimization.Optimise;
@@ -10,6 +12,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by skin on 2016-08-23.
@@ -99,6 +102,43 @@ public class VI extends camdp.solver.VI {
         flushCaches();
         
         return valueDD;        
+    }
+
+    /**
+     *
+     * @param valueDD
+     * @param subsMap
+     * @param subsMapBoolean
+     * @return
+     */
+    public HashMap<String, Integer> tempBackup(Integer valueDD, HashMap<String, ExprLib.ArithExpr> subsMap,
+                              HashMap<String, Boolean> subsMapBoolean) {
+
+        maxDD = null;
+
+        HashMap<String, Integer> qValueFuncMap = new HashMap<String, Integer>();
+
+        // Iterate over each action
+        for (Map.Entry<String, CAction> me : mdp._hmName2Action.entrySet()) {
+
+            // Regress the current value function through each action (finite number of continuous actions)
+            int regr = regress(valueDD, me.getValue(), true);
+//            plotXADD(regr, "Value DD " + me.getKey());
+//            plotFunction(regr, "Q-Value " + me.getKey(), 3);
+
+            qValueFuncMap.put(me.getKey(), regr);
+
+            // Maintain running max over different actions
+            maxDD = (maxDD == null) ? regr : context.apply(maxDD, regr, XADD.MAX);
+//            plotXADD(maxDD, "Max DD After " + me.getKey() + "^" + curIter);
+
+            this.flushCaches();
+        }
+
+//        valueDD = maxDD;
+
+        qValueFuncMap.put("max", maxDD);
+        return qValueFuncMap;
     }
 
     /**

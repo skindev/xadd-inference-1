@@ -57,7 +57,7 @@ public class Main {
 
         switch (experimentNumber) {
             case 1:
-                Experiment.Robot1D(camdp, viSolver, numIterations);
+                Experiment.Robot1D_IRL(camdp, viSolver, numIterations);
                 break;
             case 2:
                 Experiment.SIR(camdp, viSolver, numIterations);

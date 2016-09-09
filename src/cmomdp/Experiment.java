@@ -2,6 +2,7 @@ package cmomdp;
 
 import camdp.CAMDP;
 import xadd.ExprLib;
+import xadd.XADD;
 import xadd.optimization.OptimisationDirection;
 import xadd.optimization.OptimisationResult;
 import xadd.optimization.Optimise;
@@ -31,6 +32,9 @@ public class Experiment {
 
         subsMapBoolean.put("eps", Boolean.TRUE);
 
+//        subsMapBoolean.put("eta", Boolean.TRUE);
+//        subsMap.put("budget", new ExprLib.DoubleExpr(-10.0));
+
         /*
                 Run Value Iteration
          */
@@ -53,6 +57,81 @@ public class Experiment {
         System.out.println("Optimising");
         Experiment.OptimiseValueFunction(OptimisationDirection.MAXIMISE, valueIteration, valueFuncXADD, subsMap,
                 subsMapBoolean, "location", -20.0, 20.0, 1.0, problemFile);
+
+        System.out.println("COMPLETE");
+    }
+
+    public static void Robot1D_IRL(CAMDP camdp, VI valueIteration, Integer numIterations) {
+
+        HashMap<String, Boolean> subsMapBoolean = new HashMap<String, Boolean>();
+        HashMap<String, ExprLib.ArithExpr> subsMap = new HashMap<String, ExprLib.ArithExpr>();
+        File problemFile = new File(camdp._problemFile);
+
+        subsMapBoolean.put("eps", Boolean.TRUE);
+
+        /*
+                Run Value Iteration for numIterations - 1
+         */
+
+        Integer penultimateIteration = numIterations - 1;
+
+        System.out.println("VI");
+        Integer valueFuncXADD = valueIteration.solve(penultimateIteration, false, OptimisationDirection.MAXIMISE, subsMap, subsMapBoolean);
+
+        System.out.println("Plotting Value Functions H " +  penultimateIteration);
+        valueIteration.plotXADD(valueFuncXADD, "XADD H " + penultimateIteration);
+        valueIteration.plotFunction(valueFuncXADD, "Value Function H " +  penultimateIteration, 3);
+
+        /*
+                Backup for an extra horizon
+         */
+
+        HashMap<String, Integer> qValueFuncMap = valueIteration.tempBackup(valueFuncXADD, subsMap, subsMapBoolean);
+
+        Integer noOp = qValueFuncMap.get("noop");
+        Integer right = qValueFuncMap.get("right");
+        Integer maxAction = qValueFuncMap.get("max");
+
+
+
+        Integer location1 = valueIteration.context.buildCanonicalXADDFromFile("/Users/skin/repository/xadd-inference-1/src/cmomdp/domain/aaai2017/location_indicator1.xadd");
+        Integer location2 = valueIteration.context.buildCanonicalXADDFromFile("/Users/skin/repository/xadd-inference-1/src/cmomdp/domain/aaai2017/location_indicator2.xadd");
+        Integer location3 = valueIteration.context.buildCanonicalXADDFromFile("/Users/skin/repository/xadd-inference-1/src/cmomdp/domain/aaai2017/location_indicator3.xadd");
+
+        noOp = valueIteration.context.apply(noOp, location1, XADD.PROD);
+        right = valueIteration.context.apply(right, location1, XADD.PROD);
+        maxAction = valueIteration.context.apply(maxAction, location1, XADD.PROD);
+        Integer diff = valueIteration.context.apply(noOp, right, XADD.MINUS);
+
+        valueIteration.plotXADD(noOp, "noop location1 " + penultimateIteration);
+        valueIteration.plotXADD(right, "right location1 " + penultimateIteration);
+        valueIteration.plotXADD(diff, "diff location1 " + penultimateIteration);
+        valueIteration.plotXADD(maxAction, "maxAction location1 " + penultimateIteration);
+
+        valueIteration.plotFunction(noOp, "noop location1 " + penultimateIteration, 3);
+        valueIteration.plotFunction(right, "right location1 " + penultimateIteration, 3);
+        valueIteration.plotFunction(diff, "diff location1 " + penultimateIteration, 3);
+        valueIteration.plotFunction(maxAction, "maxAction location1 " + penultimateIteration, 3);
+
+//        max = valueIteration.context.substitute(optXADD, subsMap);
+
+        Experiment.WriteComputationResults(valueIteration, problemFile);
+
+        /*
+                Plot the results of Value Iteration
+         */
+
+//        System.out.println("Plotting");
+//        valueIteration.plotXADD(valueFuncXADD, "Max Q-Value XADD");
+//        valueIteration.plotFunction(valueFuncXADD, "Max Q-Value Function", 3);
+
+        /*
+                Run the optimisation method.
+         */
+
+        System.out.println("Optimising");
+        Experiment.OptimiseValueFunction(OptimisationDirection.MAXIMISE, valueIteration, maxAction, subsMap,
+                subsMapBoolean, "location", -20.0, 0.0, 1.0, problemFile);
 
         System.out.println("COMPLETE");
     }
@@ -90,7 +169,7 @@ public class Experiment {
                 Plot the results of Value Iteration
          */
 
-//        valueIteration.plotXADD(valueFuncXADD, "Final XADD");
+        valueIteration.plotXADD(valueFuncXADD, "Final XADD");
 //        valueIteration.plotFunction(valueFuncXADD, "Final Value Function", 3);
 
          // Take the derivative of the value function w.r.t. sell_prop
@@ -191,7 +270,7 @@ public class Experiment {
                 Integer optXADD = valueIteration.context.substituteBoolVars(valueFuncXADD, subsMapBoolean);
                 optXADD = valueIteration.context.substitute(optXADD, subsMap);
 
-//            valueIteration.plotXADD(optXADD, "OptXADD " + variable + ": " + var);
+            valueIteration.plotXADD(optXADD, "OptXADD " + variable + ": " + var);
 //            valueIteration.plotFunction(optXADD, "OptXADD " + variable + ": " + var + " 3D", 3);
 
                 OptimisationResult optimalResult = Optimise.optimisePaths(maxMin, valueIteration.context, optXADD, null, null);
