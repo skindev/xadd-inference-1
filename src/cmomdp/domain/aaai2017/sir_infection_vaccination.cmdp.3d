@@ -1,0 +1,6 @@
+var beta 0.0 0.05 1.0
+var vaccinate 0.0 0.05 1.0
+
+cassign s 1000
+cassign i 100.0
+cassign r 0.0

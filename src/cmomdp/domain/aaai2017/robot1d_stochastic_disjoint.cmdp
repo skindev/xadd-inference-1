@@ -1,0 +1,38 @@
+cvariables ( location w2 )
+min-values ( -20.0 0.0 )
+max-values ( 20.0 100.0 )
+bvariables ( eps eta)
+ivariables ( )
+
+action move
+    eps' (  eps
+            ([0.8])
+            ([0.2])
+    )
+    eta' (  eta
+            ([0.8])
+            ([0.2])
+    )
+    w2' ([w2])
+    location' ( [location < 10.0]
+                    (   eps
+                         ([location + 5.0])
+                         ([location])
+                    )
+                    ([location])
+     )
+
+reward
+    (   [location < 10.0]
+        (   [0] )
+        (   [location * 1.0] )
+    )
++
+    (   [location < location']
+        ([-10.0  * w2 * (location' - location)])
+        ([-10.0  * w2 * (location - location')])
+    )
+endaction
+
+discount 0.95
+iterations 20

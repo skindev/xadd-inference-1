@@ -10,6 +10,8 @@ import xadd.ExprLib.DoubleExpr;
 import xadd.LinearXADDMethod.NamedOptimResult;
 import xadd.XADD;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -19,6 +21,7 @@ public class VI extends CAMDPsolver {
     public Integer finalIter;   // Last Iteration in case of early Convergence
     public Integer maxDD; //Current Max during a Bellman Backup
 
+    HashMap<String, ArrayList<Double>> solutionStatistics;
 
     //////////////////Methods /////////////////////////////////
 
@@ -70,7 +73,10 @@ public class VI extends CAMDPsolver {
             solutionTimeList[curIter] = CAMDP.getElapsedTime(RUN_DEPTH) + (curIter > 1 ? solutionTimeList[curIter - 1] : 0);
             solutionNodeList[curIter] = context.getNodeCount(valueDD);
             //if (mdp.LINEAR_PROBLEM) solutionMaxValueList[curIter] = context.linMaxVal(valueDD);
-            if (mdp._initialS != null) solutionInitialSValueList[curIter] = mdp.evaluateInitialS(valueDD);
+
+            if (mdp._initialS != null) {
+                solutionInitialSValueList[curIter] = mdp.evaluateInitialS(valueDD);
+            }
 
             if (DEBUG_DEPTH > RUN_DEPTH) {
                 debugOutput.println("Iter:" + curIter + " Complete");
@@ -90,8 +96,10 @@ public class VI extends CAMDPsolver {
             }
         }
 
-        plotXADD(valueDD, "valueDD: H " + curIter);
+        plotXADD(valueDD, "");
+
         mdp.display3D(valueDD, "");
+
 
         flushCaches();
         finalIter = curIter;
@@ -140,7 +148,7 @@ public class VI extends CAMDPsolver {
         return new ParametrizedAction(greedyAction, greedyParams);
     }
 
-    private void checkLinearApprox() {
+    protected void checkLinearApprox() {
         int RUN_DEPTH = 2;
         if (mdp.LINEAR_PROBLEM && APPROXIMATION) {
             CAMDP.resetTimer(RUN_DEPTH);
@@ -161,7 +169,7 @@ public class VI extends CAMDPsolver {
         }
     }
 
-    private void bellmanBackup() {
+    protected void bellmanBackup() {
         int RUN_DEPTH = 2;
 
         maxDD = null;
@@ -172,11 +180,16 @@ public class VI extends CAMDPsolver {
             // Regress the current value function through each action (finite number of continuous actions)
             int regr = regress(valueDD, me.getValue(), true);
 
+//            int dd1 = context.buildCanonicalXADDFromFile("/Users/skin/repository/xadd-inference-1/src/cmomdp/domain/aaai2017/location_indicator.xadd");
+//            int dd2 = context.buildCanonicalXADDFromFile("/Users/skin/repository/xadd-inference-1/src/cmomdp/domain/aaai2017/location_indicator2.xadd");
+//            regr = context.apply(context.applyInt(regr, dd1, XADD.PROD), dd2, XADD.PROD);
+
             if (DEBUG_DEPTH > RUN_DEPTH) {
                 debugOutput.println("Bellman Backup " + curIter + " ActionSet " + me.getKey() + " Regr Time = " +
                         CAMDP.getElapsedTime(RUN_DEPTH));
                 debugShow(regr, "DD of regressing " + me.getKey() + "^" + curIter, true);
             }
+
             // Maintain running max over different actions
             maxDD = (maxDD == null) ? regr : context.apply(maxDD, regr, XADD.MAX);
 //            plotXADD(maxDD, "Max DD After " + me.getKey() + "^" + curIter);
@@ -193,8 +206,11 @@ public class VI extends CAMDPsolver {
                 }
             }
             //Optional post-max approximation, can be used if overall error is being monitored 
-            if (APPROX_ALWAYS) maxDD = mdp.approximateDD(maxDD);
-            flushCaches();
+            if (APPROX_ALWAYS) {
+                maxDD = mdp.approximateDD(maxDD);
+            }
+
+            this.flushCaches();
         }
         valueDD = maxDD;
     }
@@ -397,17 +413,7 @@ public class VI extends CAMDPsolver {
     public void exportSolutionToFile() {
         for (int i = 1; i <= finalIter; i++) {
             context.exportXADDToFile(solutionNodeList[i], makeResultFile(i));
-    }
-}
-
-    /**
-     *
-     * @param xaddID
-     * @param plotTitle
-     */
-    public void plotXADD(Integer xaddID, String plotTitle) {
-        Graph gc = context.getGraph(xaddID);
-        gc.launchViewer(plotTitle);
+        }
     }
 
 }

@@ -263,7 +263,16 @@ public abstract class CAMDPsolver {
         if (PRINT_DD) debugOutput.println(name+" DD_ID="+dd+":\n"+context.getExistNode(dd));
     }
 
-    
+    /**
+     *
+     * @param xaddID
+     * @param plotTitle
+     */
+    public void plotXADD(Integer xaddID, String plotTitle) {
+        Graph gc = context.getGraph(xaddID);
+        gc.launchViewer(plotTitle);
+    }
+
     // Results
     public void makeResultStream(){
 

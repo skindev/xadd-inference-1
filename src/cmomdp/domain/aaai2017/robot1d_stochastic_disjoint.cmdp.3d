@@ -1,0 +1,5 @@
+var location -20 0.4 20
+var w2  1.0 1 100.0
+
+bassign eps true
+bassign eta true

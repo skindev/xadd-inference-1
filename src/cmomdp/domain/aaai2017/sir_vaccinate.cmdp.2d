@@ -1,0 +1,4 @@
+var vaccinate  0.0 0.05 1.0
+cassign s 100.0
+cassign i 100.0
+cassign r 100.0
