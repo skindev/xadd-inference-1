@@ -95,6 +95,12 @@ public class VI extends CAMDPsolver {
                 break;
             }
         }
+
+        plotXADD(valueDD, "");
+
+        mdp.display3D(valueDD, "");
+
+
         flushCaches();
         finalIter = curIter;
         return finalIter;
@@ -174,16 +180,18 @@ public class VI extends CAMDPsolver {
             // Regress the current value function through each action (finite number of continuous actions)
             int regr = regress(valueDD, me.getValue(), true);
 
+//            int dd1 = context.buildCanonicalXADDFromFile("/Users/skin/repository/xadd-inference-1/src/cmomdp/domain/aaai2017/location_indicator.xadd");
+//            int dd2 = context.buildCanonicalXADDFromFile("/Users/skin/repository/xadd-inference-1/src/cmomdp/domain/aaai2017/location_indicator2.xadd");
+//            regr = context.apply(context.applyInt(regr, dd1, XADD.PROD), dd2, XADD.PROD);
+
             if (DEBUG_DEPTH > RUN_DEPTH) {
                 debugOutput.println("Bellman Backup " + curIter + " ActionSet " + me.getKey() + " Regr Time = " +
                         CAMDP.getElapsedTime(RUN_DEPTH));
                 debugShow(regr, "DD of regressing " + me.getKey() + "^" + curIter, true);
             }
 
-            maxDD = regr;
-
             // Maintain running max over different actions
-//            maxDD = (maxDD == null) ? regr : context.apply(maxDD, regr, XADD.MAX);
+            maxDD = (maxDD == null) ? regr : context.apply(maxDD, regr, XADD.MAX);
 //            plotXADD(maxDD, "Max DD After " + me.getKey() + "^" + curIter);
 
             // MakeCanonical and ReduceLP pruning.
