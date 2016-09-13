@@ -24,7 +24,7 @@ public class MATLABNonLinear implements IOptimisationTechnique {
     private static String TEMPLATE_DIRECTORY = "/Users/skin/repository/xadd-inference-1/src/xadd/optimization/templates";
 
     private static String DEFAULT_MATLAB_LOWER_BOUND = "0.0"; //"realmin";
-    private static String DEFAULT_MATLAB_UPPER_BOUND = "500.0"; //"realmax";
+    private static String DEFAULT_MATLAB_UPPER_BOUND = "1.0"; //"realmax";
     private static String DEFAULT_MATLAB_INITIAL_VALUE = "0";
 
     private static String OBJECTIVE_FILE_NAME = "xadd_obj";
@@ -104,7 +104,8 @@ public class MATLABNonLinear implements IOptimisationTechnique {
      * @return
      */
     @Override
-    public OptimisationResult run(OptimisationDirection maxMin, String objective, Set<String> variables, Collection<String> constraints,
+    public OptimisationResult run(OptimisationDirection maxMin, String objective, Set<String> variables,
+                                  Collection<String> constraints,
                                   Collection<String> lowerBounds, Collection<String> upperBounds) {
 
         double maxValue = 0.0;
@@ -229,6 +230,12 @@ public class MATLABNonLinear implements IOptimisationTechnique {
                                      ArrayList<HashMap<String, Object>> variableList) {
 
         HashMap<String, Object> data = new HashMap<String, Object>();
+
+        // HACK: Add regularisation term to the objective
+//        String l1_regularizer = " - 5.0 * norm(w, 1)";
+//        String l2_regularizer = " + 5.0 * norm(w, 2)";
+//        objective += l1_regularizer;
+
         data.put("objective", objective);
         data.put("variables", variableList);
 
