@@ -55,7 +55,7 @@ The value function of the optimal policy {\footnotesize$ \pi^{*} $} satisfies:
 \belowdisplayskip=0pt
 \begin{align}
     \label{eq:opt_vfunc}
-    V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta}) &= \max_{a \in A} \left\{ Q^{\pi^{*}}(\vec{d}, \vec{x}, a; \vec{\theta}) \right\}. 
+    V^{\pi^{*}}\left(\vec{d}, \vec{x}; \vec{\theta}\right) &= \max_{a \in A} \left\{ Q^{\pi^{*}}\left(\vec{d}, \vec{x}, a; \vec{\theta}\right) \right\}. 
 \end{align}
 }%
 
@@ -93,9 +93,9 @@ Value iteration (VI)~\parencite{Bellman_PU_1957} is a general dynamic programmin
     \abovedisplayskip=0pt
     \belowdisplayskip=0pt
     \begin{align}
-        Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta}) = \Reward(\vec{d}, \vec{x}, a; \vec{\theta}) + \gamma \, \cdot &  \nonumber \\ 
-        \sum_{\vec{d}'} \int_{\vec{x}'} \ProbArg{\vec{d}', \vec{x}' | \vec{d}, \vec{x}, a; \vec{\theta}} & \cdot V^{h-1}(\vec{d}, \vec{x}; \vec{\theta}) \, d\vec{x}'  \label{eq:vi_qfunc} \\
-        V^{h}(\vec{d}, \vec{x}; \vec{\theta}) = \max_{a \in A} \left\{ Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta}) \right\} & \label{eq:vi_vfunc}
+        Q^{h} \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) = \Reward \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) + \gamma \, \cdot &  \nonumber \\ 
+        \sum_{\vec{d}'} \int_{\vec{x}'} \ProbArg{\vec{d}', \vec{x}' | \vec{d}, \vec{x}, a; \vec{\theta}} \cdot V^{h-1}\left( \vec{d}', \vec{x}'; \vec{\theta} \right) & \, d\vec{x}'  \label{eq:vi_qfunc} \quad \\
+        V^{h}\left( \vec{d}, \vec{x}; \vec{\theta} \right) = \max_{a \in A} \left\{ Q^{h}\left( \vec{d}, \vec{x}, a; \vec{\theta} \right) \right\} & \label{eq:vi_vfunc}
     \end{align}
 }%
 
