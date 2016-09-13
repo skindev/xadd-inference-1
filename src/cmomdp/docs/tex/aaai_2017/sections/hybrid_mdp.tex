@@ -74,13 +74,7 @@ parameters.
 
 \subsubsection{Multi-objective PHMDPs}
 
-The PHMDP framework can be specialised into a multi-objective setting
-by specifying the reward as {\footnotesize \MORewardFunc} where
-{\footnotesize $ d $} is the dimension of the reward vector. In this
-formulation the parameter {\footnotesize $ \vec{\theta}^{d} $} specifies the
-linear scalarization over the reward components (i.e, {\footnotesize $\langle
-\Reward, \vec{\theta}^{d} \rangle$}) and the value function can be expressed
-as a function of all possible scalarizations.
+The PHMDP framework can be specialized into a multi-objective setting by specifying the reward as {\footnotesize \MORewardFunc}, where {\footnotesize $ d $} is the dimension of the reward vector. In this formulation the parameter {\footnotesize $ \vec{\theta}^{d} $} specifies the linear scalarization over the reward components (i.e, {\footnotesize $\langle \Reward, \vec{\theta}^{d} \rangle$}) and the value function can be expressed as a function of all possible scalarizations. Multi-objective PHMDPs can also be used for the inverse learning of the parameters of the multi-objective reward that explains observed behavior. An example of this inverse reinforcement learning inspired analysis is shown in section~\ref{sec:results_navigation}.
 
 \subsubsection{Sensitivity Analysis for PHMDPs}
 
