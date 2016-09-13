@@ -1,7 +1,7 @@
 \section{Parameterized Symbolic Dynamic Programming}
 \label{sec:sdp}
 
-Symbolic Dynamic Programming (SDP)~\parencite{Boutilier_IJCAI_2001} is the process of performing dynamic programming via symbolic manipulation. In the following sections we present a brief overview of SDP operations and also show how SDP can be used to solve parameterized Hybrid MDPs.
+Symbolic Dynamic Programming (SDP)~\parencite{Boutilier_IJCAI_2001} is the process of performing dynamic programming via symbolic manipulation. In the following sections we present a brief overview of SDP operations and it can be used to solve Parameterized Hybrid MDPs.
 
 \subsection{Symbolic Case Calculus}
 
@@ -19,7 +19,7 @@ SDP assumes that all functions can be represented in case statement form \parenc
     \end{align*}
 }%
 
-Here, {\footnotesize$ f_i $} are linear expressions over {\footnotesize$ \vec{x} $} and {\footnotesize$\phi_i$} are logical formulae defined over the state {\footnotesize$( \vec{d}, \vec{x})$} that can consist of arbitrary logical combinations of boolean variables and linear inequalities {\footnotesize$\left( \geq, >, <, \leq \right)$} over continuous variables. We assume that the set of conditions {\footnotesize$\left\lbrace \phi_1, \ldots, \phi_k \right\rbrace$} disjointly and exhaustively partition {\footnotesize$(\vec{d}, \vec{x})$} such that {\footnotesize$f$} is well-defined for all {\footnotesize$(\vec{d}, \vec{x})$}. In this paper we restrict the {\footnotesize$f_i$} to be either constant or linear functions of the state variable {\footnotesize$\vec{x}$}. Henceforth, we refer to functions with linear {\footnotesize$\phi_i$} and piecewise constant {\footnotesize$f_i$} as linear piecewise constant (LPWC) and functions with linear {\footnotesize$\phi_i$} and piecewise linear {\footnotesize$f_i$} as linear piecewise linear (LPWL) functions.
+Here, {\footnotesize$ f_i $} are linear expressions over {\footnotesize$ \vec{x} $} and {\footnotesize$\phi_i$} are logical formulae defined over the state {\footnotesize$( \vec{d}, \vec{x})$} that can consist of arbitrary logical combinations of boolean variables and linear inequalities {\footnotesize$\left( \geq, >, <, \leq \right)$} over continuous variables. We assume that the set of conditions {\footnotesize$\left\lbrace \phi_1, \ldots, \phi_k \right\rbrace$} disjointly and exhaustively partition {\footnotesize$(\vec{d}, \vec{x})$} such that {\footnotesize$f$} is well-defined for all {\footnotesize$(\vec{d}, \vec{x})$}. In this paper we restrict the {\footnotesize$f_i$} to be either constant or linear functions of the state variables. Henceforth, we refer to functions with linear {\footnotesize$\phi_i$} and piecewise constant {\footnotesize$f_i$} as linear piecewise constant (LPWC) and functions with linear {\footnotesize$\phi_i$} and piecewise linear {\footnotesize$f_i$} as linear piecewise linear (LPWL) functions.
 
 Operations on case statements may be either unary or binary. All of the operations presented here are closed form for LPWC and LPWL functions. We refer the reader to~\parencite{Sanner_UAI_2011,Zamani_AAAI_2012} for more thorough expositions of SDP for piecewise continuous functions.
 
@@ -58,21 +58,21 @@ Unary operations on a single case statement \emph{f}, such as scalar multiplicat
 
 ``cross-subtraction'' {\footnotesize$\ominus$} and ``cross-multiplication'' {\footnotesize$\otimes$} are defined in a similar manner but with the addition operator replaced by the subtraction and multiplication operators, respectively. Some partitions resulting from case operators may be inconsistent and are thus removed.
 
-Substitution into case statements is performed via a set {\footnotesize$\vartheta$} of variables and their substitutions e.g. {\footnotesize$\vartheta = \left\{ x'_1/(x_1 + x_2) \right\}$}, where the LHS of the / represents the substitution variable and the RHS of the / represents the expression that should be substituted in its place. {\footnotesize$\vartheta$} can be applied to both non-case functions {\footnotesize$f_i$} and case partitions {\footnotesize$\phi_i$} as {\footnotesize$f_i\vartheta$} and {\footnotesize$\phi_i\vartheta$}, respectively. Substitution into case statements can be written as:
-{\footnotesize 
-    \abovedisplayskip=5pt
-    \belowdisplayskip=0pt
-    \begin{align*}
-        f\vartheta = 
-        \begin{cases}
-            \phi_1\vartheta: & f_1\vartheta \\ 
-            \vdots & \vdots\\ 
-            \phi_k\vartheta: & f_k\vartheta \\ 
-        \end{cases}
-    \end{align*}
-}%
-
-Substitution is used when calculating integrals with respect to deterministic {\footnotesize$\delta$} transitions~\parencite{Sanner_UAI_2011}.
+%Substitution into case statements is performed via a set {\footnotesize$\vartheta$} of variables and their substitutions e.g. {\footnotesize$\vartheta = \left\{ x'_1/(x_1 + x_2) \right\}$}, where the LHS of the / represents the substitution variable and the RHS of the / represents the expression that should be substituted in its place. {\footnotesize$\vartheta$} can be applied to both non-case functions {\footnotesize$f_i$} and case partitions {\footnotesize$\phi_i$} as {\footnotesize$f_i\vartheta$} and {\footnotesize$\phi_i\vartheta$}, respectively. Substitution into case statements can be written as:
+%{\footnotesize 
+%    \abovedisplayskip=5pt
+%    \belowdisplayskip=0pt
+%    \begin{align*}
+%        f\vartheta = 
+%        \begin{cases}
+%            \phi_1\vartheta: & f_1\vartheta \\ 
+%            \vdots & \vdots\\ 
+%            \phi_k\vartheta: & f_k\vartheta \\ 
+%        \end{cases}
+%    \end{align*}
+%}%
+%
+%Substitution is used when calculating integrals with respect to deterministic {\footnotesize$\delta$} transitions~\parencite{Sanner_UAI_2011}.
 
 Maximisation over cases, known as $\casemax$, is defined as:
 \vspace{-0.5em}
@@ -111,11 +111,41 @@ Maximisation over cases, known as $\casemax$, is defined as:
     \end{center}
 }%
 
-$\casemax$ preserves the linearity of the constraints and the constant or linear nature of the {\footnotesize$f_i$} and {\footnotesize$g_i$}. If the {\footnotesize$f_i$} or {\footnotesize$g_i$} are quadratic then the expressions {\footnotesize$f_i > g_i$} or {\footnotesize$f_i \leq g_i$} will be at most univariate quadratic and any such constraint can be linearised into a combination of at most two linear inequalities by completing the square. 
+$\casemax$ preserves the linearity of the constraints and the constant or linear nature of the {\footnotesize$f_i$} and {\footnotesize$g_i$}. If the {\footnotesize$f_i$} or {\footnotesize$g_i$} are quadratic then the expressions {\footnotesize$f_i > g_i$} or {\footnotesize$f_i \leq g_i$} will be at most univariate quadratic and any such constraint can be linearized into a combination of at most two linear inequalities by completing the square. 
 
-A case statement can be maximised with respect to a continuous parameter {\footnotesize$y$} as {\footnotesize $ f_1(\vec{x}, y) = \contmax_{y}f_2(\vec{x}, y) $}. The continuous maximisation operation is a complex case operation whose explanation is beyond the scope of this paper. We refer the reader to~\parencite{Zamani_AAAI_2012} for further details.
+A case statement can be maximized with respect to a continuous parameter {\footnotesize$y$} as {\footnotesize $ f_1(\vec{x}, y) = \contmax_{y}f_2(\vec{x}, y) $}. The continuous maximization operation is a complex case operation whose explanation is beyond the scope of this paper. We refer the reader to~\parencite{Zamani_AAAI_2012} for further details.
 
-In principle, case statements can be used to represent all PHMDP components. In practice, case statements are implemented using a more compact representation known as Extended Algebraic Decision Diagrams (XADDs)~\parencite{Sanner_UAI_2011}, which also support efficient versions of all of the aforementioned operations.
+In principle, case statements can be used to represent all PHMDP components. In practice, case statements are implemented using a more compact representation known as Extended Algebraic Decision Diagrams (XADDs)~\parencite{Sanner_UAI_2011}, which also support efficient versions of all of the aforementioned operations. Figure~\ref{fig:xadd} shows how an XADD is used to represent a function {\footnotesize $f$} that is piecewise continuous, nonlinear and multimodal.
+
+\begin{figure}[!htb]
+    \centering
+    \begin{subfigure}[b]{0.2\textwidth}
+        \includegraphics[width=\linewidth]{images/quad2.pdf}
+%        \caption{$f(x, y, a=\mathit{true})$}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.25\textwidth}
+        \includegraphics[width=\linewidth]{images/quad2_xadd5.pdf}
+%        \caption{XADD representation}        
+    \end{subfigure}    
+    \caption{(left) A plot of a function $f(x, y, a=\mathit{true})$ for continuous variables $x$ and $y$ and boolean variable $a$; and (right) an XADD representing $f(x,y,a)$.}
+    \label{fig:xadd}
+\end{figure}
+
+%\begin{figure*}[h!]
+%    \vspace{-5mm}
+%    \begin{center}
+%        \begin{tabular}{ccc}
+%            \hspace{-4mm} \includegraphics[width=0.35\textwidth]{images/quad2.pdf} & \hspace{-7.5mm} \includegraphics[width=0.30\textwidth]{images/quad2_contour2.pdf} & \hspace{-8mm} \includegraphics[width=0.40\textwidth]{images/quad2_xadd5.pdf}\\ 
+%            %(a) & (b) & (c) \\
+%            %\multicolumn{3}{c}{}
+%        \end{tabular}
+%    \end{center}
+%    \vspace{-7mm}
+%    \caption{\normalsize (left) A plot of a function $f(x, y, a=\mathit{true})$ for continuous variables $x$ and $y$ and boolean variable $a$; (middle) a
+%        contour plot of $f(x,y,a=\mathit{true})$ showing sharp piecewise boundaries; and (right) an XADD representing $f(x,y,a)$. $f$ is \emph{piecewise continuous}, \emph{nonlinear}, and \emph{multimodal}; it has a compact symbolic XADD representation as indicated by its highly recurrent directed acyclic graph (DAG) structure.  }
+%    \label{fig:xadd}
+%    \vspace{-2mm}
+%\end{figure*}
 
 \subsection{SDP for Parameterized Hybrid MDPs}
 
