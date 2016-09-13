@@ -1,14 +1,10 @@
 \section{Parameterized Hybrid MDPs}
 \label{sec:hybrid_mdps}
 
-In this section we introduce parameterized hybrid Markov Decision
-Processes (PHMDPs) and show how the framework can be specialized to
-address multi-objective reward criteria, investigate parameter
-sensitivity and optimize continuous non-convex policy parameters. We
-also review their finite horizon solution via dynamic programming.
+In this section we introduce Parameterized Hybrid Markov Decision Processes (PHMDPs) and show how the framework can be specialized to address multi-objective reward criteria, investigate parameter sensitivity and optimize continuous non-convex policy parameters. We also review their finite horizon solution via dynamic programming.
 
 \subsection{Definition}
-\label{sec:hybrid_mdps_def}
+\label{sec:phmdp_def}
 
 A parameterized hybrid Markov Decision Process (PHMDP) is defined by the tuple {\footnotesize \PMDPTuple}. {\footnotesize \State} specifies
 a vector of states given by {\footnotesize $(\vec{d}, \vec{x}) =  \left( d_1, \ldots, d_m, x_1, \ldots, x_n \right) $}, where each {\footnotesize $ d_i \in \left\lbrace 0, 1 \right\rbrace $} {\footnotesize $\left( 1 \leq i \leq m \right)$} is discrete and each
@@ -106,17 +102,8 @@ derivatives (up to any order) of this value function.
 
 \subsection{Solution Methods}
 
-Value iteration~\parencite{Bellman_PU_1957} is a general dynamic
-programming algorithm used to solve MDPs. We modify the algorithm to
-solve the parameterized hybrid MDP formulation presented in
-section~\ref{sec:hybrid_mdps_def}. The key idea of VI is to
-successively approximate {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x};
-  \vec{\theta})$} and {\footnotesize $Q^{\pi^{*}}(\vec{d}, \vec{x}, a;
-  \vec{\theta})$} by {\footnotesize $V^{h}(\vec{d}, \vec{x}; \vec{\theta})$} and
-{\footnotesize $Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta})$}, respectively, at
-each horizon {\footnotesize$h$}. These two functions satisfy the
-following recursive relationship:
-
+Value iteration (VI)~\parencite{Bellman_PU_1957} is a general dynamic programming algorithm used to solve Markov Decision Processes (MDPs). In this section we modify VI to solve PHMDPs. The key idea of VI is to successively approximate {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta})$} and {\footnotesize $Q^{\pi^{*}}(\vec{d}, \vec{x}, a; \vec{\theta})$} by {\footnotesize $V^{h}(\vec{d}, \vec{x}; \vec{\theta})$} and
+{\footnotesize $Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta})$}, respectively, at each horizon {\footnotesize$h \in \Horizon$}. These two functions satisfy the following recursive relationship:
 {\footnotesize 
     \abovedisplayskip=0pt
     \belowdisplayskip=0pt
@@ -127,22 +114,6 @@ following recursive relationship:
     \end{align}
 }%
 
-{\footnotesize $\ProbArg{\vec{d}', \vec{x}' | \vec{d}, \vec{x}, a;
-    \vec{\theta}}$ } is specified in Equation~\eqref{eq:hmdp_tfunc}. The
-algorithm can be executed by first initialising {\footnotesize
-  $V^{0}(\vec{d}, \vec{x}; \vec{\theta})$} to zero or the terminal
-reward. Then for each {\footnotesize$h$}, {\footnotesize
-  $V^{h}(\vec{d}, \vec{x}; \vec{\theta})$} is calculated from {\footnotesize
-  $V^{h-1}(\vec{d}, \vec{x}; \vec{\theta})$} via
-Equations~\eqref{eq:vi_qfunc} and~\eqref{eq:vi_vfunc}, until the
-intended $h$-stage-to-go value function is computed.
+{\footnotesize $\ProbArg{\vec{d}', \vec{x}' | \vec{d}, \vec{x}, a; \vec{\theta}}$ } is specified in Equation~\eqref{eq:hmdp_tfunc}. The algorithm can be executed by first initialising {\footnotesize   $V^{0}(\vec{d}, \vec{x}; \vec{\theta})$} to zero or the terminal reward. Then for each {\footnotesize$h$}, {\footnotesize $V^{h}(\vec{d}, \vec{x}; \vec{\theta})$} is calculated from {\footnotesize $V^{h-1}(\vec{d}, \vec{x}; \vec{\theta})$} via Equations~\eqref{eq:vi_qfunc} and~\eqref{eq:vi_vfunc}, until the intended $h$-stage-to-go value function is computed.
 
-A key challenge still remains, namely, dealing with infinitely many
-states in {\footnotesize $\vec{x}$} and {\footnotesize
-  $\vec{\theta}$}. Furthermore, we must determine restrictions on
-{\footnotesize $Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta})$} and
-{\footnotesize $V^{h}(\vec{d}, \vec{x}; \vec{\theta})$} that guarantee
-tractable solutions. In the next section we show that a parameterized
-extension of symbolic dynamic programming can be used to address these
-concerns and optimally solve exactly and in closed-form PHMDPs for
-arbitrary horizons.
+Despite the ease with which VI can be modified to solve PHMDPs, two key challenges still remain: (i) dealing with infinitely many states in {\footnotesize $\vec{x}$} and {\footnotesize $\vec{\theta}$}; and (ii) determining restrictions on {\footnotesize $Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta})$} and {\footnotesize $V^{h}(\vec{d}, \vec{x}; \vec{\theta})$} that guarantee tractable solutions. In the next section we show that a parameterized extension of symbolic dynamic programming can be used to address these concerns and solve PHMDPs, optimally and in closed-form, for arbitrary horizons.
