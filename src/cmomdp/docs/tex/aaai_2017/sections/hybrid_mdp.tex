@@ -94,11 +94,10 @@ section~\ref{sec:results_influenza}, which allows a user to explore
 trade-offs between parameters {\footnotesize $\vec{\theta}^{d}$ }for the optimal policy as a
 function of other state variables {\footnotesize $\vec{d},\vec{x}$}.
 
-\subsubsection{Policy Gradient Methods for PHMDPs}
+\subsubsection{Nonlinear Parameterized Policy Optimization Methods for PHMDPs}
 
-PHMDP policy parameters can be analyzed and optimised by parameterizing a policy {\footnotesize $\pi$} by action parameters {\footnotesize $\vec{\theta}^{d}$}, and evaluating the value w.r.t. this parametric policy, an example of which will be shown in section~\ref{sec:results_oe}. The resulting (non-convex) policy value as a function of {\footnotesize $\vec{\theta}^{d}$} can be
-analyzed, and optimised using the parameteric form of {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} and all symbolic
-derivatives (up to any order) of this value function.
+PHMDP policy parameters can be analyzed and optimized by parameterizing a policy {\footnotesize $\pi$} by action parameters {\footnotesize $\vec{\theta}^{d}$}, and evaluating the value function with respect to the parameterized policy. The resulting non-convex policy value, as a function of {\footnotesize $\vec{\theta}^{d}$}, can be analyzed and optimized using the parametric form of {\footnotesize $V^{\pi}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} and all symbolic derivatives, up to any order, of this value function. An example of nonlinear parameterized policy optimization is shown in section~\ref{sec:results_oe}. 
+
 
 \subsection{Solution Methods}
 
