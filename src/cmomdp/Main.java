@@ -57,13 +57,13 @@ public class Main {
 
         switch (experimentNumber) {
             case 1:
-                Experiment.Robot1D_IRL(camdp, viSolver, numIterations);
+                Experiment.Robot1D_IRL(camdp, numIterations);
                 break;
             case 2:
                 Experiment.SIR(camdp, viSolver, numIterations);
                 break;
             case 3:
-                Experiment.OptimalExecution(camdp, viSolver, numIterations);
+                Experiment.OptimalExecution(camdp, numIterations);
                 break;
             default:
                 System.err.println("Unrecognised Experiment Number: " + experimentNumber);

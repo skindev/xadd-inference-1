@@ -160,17 +160,19 @@ public class VI extends camdp.solver.VI {
      *
      * @param out
      */
-    public void writeSolutionStatistics(PrintStream out) {
+    public void writeSolutionStatistics(PrintStream out, Boolean append) {
 
         if(out == null) {
             out = System.out;
         }
 
-        PrintWriter writer = new PrintWriter(out);
-
+        PrintWriter writer = new PrintWriter(out, append);
         Integer finalIter = this.solutionStatistics.get("node_count").size();
 
-        writer.println("horizon,sdp_time,nodes,branches,opt_time");
+        if(!append) {
+            writer.println("horizon,sdp_time,nodes,branches,opt_time");
+        }
+
         for(Integer index = 0; index < finalIter; index++) {
             Double numNodes = this.solutionStatistics.get("node_count").get(index);
             Double numBranches = this.solutionStatistics.get("branch_count").get(index);

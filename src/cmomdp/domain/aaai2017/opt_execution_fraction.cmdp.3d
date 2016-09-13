@@ -1,7 +1,7 @@
 var inventory 0.0 1 1000.0
 var sell_prop 0.0 0.01 1.0
 
-cassign perm_price  55.0
-cassign capture     100.0
+cassign price  55.0
+cassign market_impact 0.165
 
 bassign eps true

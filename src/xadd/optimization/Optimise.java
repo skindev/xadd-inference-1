@@ -43,7 +43,7 @@ public class Optimise {
         for(IOptimisationTechnique optimiser : Optimise.optimisers) {
 
             result = optimiser.run(maxMin, objective, variables, constraints, lowerBounds, upperBounds);
-            System.out.println(objective + ". optimalValue: " + result.getMaxValue() + " argMax: " + result.getArgMax());
+//            System.out.println(objective + ". optimalValue: " + result.getMaxValue() + " argMax: " + result.getArgMax());
         }
 
         return result;
