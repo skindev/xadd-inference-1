@@ -1,7 +1,0 @@
-var price 1.0 1.0 100.0
-var market_impact 1.0 100 1000
-
-cassign market_impact 50.0
-cassign inventory 1000.0
-
-bassign eps true
