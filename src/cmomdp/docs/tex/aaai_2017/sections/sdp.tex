@@ -155,7 +155,7 @@ To calculate the exact solution to PHMDPs we begin by replacing all functions an
     \belowdisplayskip=0pt
     \begin{align}
         Q^{h} \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) = \Reward \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) \oplus \gamma \, \cdot &  \nonumber \\ 
-        \bigoplus_{\vec{d}'} \int_{\vec{x}'} \ProbArg{ \left. \vec{d}', \vec{x}' \middle| \vec{d}, \vec{x}, a; \vec{\theta} \right.} \otimes V^{h-1} \left( \vec{d}, \vec{x}; \vec{\theta} \right) & \, d\vec{x}'  \label{eq:vi_sdp_qfunc} \\
+        \bigoplus_{\vec{d}'} \int_{\vec{x}'} \ProbArg{ \left. \vec{d}', \vec{x}' \middle| \vec{d}, \vec{x}, a; \vec{\theta} \right.} \otimes V^{h-1} \left( \vec{d}', \vec{x}'; \vec{\theta} \right) & \, d\vec{x}'  \label{eq:vi_sdp_qfunc} \\
         V^{h}\left( \vec{d}, \vec{x}; \vec{\theta} \right) = \casemax_{a \in A} \left\{ Q^{h} \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) \right\} & \label{eq:vi_sdp_vfunc}
     \end{align}
 }%
