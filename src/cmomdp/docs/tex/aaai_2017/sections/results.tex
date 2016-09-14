@@ -1,7 +1,68 @@
 \section{Results}
 \label{sec:results}
 
-In this section we demonstrate the efficacy of our novel framework by calculating the first known optimal solutions to the following difficult nonlinear sequential decision problems: (i) inverse learning of parameters in a multi-objective navigation domain; (ii) non-convex optimization of vaccination policy parameters in public health; and (iii) exact sensitivity analysis of portfolio transaction models over the full range of model parameters. Furthermore, we show that our framework is scalable in both space and time. We note that while dOp~\parencite{Gao2013} offer strong delta-optimality guarantees, we found in practice that nonlinear solvers such as $ \mathtt{fmincon} $~\parencite{MATLAB_2010} perform comparably well at optimization and are much more efficient, hence we use solver $ \mathtt{fmincon} $ in the experiments.
+In this section we demonstrate the efficacy of our novel framework by calculating the first known optimal solutions to the following difficult nonlinear sequential decision problems: (i) inverse learning of parameters in a multi-objective navigation domain; (ii) non-convex optimization of vaccination policy parameters in a public health setting; and (iii) exact sensitivity analysis of portfolio transaction models over the full range of model parameters. Furthermore, we show that our framework is scalable in both space and time. We note that while dOp~\parencite{Gao2013} offer strong delta-optimality guarantees, we found in practice that nonlinear solvers such as $ \mathtt{fmincon} $~\parencite{MATLAB_2010} perform comparably well at optimization and are much more efficient, hence we use solver $ \mathtt{fmincon} $ in the experiments.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{figure*}[h!]
+%    \vspace{-5mm}
+%    \begin{center}
+%        \begin{tabular}{ccc}
+%            \hspace{-4mm} \includegraphics[width=0.35\textwidth]{images/robot_opt}\label{fig:navigation_opt} & \hspace{-7.5mm} \includegraphics[width=0.35\textwidth]{images/sir_opt} & \hspace{-8mm} \includegraphics[width=0.35\textwidth]{images/oe_opt}\\ 
+%            (a) & (b)\label{fig:sir_opt} & (c)\label{fig:oe_opt} \\
+%            %\multicolumn{3}{c}{}
+%        \end{tabular}
+%    \end{center}
+%%    \vspace{-4mm}
+%    \caption{Nonlinear optimization results for: (a) Maximal weight under a sub-optimal movement policy; (b) Optimal vaccination proportion {\footnotesize $ \nu $} for {\footnotesize $ 0.0 \leq \beta \leq 1.0 $}; and (c) Optimal sell proportion $ \theta $ for {\footnotesize $ inventory \in \left(0.0, 1000.0 \right) $}. }
+%    \label{fig:xadd}
+%    \vspace{-2mm}
+%\end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{figure*}
+%    \begin{multicols}{4}
+%        \includegraphics[width=\linewidth]{images/robot_opt}\par\caption{caption} 
+%        \includegraphics[width=\linewidth]{images/sir_opt}\par \caption{caption}
+%        \includegraphics[width=\linewidth]{images/oe_opt}\par \caption{caption}        
+%    \end{multicols}
+%    \caption{caption here}
+%\end{figure*}
+%
+%\begin{figure*}
+%    \begin{multicols}{4}
+%        \includegraphics[width=\linewidth]{images/vf_robot}\par\caption{caption} 
+%        \includegraphics[width=\linewidth]{images/vf_sir}\par \caption{caption}
+%        \includegraphics[width=\linewidth]{images/vf_oe}\par \caption{caption}        
+%        \includegraphics[width=\linewidth]{images/vf_oe_deriv}\par \caption{caption}                
+%    \end{multicols}
+%    \caption{caption here}
+%\end{figure*}
+
+{\centering
+    \begin{figure*}[ht]
+        \begin{tabular}{cccc}
+            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/vf_robot}\caption{The value function under the optimal policy.}\label{fig:navigation_vf}\end{subfigure}&
+            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/vf_sir}\caption{Optimal Value Function for varying {\footnotesize $ \beta $} and {\footnotesize $ \nu $}.}\label{fig:sir_vf}\end{subfigure}&
+            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/vf_oe}\caption{Optimal Value Function for varying {\footnotesize $ \theta $} and {\footnotesize $ inventory $}.}\label{fig:oe_vf}\end{subfigure}&
+            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/vf_oe_deriv}\caption{Optimal Value Function for varying {\footnotesize $\nabla \theta $} and {\footnotesize $ inventory $}.}\label{fig:oe_vf_deriv}\end{subfigure}\\            
+        \end{tabular}
+        \caption{Value functions.}
+        \label{tab:vf_Results}
+    \end{figure*}
+}
+
+{\centering
+    \begin{figure*}[ht]
+        \begin{tabular}{ccc}
+            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25]{images/robot_opt}\caption{Maximal weight under a sub-optimal movement policy}\label{fig:navigation_opt}\end{subfigure}&
+            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25]{images/sir_opt}\caption{Optimal vaccination proportion {\footnotesize $ \nu $} for {\footnotesize $ 0.0 \leq \beta \leq 1.0 $}}\label{fig:sir_opt}\end{subfigure}&
+            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25]{images/oe_opt}\caption{Optimal sell proportion $ \theta $ for {\footnotesize $ inventory \in \left(0.0, 1000.0 \right) $}}\label{fig:oe_opt}\end{subfigure}\\
+        \end{tabular}
+        \caption{Nonlinear optimization results.}
+        \label{tab:opt_results}
+    \end{figure*}
+}
 
 \subsection{Multi-objective Navigation}
 \label{sec:results_navigation}
@@ -23,24 +84,24 @@ In this domain we consider an autonomous vehicle moving in one dimension towards
 
 Figure~\ref{fig:navigation_vf} and Figure~\ref{fig:navigation_opt} show the {\footnotesize$ \Horizon = 15 $} value function under the optimal and a sub-optimal policy, respectively. We define the sub-optimal policy as $ \pi(0 < loc < 10) = 5.0,  \pi(loc < 0 \,\mathrm{or}\, loc > 10) = 0.0$. The optimal value function reveals that the vehicle is willing to incur the movement cost in order to reach the reward region for low values of {\footnotesize $ w_2 $}, but not otherwise. Figure~\ref{fig:navigation_opt} shows the maximal {\footnotesize $ w_2 $} associated with the actions executed by the vehicle in each state. We notice that in regions where the vehicle does not move, {\footnotesize $ w_2 $} was at its maximum i.e. the movement cost was too great for the vehicle to move. However, in the region where the vehicle did move, the {\footnotesize $ w_2 $} increases as the location approaches the goal region, indicating that the vehicle is willing to incur a greater movement cost to reach the goal region.
 
-%------------------------------------------------------------------------------
-% Figure
-\begin{figure}[h!]
-    \centering
-    \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/vf_robot}
-        \caption{The value function under the optimal policy.}
-            \label{fig:navigation_vf}
-    \end{subfigure}
-    \begin{subfigure}{0.4\textwidth}
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/robot_opt}
-        \caption{The value function under a sub-optimal policy.}
-            \label{fig:navigation_opt}
-    \end{subfigure}
-    \caption{Multi-objective navigation when {\footnotesize $w_1 = 1.0$}, {\footnotesize $ \mathtt{threshold} = 10.0 $} and {\footnotesize$ cost_{\mathtt{move}} = 1.0$.}} 
-    \label{fig:vehicle1d}            
-\end{figure}
-%------------------------------------------------------------------------------
+%%------------------------------------------------------------------------------
+%% Figure
+%\begin{figure}[h!]
+%    \centering
+%    \begin{subfigure}{0.4\textwidth}
+%        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/vf_robot}
+%        \caption{The value function under the optimal policy.}
+%            \label{fig:navigation_vf}
+%    \end{subfigure}
+%%    \begin{subfigure}{0.4\textwidth}
+%%        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/robot_opt}
+%%        \caption{The value function under a sub-optimal policy.}
+%%            \label{fig:navigation_opt}
+%%    \end{subfigure}
+%    \caption{Multi-objective navigation when {\footnotesize $w_1 = 1.0$}, {\footnotesize $ \mathtt{threshold} = 10.0 $} and {\footnotesize$ cost_{\mathtt{move}} = 1.0$.}} 
+%    \label{fig:vehicle1d}            
+%\end{figure}
+%%------------------------------------------------------------------------------
 
 \subsection{Influenza Public Health Policy}
 \label{sec:results_influenza}
@@ -74,24 +135,24 @@ Figures~\ref{fig:sir_vf} and~\ref{fig:sir_opt} show the optimal {\footnotesize $
 
 %------------------------------------------------------------------------------
 % Figure
-\begin{figure}[h!]
-    \centering
-    \begin{subfigure}[b]{0.4\textwidth}    
-        \centering
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/vf_sir}
-        \caption{Optimal Value Function for varying {\footnotesize $ \beta $} and {\footnotesize $ \nu $}.}
-        \label{fig:sir_vf}
-        \vspace{1em}
-       \end{subfigure}         
-    \begin{subfigure}[b]{0.4\textwidth}    
-        \centering
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/sir_opt}
-        \caption{Optimal {\footnotesize $ \nu $} for {\footnotesize $ 0.0 \leq \beta \leq 1.0 $}. Regions where $ R_0 $, the basic reproductive ratio, is $ < 1 $ and $ > 1 $ are shaded blue and green, respectively. }
-        \label{fig:sir_opt}
-     \end{subfigure}         
-    \caption{Influenza Public Health Policy when {\footnotesize $ s = 1000.0, i = 100.0, r = 0.0, \lambda = 0.25 $}, {\footnotesize $ cost_{\mathtt{vaccine}} = 4.0$} and {\footnotesize $ cost_{\mathtt{inf}} = 10.0 $}.}
-    \label{fig:sir}    
-\end{figure}
+%\begin{figure}[h!]
+%    \centering
+%%    \begin{subfigure}[b]{0.4\textwidth}    
+%%        \centering
+%%        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/vf_sir}
+%%        \caption{Optimal Value Function for varying {\footnotesize $ \beta $} and {\footnotesize $ \nu $}.}
+%%        \label{fig:sir_vf}
+%%        \vspace{1em}
+%%       \end{subfigure}         
+%%    \begin{subfigure}[b]{0.4\textwidth}    
+%%        \centering
+%%        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/sir_opt}
+%%        \caption{Optimal {\footnotesize $ \nu $} for {\footnotesize $ 0.0 \leq \beta \leq 1.0 $}. Regions where $ R_0 $, the basic reproductive ratio, is $ < 1 $ and $ > 1 $ are shaded blue and green, respectively. }
+%%        \label{fig:sir_opt}
+%%     \end{subfigure}         
+%    \caption{Influenza Public Health Policy when {\footnotesize $ s = 1000.0, i = 100.0, r = 0.0, \lambda = 0.25 $}, {\footnotesize $ cost_{\mathtt{vaccine}} = 4.0$} and {\footnotesize $ cost_{\mathtt{inf}} = 10.0 $}.}
+%    \label{fig:sir}    
+%\end{figure}
 %------------------------------------------------------------------------------
 
 \subsection{Optimal Execution}
@@ -113,29 +174,29 @@ Figures~\ref{fig:oe_vf} and~\ref{fig:oe_vf_deriv} show the optimal {\footnotesiz
 
 %------------------------------------------------------------------------------
 % Figure
-\begin{figure}[h!]
-    \centering
-    \begin{subfigure}[b]{0.4\textwidth}    
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/vf_oe}
-        \caption{Optimal Value Function for varying {\footnotesize $ \theta $} and {\footnotesize $ inventory $}.}
-        \label{fig:oe_vf}        
-    \end{subfigure}
-    
-    \begin{subfigure}[b]{0.4\textwidth}    
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/vf_oe_deriv}
-        \caption{Optimal Value Function for varying {\footnotesize $\nabla \theta $} and {\footnotesize $ inventory $}.}
-        \label{fig:oe_vf_deriv}        
-    \end{subfigure}    
-    
-    \begin{subfigure}[b]{0.4\textwidth}    
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/oe_opt}
-        \caption{Optimal $ \theta $ for {\footnotesize $ inventory \in \left(0.0, 1000.0 \right) $}.}
-        \label{fig:oe_opt}
-        
-    \end{subfigure}        
-        \caption{Optimal Execution when {\footnotesize $ \kappa = 0.165 $} and {\footnotesize $ p = 55.0 $}.}
-        \label{fig:oe}    
-\end{figure}
+%\begin{figure}[h!]
+%    \centering
+%    \begin{subfigure}[b]{0.4\textwidth}    
+%        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/vf_oe}
+%        \caption{Optimal Value Function for varying {\footnotesize $ \theta $} and {\footnotesize $ inventory $}.}
+%        \label{fig:oe_vf}        
+%    \end{subfigure}
+%    
+%    \begin{subfigure}[b]{0.4\textwidth}    
+%        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/vf_oe_deriv}
+%        \caption{Optimal Value Function for varying {\footnotesize $\nabla \theta $} and {\footnotesize $ inventory $}.}
+%        \label{fig:oe_vf_deriv}        
+%    \end{subfigure}    
+%    
+%%    \begin{subfigure}[b]{0.4\textwidth}    
+%%        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/oe_opt}
+%%        \caption{Optimal $ \theta $ for {\footnotesize $ inventory \in \left(0.0, 1000.0 \right) $}.}
+%%        \label{fig:oe_opt}
+%%        
+%%    \end{subfigure}        
+%        \caption{Optimal Execution when {\footnotesize $ \kappa = 0.165 $} and {\footnotesize $ p = 55.0 $}.}
+%        \label{fig:oe}    
+%\end{figure}
 %------------------------------------------------------------------------------
 
 \subsection{Time and Space Complexity}
@@ -143,13 +204,13 @@ Figures~\ref{fig:oe_vf} and~\ref{fig:oe_vf_deriv} show the optimal {\footnotesiz
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.4\textwidth}    
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/time_plot}
+        \includegraphics[scale=0.25]{images/time_plot}
  %       \caption{Optimal Value Function for varying {\footnotesize $ \theta $} and {\footnotesize $ inventory $}.}
         \label{fig:time_complexity}        
     \end{subfigure}
     
     \begin{subfigure}[b]{0.4\textwidth}    
-        \includegraphics[width=0.8\linewidth, height=0.5\linewidth]{images/space_plot}
+        \includegraphics[scale=0.25]{images/space_plot}
 %        \caption{Optimal Value Function for varying {\footnotesize $\nabla \theta $} and {\footnotesize $ inventory $}.}
         \label{fig:space_complexity}        
     \end{subfigure}    
