@@ -42,10 +42,10 @@ In this section we demonstrate the efficacy of our novel framework by calculatin
 {\centering
     \begin{figure*}[ht]
         \begin{tabular}{cccc}
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/vf_robot}\caption{The value function under the optimal policy.}\label{fig:navigation_vf}\end{subfigure}&
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/vf_sir}\caption{Optimal Value Function for varying {\footnotesize $ \beta $} and {\footnotesize $ \nu $}.}\label{fig:sir_vf}\end{subfigure}&
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/vf_oe}\caption{Optimal Value Function for varying {\footnotesize $ \theta $} and {\footnotesize $ inventory $}.}\label{fig:oe_vf}\end{subfigure}&
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/vf_oe_deriv}\caption{Optimal Value Function for varying {\footnotesize $\nabla \theta $} and {\footnotesize $ inventory $}.}\label{fig:oe_vf_deriv}\end{subfigure}\\            
+            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth, frame]{images/vf_robot}\caption{The value function under the optimal policy.}\label{fig:navigation_vf}\end{subfigure}&
+            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth, frame]{images/vf_sir}\caption{Optimal Value Function for varying {\footnotesize $ \beta $} and {\footnotesize $ \nu $}.}\label{fig:sir_vf}\end{subfigure}&
+            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth, frame]{images/vf_oe}\caption{Optimal Value Function for varying {\footnotesize $ \theta $} and {\footnotesize $ inventory $}.}\label{fig:oe_vf}\end{subfigure}&
+            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth, frame]{images/vf_oe_deriv}\caption{Optimal Value Function for varying {\footnotesize $\nabla \theta $} and {\footnotesize $ inventory $}.}\label{fig:oe_vf_deriv}\end{subfigure}\\            
         \end{tabular}
         \caption{Value functions.}
         \label{tab:vf_Results}
@@ -55,9 +55,9 @@ In this section we demonstrate the efficacy of our novel framework by calculatin
 {\centering
     \begin{figure*}[ht]
         \begin{tabular}{ccc}
-            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25]{images/robot_opt}\caption{Maximal weight under a sub-optimal movement policy}\label{fig:navigation_opt}\end{subfigure}&
-            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25]{images/sir_opt}\caption{Optimal vaccination proportion {\footnotesize $ \nu $} for {\footnotesize $ 0.0 \leq \beta \leq 1.0 $}}\label{fig:sir_opt}\end{subfigure}&
-            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25]{images/oe_opt}\caption{Optimal sell proportion $ \theta $ for {\footnotesize $ inventory \in \left(0.0, 1000.0 \right) $}}\label{fig:oe_opt}\end{subfigure}\\
+            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25, frame]{images/robot_opt}\caption{Maximal weight under a sub-optimal movement policy}\label{fig:navigation_opt}\end{subfigure}&
+            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25, frame]{images/sir_opt}\caption{Optimal vaccination proportion {\footnotesize $ \nu $} for {\footnotesize $ 0.0 \leq \beta \leq 1.0 $}}\label{fig:sir_opt}\end{subfigure}&
+            \begin{subfigure}{0.3\textwidth}\centering\includegraphics[scale=0.25, frame]{images/oe_opt}\caption{Optimal sell proportion $ \theta $ for {\footnotesize $ inventory \in \left(0.0, 1000.0 \right) $}}\label{fig:oe_opt}\end{subfigure}\\
         \end{tabular}
         \caption{Nonlinear optimization results.}
         \label{tab:opt_results}
@@ -204,13 +204,13 @@ Figures~\ref{fig:oe_vf} and~\ref{fig:oe_vf_deriv} show the optimal {\footnotesiz
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.4\textwidth}    
-        \includegraphics[scale=0.25]{images/time_plot}
+        \includegraphics[scale=0.25, frame]{images/time_plot}
  %       \caption{Optimal Value Function for varying {\footnotesize $ \theta $} and {\footnotesize $ inventory $}.}
         \label{fig:time_complexity}        
     \end{subfigure}
     
     \begin{subfigure}[b]{0.4\textwidth}    
-        \includegraphics[scale=0.25]{images/space_plot}
+        \includegraphics[scale=0.25, frame]{images/space_plot}
 %        \caption{Optimal Value Function for varying {\footnotesize $\nabla \theta $} and {\footnotesize $ inventory $}.}
         \label{fig:space_complexity}        
     \end{subfigure}    
