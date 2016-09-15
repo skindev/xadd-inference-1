@@ -30,7 +30,7 @@ In this section we demonstrate the efficacy of our novel framework by calculatin
     \end{figure*}
 }
 
-\subsection{Multi-objective Navigation}
+\subsection{Inverse Learning for Multi-objective Navigation}
 \label{sec:results_navigation}
 
 In this domain we consider an autonomous vehicle moving in one dimension towards a goal region. At each stage the vehicle faces a trade-off between reaching the goal region and incurring a movement cost. The domain is specified as follows: {\footnotesize $ \State = \left\langle loc \right\rangle$}, where $ loc $ is the location of the vehicle. {\footnotesize $ \Action \in \left\lbrace 0.0, 5.0 \right\rbrace $} is the amount by which vehicle moves relative to its current location. {\footnotesize $ \Transition\left( loc' | loc, a \right) = \delta \left[ loc' + (loc + a) \right] $}, where {\footnotesize $ a \in \Action $}. {\footnotesize $ \Reward\left(\vec{w}, loc, loc'\right) = w_1 \cdot \Reward_{\mathtt{region}} + w_2 \cdot \Reward_{\mathtt{move}} $} where,
@@ -67,7 +67,7 @@ In this domain we address the optimization of a static parameterized vaccination
     }%
 where {\footnotesize $ \beta $} is the infection rate and {\footnotesize $\lambda$} is the spontaneous recovery rate. The reward is specified as {\footnotesize $ \Reward\left(cost_{\mathtt{inf}}, cost_{\mathtt{vaccine}}, s, i, r, \pi(\nu) \right) = (s \cdot (-cost_{\mathtt{vaccine}} \cdot \pi(\nu) + (1 - \pi(\nu)))) - cost_{\mathtt{inf}} \cdot i + r$}. {\footnotesize $ cost_{\mathtt{inf}} $} is the incident cost of infection, akin to a burden of disease, and {\footnotesize $ cost_{\mathtt{vaccine}} $} is the unit cost of vaccination. We assume that the total population is constant and that vaccinated individuals go straight from {\footnotesize $ s $} to {\footnotesize $ r $} without being infected. 
 
-Figure~\ref{fig:sir_vf} shows the optimal value function at {\footnotesize$ \Horizon = 7 $} when {\footnotesize $ s = 1000.0, i = 100.0, r = 0.0, \lambda = 0.25 $}, {\footnotesize $ cost_{\mathtt{vaccine}} = 4.0$} and {\footnotesize $ cost_{\mathtt{inf}} = 10.0 $}. The value function shows that it is not always optimal to vaccinate the entire population. In fact, the non-convex optimization of the value function with respect to the policy parameter {\footnotesize $ \nu $}, shown in Figure~\ref{fig:sir_opt}, reveals that it is optimal to vaccinate the entire population only when the infection rate {\footnotesize $ \beta > 0.25 $}. When  {\footnotesize $ \beta > 0.25 $}, the \textit{basic reproductive ratio} {\footnotesize $ R_0 \,(= \beta/\lambda)$}~\parencite{Heffernan_2005} exceeds 1.0. {\footnotesize $ R_0$} indicates the average number of secondary cases produced by an infected individual in a completely susceptible population and scenarios where {\footnotesize $R_0 > 1.0$} can lead to an epidemic. The non-convex optimization shows that in this scenario it is worth incurring the vaccination cost to mitigate the costs associated with the burden of disease in an epidemic.
+Figure~\ref{fig:sir_vf} shows the optimal value function at {\footnotesize$ \Horizon = 7 $} when {\footnotesize $ s = 1000.0, i = 100.0, r = 0.0, \lambda = 0.25 $}, {\footnotesize $ cost_{\mathtt{vaccine}} = 4.0$} and {\footnotesize $ cost_{\mathtt{inf}} = 10.0 $}. The value function shows that it is not always optimal to vaccinate the entire population. In fact, the non-convex optimization of the value function with respect to the policy parameter {\footnotesize $ \nu $}, shown in Figure~\ref{fig:sir_opt}, reveals that it is optimal to vaccinate the entire population only when the infection rate {\footnotesize $ \beta > 0.25 $}. When  {\footnotesize $ \beta > 0.25 $}, the \textit{basic reproductive ratio} {\footnotesize $ R_0 \,(= \beta/\lambda)$}~\parencite{Heffernan_2005} exceeds 1.0. {\footnotesize $ R_0$} indicates the average number of secondary cases produced by an infected individual in a completely susceptible population and scenarios where {\footnotesize $R_0 > 1.0$} can lead to an epidemic. The non-convex optimization shows that in this scenario it is worth incurring the vaccination cost to mitigate the costs associated with the burden of disease in an epidemic. 
 
 \subsection{Optimal Execution}
 \label{sec:results_oe}
@@ -90,13 +90,13 @@ Figures~\ref{fig:oe_vf} and~\ref{fig:oe_vf_deriv} show the optimal value functio
 
 \begin{figure}[h!]
     \centering
-    \begin{subfigure}[b]{0.23\textwidth}    
-        \includegraphics[width=\linewidth]{images/time_plot_new}
+    \begin{subfigure}[b]{0.5\textwidth}    
+        \includegraphics[scale=0.35]{images/time_plot_new}
  %       \caption{Optimal Value Function for varying {\footnotesize $ \theta $} and {\footnotesize $ inventory $}.}
         \label{fig:time_complexity}        
     \end{subfigure}    
-    \begin{subfigure}[b]{0.23\textwidth}    
-        \includegraphics[width=\linewidth]{images/space_plot_new}
+    \begin{subfigure}[b]{0.5\textwidth}    
+        \includegraphics[scale=0.35]{images/space_plot_new}
 %        \caption{Optimal Value Function for varying {\footnotesize $\nabla \theta $} and {\footnotesize $ inventory $}.}
         \label{fig:space_complexity}        
     \end{subfigure}    
