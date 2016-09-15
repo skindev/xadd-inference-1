@@ -11,7 +11,8 @@ In this section we demonstrate the efficacy of our novel framework by calculatin
             \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/oe_vf_new}\caption{{\footnotesize $V^{\pi^{*}}(\theta, inv; \\\hspace{\textwidth}\qquad p = 55.0, \kappa = 0.165)$}}\label{fig:oe_vf}\end{subfigure}&
             \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=1.0\linewidth]{images/oe_vf_deriv_new}\caption{{\footnotesize $\nabla_{\theta} V^{\pi^{*}} (\theta, inv; \\\hspace{\textwidth}\qquad p = 55.0, \kappa = 0.165)    $}}\label{fig:oe_vf_deriv}\end{subfigure}\\            
         \end{tabular}
-        \caption{Value functions for each domain. ~\ref{fig:navigation_vf} multi-objective navigation. ~\ref{fig:sir_vf} public health policy. ~\ref{fig:oe_vf} and~\ref{fig:oe_vf_deriv} optimal execution.}
+%        \caption{Value functions for each domain. ~\ref{fig:navigation_vf} multi-objective navigation. ~\ref{fig:sir_vf} public health policy. ~\ref{fig:oe_vf} and~\ref{fig:oe_vf_deriv} optimal execution.}
+        \caption{Value functions for each domain.}        
         \label{tab:vf_Results}
     \end{figure*}
 }
@@ -23,7 +24,8 @@ In this section we demonstrate the efficacy of our novel framework by calculatin
             \begin{subfigure}{0.33\textwidth}\centering\includegraphics[width=0.9\linewidth, height=0.55\linewidth]{images/sir_opt_new}\caption{Optimal value of {\footnotesize $ \nu $} for {\footnotesize $ \beta \in \left[ 0.0, 1.0 \right] $}}\label{fig:sir_opt}\end{subfigure}&
             \begin{subfigure}{0.33\textwidth}\centering\includegraphics[width=0.9\linewidth, height=0.55\linewidth]{images/oe_opt_new}\caption{Optimal value of {\footnotesize $ \theta $} for {\footnotesize $ \mathrm{inventory} \in \left(0.0, 1000.0 \right) $}}\label{fig:oe_opt}\end{subfigure}\\
         \end{tabular}
-        \caption{Nonlinear optimization for each domain. ~\ref{fig:navigation_opt} multi-objective navigation. ~\ref{fig:sir_opt} public health policy. ~\ref{fig:oe_opt} optimal execution. }
+%        \caption{Nonlinear optimization for each domain. ~\ref{fig:navigation_opt} multi-objective navigation. ~\ref{fig:sir_opt} public health policy. ~\ref{fig:oe_opt} optimal execution. }
+        \caption{Nonlinear optimization for each domain.}        
         \label{tab:opt_results}
     \end{figure*}
 }
@@ -37,12 +39,12 @@ In this domain we consider an autonomous vehicle moving in one dimension towards
     \belowdisplayskip=0pt
     \renewcommand{\arraystretch}{1.5}
     \begin{tabular}{ll}    
-        $ \Reward_{\mathtt{region}}(loc') = $ &  $ $ \\
+        $ \Reward_{\mathtt{region}}(loc') = $ &  $  \Reward_{\mathtt{move}}(loc, loc') = - (loc' - loc)$ \\
         \qquad $ \begin{cases}
         (loc' \geq 10.0 ) : & loc' \\
         \text{otherwise} : & 0.0 \\
         \end{cases} $ & $ $\\
-        $ \Reward_{\mathtt{move}}(loc, loc') = - (loc' - loc)$ & $ $ \\                        
+%        $ \Reward_{\mathtt{move}}(loc, loc') = - (loc' - loc)$ & $ $ \\                        
     \end{tabular}
 } 
 
@@ -75,8 +77,8 @@ In this domain we examine the sensitivity of an optimal portfolio transaction mo
     \belowdisplayskip=0pt
     \renewcommand{\arraystretch}{1.5}
     \begin{tabular}{ll}
-        $\Transition\left( p' | p, inv, \pi\left( \theta \right) \right) = $ & $\delta \left[ p' - (p - \kappa \cdot (inv \cdot \pi\left( \theta \right)) + \epsilon) \right] $ \\
-        $\Transition\left( inv' | p, inv, \pi\left( \theta \right) \right) = $ & $\delta \left[ inv' - (inv - inv \cdot \pi\left( \theta \right)) \right] $ \\
+        $\Transition\left( p' | p, inv, \pi\left( \theta \right) \right) =$ & $ \delta \left[ p' - (p - \kappa \cdot (inv \cdot \pi\left( \theta \right)) + \epsilon) \right] $ \\
+        $\Transition\left( inv' | p, inv, \pi\left( \theta \right) \right) =$ & $\delta \left[ inv' - (inv - inv \cdot \pi\left( \theta \right)) \right] $ \\
     \end{tabular}
 }%
 where {\footnotesize $ \kappa > 0$} is a market-impact parameter and {\footnotesize $ \epsilon $} is a discrete noise parameter. The reward is specified by {\footnotesize $ \Reward\left(p', inv, \pi\left( \theta \right) \right) = p' \cdot inv \cdot \pi\left( \theta \right)$ }. 

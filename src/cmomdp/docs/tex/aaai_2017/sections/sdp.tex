@@ -118,13 +118,15 @@ A case statement can be maximized with respect to a continuous parameter {\footn
 In principle, case statements can be used to represent all PHMDP components. In practice, case statements are implemented using a more compact representation known as Extended Algebraic Decision Diagrams (XADDs)~\parencite{Sanner_UAI_2011}, which also support efficient versions of all of the aforementioned operations. Figure~\ref{fig:xadd} shows how an XADD is used to represent a function {\footnotesize $f$} that is piecewise continuous, nonlinear and multimodal.
 
 \begin{figure}[!htb]
-    \centering
-    \begin{subfigure}[b]{0.23\textwidth}
+%    \centering
+    \begin{subfigure}[b]{0.20\textwidth}
         \includegraphics[width=1.0\linewidth]{images/quad2.pdf}
 %        \caption{$f(x, y, a=\mathit{true})$}
     \end{subfigure}
-    \begin{subfigure}[b]{0.23\textwidth}
-        \includegraphics[width=0.88\linewidth, height=1.1\linewidth]{images/quad2_xadd5.pdf}
+            \hspace{-3mm}
+    \begin{subfigure}[b]{0.24\textwidth}
+
+        \includegraphics[width=1.3\linewidth, height=1.0\linewidth]{images/quad2_xadd5.pdf}
 %        \caption{XADD representation}        
     \end{subfigure}    
     \caption{(left) A plot of a function $f(x, y, a=\mathit{true})$ for continuous variables $x$ and $y$ and boolean variable $a$; and (right) an XADD representing $f(x,y,a)$.}
