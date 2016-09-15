@@ -18,18 +18,21 @@ $\vec{x}$}. Hence, the joint transition model can be written as:
     & \prod_{i=1}^{m} \ProbArg{ \left. d_i' \middle| \vec{d}, \vec{x}, a, \vec{\theta} \right. } \prod_{j=1}^{n} \ProbArg{ \left. x_j' \middle| \vec{d}, \vec{d}', \vec{x}, a, \vec{\theta} \right. },
 \end{align}   
 }
-where {\footnotesize $ a \in \Action^{h}_{s} $} and {\footnotesize \RewardFunc} is the reward function which encodes the preferences of the agent. {\footnotesize \Horizon} represents the number of decision steps until termination and the discount factor {\footnotesize $\gamma \in [0, 1)$} is used to geometrically discount future rewards.
+where {\footnotesize $ a \in \Action^{h}_{s} $}. It is clear that while the transition model does not permit general stochastic transition noise, they do permit discrete noise in the sense that {\footnotesize $ \ProbArg{ x_j' | \vec{d}, \vec{d}', \vec{x}, a, \vec{\theta} } $} may condition on $ \vec{d}' $, which are stochastically sampled according to their conditional probability functions. We refer the reader to~\parencite{Zamani_AAAI_2012,Sanner_UAI_2011} for further details.
+
+{\footnotesize \RewardFunc} is the reward function which encodes the preferences of the agent. {\footnotesize \Horizon} represents the number of decision steps until termination and the discount factor {\footnotesize $\gamma \in [0, 1)$} is used to geometrically discount future rewards.
 
 A policy {\footnotesize $\pi : \State \times \Horizon \rightarrow \Action$}, specifies the action to take in every state and horizon. The state-value function {\footnotesize $ V^{\pi}(\vec{d}, \vec{x}; \vec{\theta}) $} is the expected return starting from state {\footnotesize $(\vec{d}, \vec{x}) \in \State$}, and then following policy $ \pi $:
 {\footnotesize
     \abovedisplayskip=0pt
     \belowdisplayskip=0pt
 \begin{align*}
-    V^{\pi}\left( \vec{d}, \vec{x}; \vec{\theta} \right) &= \Exp{ \left. \sum\limits_{h = 0}^{\Horizon} \gamma^h \cdot \Reward^h \middle| \vec{d}, \vec{x}, \vec{\theta}, \pi \right.} \nonumber  
+    V^{\pi}\left( \vec{d}, \vec{x}; \vec{\theta} \right) &= \Exp{ \left. \sum\limits_{h = 0}^{\Horizon} \gamma^h \cdot r^h \middle| \vec{d}, \vec{x}, \vec{\theta}, \pi \right.} \nonumber  
 %    &= \sum\limits_{s' \in \State}  \Transition\left(s, \pi\left(s\right), s' \right) \left[ \Reward\left(s, \pi(s), s'\right) + \gamma \cdot V^{\pi}(s')\right]. \label{eq:mdp_bellman_eq}
 \end{align*}
 }
 %Equation~\eqref{eq:mdp_bellman_eq} is known as the Bellman equation for $V^{\pi}$.
+Here, {\footnotesize $r^h$} is the reward obtained at horizon $ h $ following the policy $ \pi $ where we assume a starting state of {\footnotesize $ (\vec{d}, \vec{x}) $} at {\footnotesize $ h = 0 $}.
 
 The state-action value function {\footnotesize $Q : \State \times \Action \rightarrow \mathbb{R}$} is the expected return starting from state {\footnotesize $(\vec{d}, \vec{x}) \in \State$}, taking action {\footnotesize $ a \in \Action^{h}_{s} $}, and then following policy $ \pi $:
 {\footnotesize 
@@ -37,7 +40,7 @@ The state-action value function {\footnotesize $Q : \State \times \Action \right
     \belowdisplayskip=0pt
 \begin{align}
     \label{eq:mdp_qfunc}
-    Q^{\pi}\left(\vec{d}, \vec{x}, a; \vec{\theta}\right) = \Exp{ \left. \sum\limits_{h = 0}^{\Horizon} \gamma^h \cdot \Reward^h \middle| \vec{d}, \vec{x}, a, \vec{\theta}, \pi \right.}. 
+    Q^{\pi}\left(\vec{d}, \vec{x}, a; \vec{\theta}\right) = \Exp{ \left. \sum\limits_{h = 0}^{\Horizon} \gamma^h \cdot r^h \middle| \vec{d}, \vec{x}, a, \vec{\theta}, \pi \right.}. 
 \end{align}
 }
 
@@ -52,8 +55,7 @@ The value function of the optimal policy {\footnotesize$ \pi^{*} $} satisfies:
 }%
 
 We again remark that in our formulation of PHMDPs the parameters {\footnotesize $ \vec{\theta} $} are free parameters and not
-learned from reward and transition samples as discussed in section~\ref{sec:background}. We also remark that we are not assuming a (Bayesian) reinforcement learning setting, but rather a setting of strict uncertainty over {\footnotesize $ \vec{\theta} $}.
-% and a parameterized symbolic value iteration solution to solve it.
+learned from reward and transition samples, as for example in Bayesian reinforcement learning, as discussed in section~\ref{sec:background}. 
 
 In subsequent sections we demonstrate how the PHMDP framework can be specialized into models capable of: (i) investigating multi-objective reward criteria; (ii) exact parameter sensitivity analysis; and (iii) optimization of continuous non-convex policy parameters.
 
