@@ -20,8 +20,7 @@ $\vec{x}$}. Hence, the joint transition model can be written as:
 }
 where {\footnotesize $ a \in \Action^{h}_{s} $} and {\footnotesize \RewardFunc} is the reward function which encodes the preferences of the agent. {\footnotesize \Horizon} represents the number of decision steps until termination and the discount factor {\footnotesize $\gamma \in [0, 1)$} is used to geometrically discount future rewards.
 
-A policy {\footnotesize $\pi : \State \times \Horizon \rightarrow \Action$}, specifies the action to take in every state and horizon. 
-The state-value function {\footnotesize $ V^{\pi}\left( \vec{d}, \vec{x}; \vec{\theta} \right) $} is the expected return starting from state {\footnotesize $(\vec{d}, \vec{x}) \in \State$}, and then following policy $ \pi $:
+A policy {\footnotesize $\pi : \State \times \Horizon \rightarrow \Action$}, specifies the action to take in every state and horizon. The state-value function {\footnotesize $ V^{\pi}(\vec{d}, \vec{x}; \vec{\theta}) $} is the expected return starting from state {\footnotesize $(\vec{d}, \vec{x}) \in \State$}, and then following policy $ \pi $:
 {\footnotesize
     \abovedisplayskip=0pt
     \belowdisplayskip=0pt
@@ -69,7 +68,6 @@ To conduct a sensitivity analysis, we assume that {\footnotesize $\vec{\theta}^{
 \subsubsection{Nonlinear Parameterized Policy Optimization Methods for PHMDPs}
 
 PHMDP policy parameters can be analyzed and optimized by parameterizing a policy {\footnotesize $\pi$} by action parameters {\footnotesize $\vec{\theta}^{d}$}, and evaluating the value function with respect to the parameterized policy. The resulting non-convex policy value, as a function of {\footnotesize $\vec{\theta}^{d}$}, can be analyzed and optimized using the parametric form of {\footnotesize $V^{\pi}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} and all symbolic derivatives, up to any order, of this value function. An example of nonlinear parameterized policy optimization is shown in section~\ref{sec:results_influenza}. 
-
 
 \subsection{Solution Methods}
 
