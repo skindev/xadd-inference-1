@@ -34,17 +34,18 @@ In this section we demonstrate the efficacy of our novel framework by calculatin
 \label{sec:results_navigation}
 
 In this domain we consider an autonomous vehicle moving in one dimension towards a goal region. At each stage the vehicle faces a trade-off between reaching the goal region and incurring a movement cost. The domain is specified as follows: {\footnotesize $ \State = \left\langle loc \right\rangle$}, where $ loc $ is the location of the vehicle. {\footnotesize $ \Action \in \left\lbrace 0.0, 5.0 \right\rbrace $} is the amount by which vehicle moves relative to its current location. {\footnotesize $ \Transition\left( loc' | loc, a \right) = \delta \left[ loc' + (loc + a) \right] $}, where {\footnotesize $ a \in \Action $}. {\footnotesize $ \Reward\left(\vec{w}, loc, loc'\right) = w_1 \cdot \Reward_{\mathtt{region}} + w_2 \cdot \Reward_{\mathtt{move}} $} where,
+
 {\footnotesize 
     \abovedisplayskip=10pt
     \belowdisplayskip=0pt
     \renewcommand{\arraystretch}{1.5}
     \begin{tabular}{ll}    
-        $ \Reward_{\mathtt{region}}(loc') = $ &  $  \Reward_{\mathtt{move}}(loc, loc') = - (loc' - loc)$ \\
+        $ \Reward_{\mathtt{region}}(loc') = $ &  $  $ \\
         \qquad $ \begin{cases}
         (loc' \geq 10.0 ) : & loc' \\
         \text{otherwise} : & 0.0 \\
         \end{cases} $ & $ $\\
-%        $ \Reward_{\mathtt{move}}(loc, loc') = - (loc' - loc)$ & $ $ \\                        
+        $ \Reward_{\mathtt{move}}(loc, loc') = - (loc' - loc)$ & $ $ \\                        
     \end{tabular}
 } 
 
