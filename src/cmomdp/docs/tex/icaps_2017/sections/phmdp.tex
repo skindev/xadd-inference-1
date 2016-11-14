@@ -71,13 +71,15 @@ The PHMDP framework can be specialized into a multi-objective setting by specify
 
 \subsubsection{Sensitivity Analysis for PHMDPs}
 
-To conduct a sensitivity analysis, we assume that {\footnotesize $\vec{\theta}^{d}$} are unknown parameters and we solve the value function in Equation~\eqref{eq:opt_vfunc} as a parametric function, {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta}^{d})$}, of these parameters. The parametric value function can then be analyzed under the optimal policy {\footnotesize $ \pi^{*} $} as a function of other state variables {\footnotesize $(\vec{d}, \vec{x})$}.
+To conduct a sensitivity analysis, we assume that {\footnotesize $\vec{\theta}^{d}$} are unknown parameters and we solve {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} in Equation~\eqref{eq:opt_vfunc} as a parametric function. The parametric value function can then be analyzed under the optimal policy {\footnotesize $ \pi^{*} $} as a function of other state variables {\footnotesize $(\vec{d}, \vec{x})$}.
 %The parametric value function can then be displayed or analyzed to allow a user to explore trade-offs between parameters {\footnotesize $\vec{\theta}^{d}$} or the optimal policy {\footnotesize $ \pi^{*} $} as a function of other state variables {\footnotesize $(\vec{d}, \vec{x})$}. 
 %An example of sensitivity analysis is shown in section~\ref{sec:results_oe}.
 
 \subsubsection{Nonlinear Parameterized Policy Optimization Methods for PHMDPs}
 
-PHMDP policy parameters can be analyzed and optimized by parameterizing a policy {\footnotesize $\pi$} by action parameters {\footnotesize $\vec{\theta}^{d}$}, and evaluating the value function with respect to the parameterized policy. The resulting non-convex policy value, as a function of {\footnotesize $\vec{\theta}^{d}$}, can be analyzed and optimized using the parametric form of {\footnotesize $V^{\pi}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} and all symbolic derivatives, up to any order, of this value function. Symbolic derivatives avoid the stochasticity issues associated with traditional policy gradient methods.
+PHMDP policy parameters can be analyzed and optimized by parameterizing a policy {\footnotesize $\pi$} by action parameters {\footnotesize $\vec{\theta}^{d}$}, and evaluating the value function with respect to the parameterized policy. The resulting non-convex policy value, as a function of {\footnotesize $\vec{\theta}^{d}$}, can be analyzed and optimized using the parametric form of {\footnotesize $V^{\pi}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} and its symbolic derivatives, up to any order.
+%all symbolic derivatives, up to any order, of this value function. 
+Symbolic derivatives avoid the stochasticity issues associated with traditional policy gradient methods.
 %An example of nonlinear parameterized policy optimization is shown in section~\ref{sec:results_influenza}. 
 
 %\subsection{Solution Methods}

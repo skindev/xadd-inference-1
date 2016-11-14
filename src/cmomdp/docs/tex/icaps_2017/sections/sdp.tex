@@ -138,7 +138,7 @@ In principle, case statements can be used to represent all PHMDP components. In 
 
 \subsection{SDP for Parameterized Hybrid MDPs}
 
-Value iteration (VI)~\parencite{Bellman_PU_1957} can be modified to solve continuous state and parameter PHMDPs in terms of the following case operations:
+Value iteration (VI)~\parencite{Bellman_PU_1957} can be modified to solve Parameterized Hybrid MDPs in terms of the following case operations:
 %To calculate the exact solution to PHMDPs we begin by replacing all functions and operations in Equations~\eqref{eq:vi_qfunc} and~\eqref{eq:vi_vfunc} by their case statement equivalents: 
 %That is, we exchange operations such as {\footnotesize$+$}, {\footnotesize$\times$} and {\footnotesize$\max$}, by their symbolic equivalents, {\footnotesize$\oplus$}, {\footnotesize$\otimes$} and $\casemax$, respectively, and express {\footnotesize $\Reward(\vec{d}, \vec{x}, a; \vec{\theta})$},  {\footnotesize $\ProbArg{\vec{d}', \vec{x}' | \vec{d}, \vec{x}, a, \vec{\theta}}$}, {\footnotesize $V^0(\vec{d}, \vec{x}; \vec{\theta})$} as case statements. 
 %The optimal solution to PHMDPs can now be described by the following recursive SDP equations:
@@ -163,13 +163,13 @@ In the case of discrete {\footnotesize \Action} it can be proved that all of the
 
 A possible formulation for the inverse learning problem for multi-objective MDPs is to 
 %The inverse learning problem for multi-objective MDPs, whereby observed behavior is used to infer multi-objective weights that explain the observed behavior, has many possible formulations. One possible formulation is to 
-constrain the Q-values corresponding to the observed behavior and maximize the weight {\footnotesize $ w $} that most explains the observed behavior: 
+constrain the Q-values corresponding to the observed behavior and maximize the weight {\footnotesize $ w $} that best explains the observed behavior: 
 \begin{align}
-    \max_w Q^{h} \left(w, \vec{d}, x, a_1; \vec{\theta}^d \right) \ominus Q^{h} \left(w, \vec{d}, x, a_2; \vec{\theta}^d \right)
+    \max_w Q^{h} \left(w, \vec{d}, x, a_1; \vec{\theta}^d \right) \ominus Q^{h} \left(w, \vec{d}, x, a_2; \vec{\theta}^d \right),
 \end{align}
 where {\footnotesize $ x $} can either be fixed or a region specified in the constraints. The PHMDP framework permits any variant of the inverse learning problem for multi-objective MDPs.
 
-PHMDPs with multi-objective {\footnotesize $\Reward$} and linear scalarization functions can be solved exactly and in closed-form by restricting the {\footnotesize $\Reward$} to LPWC functions and {\footnotesize $\Transition$} to LPWL functions. 
+PHMDPs with multi-objective {\footnotesize $\Reward$} and linear scalarization functions can be solved exactly and in closed-form by restricting {\footnotesize $\Reward$} to LPWC functions and {\footnotesize $\Transition$} to LPWL functions. 
 %Given a LPWL {\footnotesize $V^{0}(\vec{d}, \vec{x}; \vec{\theta})$} and SDP operations that are closed form, the resulting {\footnotesize $V^{1}(\vec{d}, \vec{x}; \vec{\theta})$} is also LPWL. Therefore, by induction {\footnotesize $V^{h+1}(\vec{d}, \vec{x}; \vec{\theta})$} is LPWL for all horizons {\footnotesize $ h \in \Horizon $}. 
 Multi-objective PHMDPs with a nonlinear scalarization function and NPWN {\footnotesize $\Reward$} and {\footnotesize $\Transition$} functions lead to NPWN solutions, which are exact and closed-form~\parencite{Sanner_UAI_2011}.
 
