@@ -1,14 +1,28 @@
-\documentclass{article}
-
+\documentclass[letterpaper]{article}
 \usepackage{aaai17}
-\usepackage{times} 
+\usepackage{times}
 \usepackage{helvet}
-\usepackage{courier} 
-\setlength{\pdfpagewidth}{8.5in} 
-\setlength{\pdfpageheight}{11in}
+\usepackage{courier}
+%\setlength{\pdfpagewidth}{8.5in} 
+%\setlength{\pdfpageheight}{11in}
 
 % Packages
-\usepackage{./std_package_reqs}
+% MATHEMATICS
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[algoruled, titlenumbered, vlined]{algorithm2e}
+
+% CITATIONS
+\usepackage{hyperref}
+
+% SPACING
+\usepackage{xspace}
+\usepackage{enumitem}
+\setlist{nolistsep}
+
+% COMMENTS
+\usepackage{verbatim}
 
 % Definitions
 \usepackage{./definitions}
@@ -28,14 +42,6 @@
 
 % Graphics Path
 \graphicspath{{./images/}}
-
-\renewcommand*{\mkbibparens}[1]{{\ifcitation{\bibleftbracket#1\bibrightbracket}%
-        {\bibleftparen#1\bibrightparen}}}
-\renewcommand*{\bibopenparen}[1]{{\ifcitation{\bibleftbracket#1}{\bibleftparen#1}}}
-\renewcommand*{\bibcloseparen}{{\ifcitation{\bibrightbracket}{\bibrightparen}}}
-
-% Bibliography
-\addbibresource{references.bib}
 
 \begin{document}
     
@@ -60,8 +66,9 @@
 %--------------------------------------------------------------------------------------------------
 % Bibliography
 %--------------------------------------------------------------------------------------------------
-\newpage
-{\small
-\printbibliography
-}
+
+% Bibliography
+\bibliographystyle{alpha}
+\bibliography{references}
+
 \end{document}
