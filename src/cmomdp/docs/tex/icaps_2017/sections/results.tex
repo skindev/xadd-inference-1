@@ -4,7 +4,7 @@
 In this section we demonstrate the efficacy and tractability of our novel framework by calculating the first known optimal solutions to three difficult nonlinear sequential decision problems.
 %the following difficult nonlinear sequential decision problems: (i) inverse learning of parameters in a multi-objective navigation domain; (ii) non-convex optimization of vaccination policy parameters in a public health setting; and (iii) exact sensitivity analysis of portfolio transaction models over the full range of model parameters. 
 %Furthermore, we show that our framework is scalable in both time and space. 
-We note that while dOp~\cite{Gao2013} offers strong {\footnotesize $ \delta $}-optimality guarantees, we found in practice that nonlinear solvers such as $ \mathtt{fmincon} $~\cite{MATLAB_2010} perform comparably well at optimization and are much more efficient, hence we use $ \mathtt{fmincon} $ in the experiments.
+We note that while dOp~\cite{Gao2013} offers strong {\footnotesize $ \delta $}-optimality guarantees, we found that nonlinear solvers such as $ \mathtt{fmincon} $~\cite{MATLAB_2010} perform comparably well at optimization and are much more efficient, hence we use $ \mathtt{fmincon} $.
 
 {\centering
     \begin{figure}[ht]
@@ -17,20 +17,22 @@ We note that while dOp~\cite{Gao2013} offers strong {\footnotesize $ \delta $}-o
         \end{tabular}
         \caption{Optimal Value functions for each domain.}        
         \label{tab:vf_Results}
+        \vspace{-3mm}
     \end{figure}
 }
 
 {\centering
     \begin{figure}[ht]
         \begin{tabular}{cc}
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=\textwidth]{images/robot_opt_new}\caption{Max {\footnotesize $w_2 \in \left[0.0, 50.0 \right]$} for $ \tilde{\pi} $}\label{fig:navigation_opt}\end{subfigure}&            
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=\textwidth]{images/sir_opt_new}\caption{Optimal {\footnotesize $ \nu $} for {\footnotesize $ \beta \in \left[ 0.0, 1.0 \right] $}}\label{fig:sir_opt}\end{subfigure}
+            \begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/robot_opt_new}\caption{Max {\footnotesize $w_2 \in \left[0.0, 50.0 \right]$} for $ \tilde{\pi} $}\label{fig:navigation_opt}\end{subfigure}&            
+            \begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/sir_opt_new}\caption{Optimal {\footnotesize $ \nu $} for {\footnotesize $ \beta \in \left[ 0.0, 1.0 \right] $}}\label{fig:sir_opt}\end{subfigure}
             \\
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=\textwidth]{images/oe_opt_new}\caption{Optimal {\footnotesize $ \theta $} for {\footnotesize $ inv \in \left(0.0, 1000.0 \right) $}}\label{fig:oe_opt}\end{subfigure}&
+            \begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/oe_opt_new}\caption{Optimal {\footnotesize $ \theta $} for {\footnotesize $ inv \in \left(0.0, 1000.0 \right) $}}\label{fig:oe_opt}\end{subfigure}&
             \\
         \end{tabular}
         \caption{Nonlinear optimization for each domain.}        
         \label{tab:opt_results}
+        \vspace{-3mm}
     \end{figure}
 }
 
@@ -124,9 +126,10 @@ This insight is confirmed in Figure~\ref{fig:oe_vf_deriv} which shows that the v
 %        \vspace{-1em}
         \caption{Computational time and space versus {\footnotesize $ \Horizon $} for the multi-objective navigation domain.}
         \label{fig:time_space_complexity}    
+        \vspace{-3mm}
     \end{figure}
 %}
 
 Figure~\ref{fig:time_space_complexity} shows the relationship between the horizon {\footnotesize $ \Horizon $} and the computational time and space for the largest domain investigated in this section. 
 %It is clear that the space and time requirements remain tractable. 
-The computation time required to run SDP operations increases at a rate that is proportional to the number of XADD nodes used to represent each case statement.
+The computation time and space required to run SDP on PHMDPs increases linearly with the horizon indicating tractability of the overall framework.
