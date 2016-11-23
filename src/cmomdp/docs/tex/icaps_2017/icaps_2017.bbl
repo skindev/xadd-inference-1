@@ -1,0 +1,137 @@
+\begin{thebibliography}{SDNdB11}
+
+\bibitem[BB00]{Baxter_ISCAS_2000}
+Jonathan Baxter and Peter~L Bartlett.
+\newblock Direct gradient-based reinforcement learning.
+\newblock In {\em Circuits and Systems.}, volume~3, pages 271--274. IEEE, 2000.
+
+\bibitem[BDH99]{Boutilier_JAIR_1999}
+Craig Boutilier, Thomas Dean, and Steve Hanks.
+\newblock Decision-{Theoretic} {Planning}: {Structural} {Assumptions} and
+  {Computational} {Leverage}.
+\newblock {\em JAIR}, 11:1--94, 1999.
+
+\bibitem[Bel57]{Bellman_PU_1957}
+Richard~E. Bellman.
+\newblock {\em Dynamic {Programming}}.
+\newblock Princeton University Press, Princeton, NJ, 1957.
+
+\bibitem[BN08]{Barrett_ICML_2008}
+Leon Barrett and Srini Narayanan.
+\newblock Learning all optimal policies with multiple criteria.
+\newblock In {\em ICML}, ICML '08, pages 41--47, New York, NY, USA, 2008. ACM.
+
+\bibitem[BRP01]{Boutilier_IJCAI_2001}
+Craig Boutilier, Ray Reiter, and Bob Price.
+\newblock {Symbolic Dynamic Programming for First-order MDPs}.
+\newblock In {\em IJCAI}, pages 690--697, 2001.
+
+\bibitem[CMH06]{Chatterjee_STACS_2006}
+Krishnendu Chatterjee, Rupak Majumdar, and Thomas~A Henzinger.
+\newblock Markov decision processes with multiple objectives.
+\newblock In {\em STACS 2006}, pages 325--336. Springer, 2006.
+
+\bibitem[DFA99]{Dearden_UAI_1999}
+Richard Dearden, Nir Friedman, and David Andre.
+\newblock Model based bayesian exploration.
+\newblock In {\em UAI}, UAI'99, pages 150--159, 1999.
+
+\bibitem[DK16]{Doshi-VelezK16}
+Finale Doshi{-}Velez and George Konidaris.
+\newblock Hidden parameter markov decision processes: {A} semiparametric
+  regression approach for discovering latent task parametrizations.
+\newblock In {\em IJCAI}, pages 1432--1440, 2016.
+
+\bibitem[Duf02]{Duff_UMA_2002}
+Michael~O'Gordon Duff.
+\newblock {\em Optimal Learning: Computational procedures for Bayes-adaptive
+  Markov decision processes}.
+\newblock PhD thesis, University of Massachusetts Amherst, 2002.
+
+\bibitem[GKC13]{Gao2013}
+Sicun Gao, Soonho Kong, and Edmund~M. Clarke.
+\newblock {\em dReal: An SMT Solver for Nonlinear Theories over the Reals},
+  pages 208--214.
+\newblock 2013.
+
+\bibitem[GLD00]{Givan_AI_2000}
+Robert Givan, Sonia Leach, and Thomas Dean.
+\newblock Bounded-parameter markov decision processes.
+\newblock {\em Artificial Intelligence}, 122(1–2):71--109, 2000.
+
+\bibitem[GM15]{Gopalan_COLT_2015}
+Aditya Gopalan and Shie Mannor.
+\newblock Thompson sampling for learning parameterized markov decision
+  processes.
+\newblock In {\em COLT}, pages 861--898, 2015.
+
+\bibitem[HSW05]{Heffernan_2005}
+J.M Heffernan, R.J Smith, and L.M Wahl.
+\newblock {Perspectives on the basic reproductive ratio}.
+\newblock {\em Journal of The Royal Society Interface}, 2(4):281--293, 2005.
+
+\bibitem[KCS04]{Kalyanasundaram_AJC_2004}
+Suresh Kalyanasundaram, Edwin K.~P. Chong, and Ness~B. Shroff.
+\newblock Markov decision processes with uncertain transition rates:
+  sensitivity and max hyphen min control.
+\newblock {\em Asian Journal of Control}, 6(2):253--269, 2004.
+
+\bibitem[NJ00]{Ng_UAI_2000}
+A.~Y. Ng and M.~Jordan.
+\newblock Pegasus: A policy search method for large mpds and pomdps.
+\newblock In {\em UAI}, UAI '00, 2000.
+
+\bibitem[NR00]{Ng_ICML_2000}
+Andrew~Y. Ng and Stuart~J. Russell.
+\newblock Algorithms for inverse reinforcement learning.
+\newblock In {\em ICML}, ICML '00, pages 663--670, 2000.
+
+\bibitem[PPR15]{Pirotta_AAAI_2015}
+Matteo Pirotta, Simone Parisi, and Marcello Restelli.
+\newblock Multi-objective reinforcement learning with continuous pareto
+  frontier approximation.
+\newblock In {\em AAAI}, pages 2928--2934, 2015.
+
+\bibitem[PWGH13]{Perny_AAAI_2013}
+Patrice Perny, Paul Weng, Judy Goldsmith, and Josiah~P Hanna.
+\newblock Approximation of lorenz-optimal solutions in multiobjective markov
+  decision processes.
+\newblock In {\em Workshops at the Twenty Seventh AAAI Conference on Artificial
+  Intelligence}, 2013.
+
+\bibitem[RVWR13]{Roijers_JAIR_2013}
+Diederik~M. Roijers, Peter Vamplew, Shimon Whiteson, and {Richard Dazeley}.
+\newblock A {Survey} of {Multi}-{Objective} {Sequential} {Decision}-{Making}.
+\newblock {\em JAIR}, 48:67--113, 2013.
+
+\bibitem[SDNdB11]{Sanner_UAI_2011}
+Scott Sanner, Karina Delgado, and Leliane Nunes~de Barros.
+\newblock {Symbolic Dynamic Programming for Discrete and Continuous State
+  MDPs}.
+\newblock In {\em UAI}, pages 1--10, 2011.
+
+\bibitem[SMSM00]{Sutton_NIPS_1999}
+Richard~S Sutton, David~A. McAllester, Satinder~P. Singh, and Yishay Mansour.
+\newblock Policy gradient methods for reinforcement learning with function
+  approximation.
+\newblock In S.A. Solla, T.K. Leen, and K.~M\"{u}ller, editors, {\em NIPS 12},
+  pages 1057--1063. MIT Press, 2000.
+
+\bibitem[TH11]{Tan_JAP_2011}
+Chin~Hon Tan and Joseph~C. Hartman.
+\newblock Sensitivity analysis in markov decision processes with uncertain
+  reward parameters.
+\newblock {\em Journal of Applied Probability}, 48(4):954--967, 12 2011.
+
+\bibitem[{The}15]{MATLAB_2010}
+{The MathWorks Inc.}
+\newblock {\em MATLAB version 8.5.197613 (R2015a) and Optimization Toolbox
+  7.2}.
+\newblock The MathWorks Inc., Natick, Massachusetts, United States, 2015.
+
+\bibitem[ZS12]{Zamani_AAAI_2012}
+Zahra Zamani and Scott Sanner.
+\newblock Symbolic dynamic programming for continuous state and action mdps.
+\newblock In {\em AAAI}, pages 1--7, 2012.
+
+\end{thebibliography}
