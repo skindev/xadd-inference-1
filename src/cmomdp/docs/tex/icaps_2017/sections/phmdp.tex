@@ -60,27 +60,27 @@ where {\footnotesize $ a \in \Action^{h}_{s} $}. The transition model permits di
 We again remark that in our formulation of PHMDPs the parameters {\footnotesize $ \vec{\theta} $} are free parameters and not learned from reward and transition samples.
 %, as for example in Bayesian reinforcement learning, as discussed in section~\ref{sec:background}. 
 
-%In subsequent sections we demonstrate how the PHMDP framework can be specialized into models capable of: (i) investigating multi-objective reward criteria; (ii) exact parameter sensitivity analysis; and (iii) optimization of continuous non-convex policy parameters.
+In subsequent sections we demonstrate how the PHMDP framework can be specialized into models capable of: (i) investigating multi-objective reward criteria; (ii) exact parameter sensitivity analysis; and (iii) optimization of continuous non-convex policy parameters.
 
-\subsubsection{Inverse Learning for Multi-objective PHMDPs}
-
-The PHMDP framework can be specialized into a multi-objective setting by specifying the reward as {\footnotesize \MORewardFunc}, where {\footnotesize $ d $} is the dimension of the reward vector. In this formulation the parameter {\footnotesize $ \vec{\theta}^{d} $} specifies the linear scalarization over the reward components (i.e, {\footnotesize $\langle \Reward, \vec{\theta}^{d} \rangle$}).
-% and the value function can be expressed as a function of all possible scalarizations. 
-%Multi-objective PHMDPs can also be used for the inverse learning of the parameters of the multi-objective reward that explains observed behavior. A more formal definition is provide in section~\ref{sec:sdp}. 
-%An example of this inverse reinforcement learning inspired analysis is shown in section~\ref{sec:results_navigation}.
-
-\subsubsection{Sensitivity Analysis for PHMDPs}
-
-To conduct a sensitivity analysis, we assume that {\footnotesize $\vec{\theta}^{d}$} are unknown parameters and we solve {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} in Equation~\eqref{eq:opt_vfunc} as a parametric function. The parametric value function can then be analyzed under the optimal policy {\footnotesize $ \pi^{*} $} as a function of other state variables {\footnotesize $(\vec{d}, \vec{x})$}.
-%The parametric value function can then be displayed or analyzed to allow a user to explore trade-offs between parameters {\footnotesize $\vec{\theta}^{d}$} or the optimal policy {\footnotesize $ \pi^{*} $} as a function of other state variables {\footnotesize $(\vec{d}, \vec{x})$}. 
-%An example of sensitivity analysis is shown in section~\ref{sec:results_oe}.
-
-\subsubsection{Nonlinear Parameterized Policy Optimization Methods for PHMDPs}
-
-PHMDP policy parameters can be analyzed and optimized by parameterizing a policy {\footnotesize $\pi$} by action parameters {\footnotesize $\vec{\theta}^{d}$}, and evaluating the value function with respect to the parameterized policy. The resulting non-convex policy value, as a function of {\footnotesize $\vec{\theta}^{d}$}, can be analyzed and optimized using the parametric form of {\footnotesize $V^{\pi}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} and its symbolic derivatives, up to any order.
-%all symbolic derivatives, up to any order, of this value function. 
-Symbolic derivatives avoid the stochasticity issues associated with traditional policy gradient methods.
-%An example of nonlinear parameterized policy optimization is shown in section~\ref{sec:results_influenza}. 
+%\subsubsection{Inverse Learning for Multi-objective PHMDPs}
+%
+%The PHMDP framework can be specialized into a multi-objective setting by specifying the reward as {\footnotesize \MORewardFunc}, where {\footnotesize $ d $} is the dimension of the reward vector. In this formulation the parameter {\footnotesize $ \vec{\theta}^{d} $} specifies the linear scalarization over the reward components (i.e, {\footnotesize $\langle \Reward, \vec{\theta}^{d} \rangle$}).
+%% and the value function can be expressed as a function of all possible scalarizations. 
+%%Multi-objective PHMDPs can also be used for the inverse learning of the parameters of the multi-objective reward that explains observed behavior. A more formal definition is provide in section~\ref{sec:sdp}. 
+%%An example of this inverse reinforcement learning inspired analysis is shown in section~\ref{sec:results_navigation}.
+%
+%\subsubsection{Sensitivity Analysis for PHMDPs}
+%
+%To conduct a sensitivity analysis, we assume that {\footnotesize $\vec{\theta}^{d}$} are unknown parameters and we solve {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} in Equation~\eqref{eq:opt_vfunc} as a parametric function. The parametric value function can then be analyzed under the optimal policy {\footnotesize $ \pi^{*} $} as a function of other state variables {\footnotesize $(\vec{d}, \vec{x})$}.
+%%The parametric value function can then be displayed or analyzed to allow a user to explore trade-offs between parameters {\footnotesize $\vec{\theta}^{d}$} or the optimal policy {\footnotesize $ \pi^{*} $} as a function of other state variables {\footnotesize $(\vec{d}, \vec{x})$}. 
+%%An example of sensitivity analysis is shown in section~\ref{sec:results_oe}.
+%
+%\subsubsection{Nonlinear Parameterized Policy Optimization Methods for PHMDPs}
+%
+%PHMDP policy parameters can be analyzed and optimized by parameterizing a policy {\footnotesize $\pi$} by action parameters {\footnotesize $\vec{\theta}^{d}$}, and evaluating the value function with respect to the parameterized policy. The resulting non-convex policy value, as a function of {\footnotesize $\vec{\theta}^{d}$}, can be analyzed and optimized using the parametric form of {\footnotesize $V^{\pi}(\vec{d}, \vec{x}; \vec{\theta}^{d})$} and its symbolic derivatives, up to any order.
+%%all symbolic derivatives, up to any order, of this value function. 
+%Symbolic derivatives avoid the stochasticity issues associated with traditional policy gradient methods.
+%%An example of nonlinear parameterized policy optimization is shown in section~\ref{sec:results_influenza}. 
 
 %\subsection{Solution Methods}
 %Value iteration (VI)~\cite{Bellman_PU_1957} can be modified to solve PHMDPs as follows:

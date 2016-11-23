@@ -58,21 +58,21 @@ Unary operations on a single case statement \emph{f}, such as scalar multiplicat
 
 ``cross-subtraction'' {\footnotesize$\ominus$} and ``cross-multiplication'' {\footnotesize$\otimes$} are defined in a similar manner but with the addition operator replaced by the subtraction and multiplication operators, respectively. Some partitions resulting from case operators may be inconsistent and are thus removed.
 
-Substitution into case statements is performed via a set {\footnotesize$\vartheta$} of variables and their substitutions e.g. {\footnotesize$\vartheta = \left\{ x'_1/(x_1 + x_2) \right\}$}, where the LHS of the / represents the substitution variable and the RHS of the / represents the expression that should be substituted in its place. 
-%{\footnotesize$\vartheta$} can be applied to both non-case functions {\footnotesize$f_i$} and case partitions {\footnotesize$\phi_i$} as {\footnotesize$f_i\vartheta$} and {\footnotesize$\phi_i\vartheta$}, respectively. Substitution into case statements can be written as:
-%{\footnotesize 
-%    \abovedisplayskip=5pt
-%    \belowdisplayskip=0pt
-%    \begin{align*}
-%        f\vartheta = 
-%        \begin{cases}
-%            \phi_1\vartheta: & f_1\vartheta \\ 
-%            \vdots & \vdots\\ 
-%            \phi_k\vartheta: & f_k\vartheta \\ 
-%        \end{cases}
-%    \end{align*}
-%}%
-Substitution is used when calculating integrals with respect to deterministic {\footnotesize$\delta$} transitions~\cite{Sanner_UAI_2011}.
+%Substitution into case statements is performed via a set {\footnotesize$\vartheta$} of variables and their substitutions e.g. {\footnotesize$\vartheta = \left\{ x'_1/(x_1 + x_2) \right\}$}, where the LHS of the / represents the substitution variable and the RHS of the / represents the expression that should be substituted in its place. 
+%%{\footnotesize$\vartheta$} can be applied to both non-case functions {\footnotesize$f_i$} and case partitions {\footnotesize$\phi_i$} as {\footnotesize$f_i\vartheta$} and {\footnotesize$\phi_i\vartheta$}, respectively. Substitution into case statements can be written as:
+%%{\footnotesize 
+%%    \abovedisplayskip=5pt
+%%    \belowdisplayskip=0pt
+%%    \begin{align*}
+%%        f\vartheta = 
+%%        \begin{cases}
+%%            \phi_1\vartheta: & f_1\vartheta \\ 
+%%            \vdots & \vdots\\ 
+%%            \phi_k\vartheta: & f_k\vartheta \\ 
+%%        \end{cases}
+%%    \end{align*}
+%%}%
+%Substitution is used when calculating integrals with respect to deterministic {\footnotesize$\delta$} transitions~\cite{Sanner_UAI_2011}.
 
 Maximisation over cases, known as $\casemax$, is defined as:
 \vspace{-0.5em}
