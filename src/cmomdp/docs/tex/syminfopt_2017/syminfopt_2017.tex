@@ -1,0 +1,69 @@
+\documentclass{article}
+
+\usepackage{aaai17}
+\usepackage{times} 
+\usepackage{helvet}
+\usepackage{courier} 
+\setlength{\pdfpagewidth}{8.5in} 
+\setlength{\pdfpageheight}{11in}
+
+% Packages
+\usepackage{./std_package_reqs}
+
+% Definitions
+\usepackage{./definitions}
+
+\usepackage{verbatim}
+
+\setcounter{secnumdepth}{2}
+
+% GRAPHICS
+%\usepackage[draft]{graphicx}
+\usepackage[]{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multicol}
+
+% Graphics Path
+\graphicspath{{./images/}}
+
+\renewcommand*{\mkbibparens}[1]{{\ifcitation{\bibleftbracket#1\bibrightbracket}%
+        {\bibleftparen#1\bibrightparen}}}
+\renewcommand*{\bibopenparen}[1]{{\ifcitation{\bibleftbracket#1}{\bibleftparen#1}}}
+\renewcommand*{\bibcloseparen}{{\ifcitation{\bibrightbracket}{\bibrightparen}}}
+
+% Bibliography
+\addbibresource{references.bib}
+
+%\input{icaps_2017.bbl}
+
+\begin{document}
+    
+%--------------------------------------------------------------------------------------------------
+% Front Matter
+%--------------------------------------------------------------------------------------------------
+
+    \input{./title}
+    \input{./sections/abstract}
+
+%--------------------------------------------------------------------------------------------------
+% Body
+%--------------------------------------------------------------------------------------------------
+
+    \input{./sections/introduction}
+    \input{./sections/background}
+    \input{./sections/phmdp}
+    \input{./sections/sdp}
+    \input{./sections/results}
+    \input{./sections/conclusion}
+
+%--------------------------------------------------------------------------------------------------
+% Bibliography
+%--------------------------------------------------------------------------------------------------
+\newpage
+\clearpage
+
+{\small
+\printbibliography
+}
+\end{document}
