@@ -8,7 +8,7 @@
 \setlength{\pdfpageheight}{11in}
 
 % Packages
-\usepackage{./std_package_reqs}
+ \usepackage{./std_package_reqs}
 
 % Definitions
 \usepackage{./definitions}
@@ -24,18 +24,28 @@
 \usepackage{subcaption}
 \usepackage{multicol}
 
+% CITATIONS
+\usepackage{hyperref}
+
+% SPACING
+\usepackage{xspace}
+\usepackage{enumitem}
+\setlist{nolistsep}
+
+% COMMENTS
+\usepackage{verbatim}
+
+
 % Graphics Path
 \graphicspath{{./images/}}
 
-\renewcommand*{\mkbibparens}[1]{{\ifcitation{\bibleftbracket#1\bibrightbracket}%
-        {\bibleftparen#1\bibrightparen}}}
-\renewcommand*{\bibopenparen}[1]{{\ifcitation{\bibleftbracket#1}{\bibleftparen#1}}}
-\renewcommand*{\bibcloseparen}{{\ifcitation{\bibrightbracket}{\bibrightparen}}}
+ \renewcommand*{\mkbibparens}[1]{{\ifcitation{\bibleftbracket#1\bibrightbracket}%
+         {\bibleftparen#1\bibrightparen}}}
+ \renewcommand*{\bibopenparen}[1]{{\ifcitation{\bibleftbracket#1}{\bibleftparen#1}}}
+ \renewcommand*{\bibcloseparen}{{\ifcitation{\bibrightbracket}{\bibrightparen}}}
 
 % Bibliography
-\addbibresource{references.bib}
-
-%\input{icaps_2017.bbl}
+ \addbibresource{references.bib}
 
 \begin{document}
     
@@ -63,7 +73,11 @@
 \newpage
 \clearpage
 
-{\small
-\printbibliography
-}
+%\bibliographystyle{alpha}
+% \bibliography{references}
+%\input{icaps_2017.bbl}
+
+ {\small
+ \printbibliography
+ }
 \end{document}

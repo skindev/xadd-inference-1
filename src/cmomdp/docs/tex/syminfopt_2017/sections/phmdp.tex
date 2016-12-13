@@ -7,7 +7,7 @@ In this section we introduce Parameterized Hybrid Markov Decision Processes (PHM
 \subsection{Definition}
 \label{sec:phmdp_def}
 
-A parameterized hybrid Markov Decision Process (PHMDP) is defined by the tuple {\footnotesize \PMDPTuple}. {\footnotesize \State} specifies a vector of states given by {\footnotesize $(\vec{d}, \vec{x}) =  \left( d_1, \ldots, d_m, x_1, \ldots, x_n \right) $}, where each {\footnotesize $ d_i \in \left\lbrace 0, 1 \right\rbrace $} {\footnotesize $\left( 1 \leq i \leq m \right)$} is discrete and each {\footnotesize$ x_j \in \Real $} {\footnotesize $\left( 1 \leq j \leq   n \right)$} is continuous. {\footnotesize $\Action^{h}_{s}$} specifies a finite set of state and horizon dependent actions.  {\footnotesize $\vec{\theta} \in \Theta$} are free parameters from the parameter space {\footnotesize $ \Theta $}. PHMDPs are naturally factored~\cite{Boutilier_JAIR_1999} in terms of the state variables {\footnotesize$\vec{d}$} and {\footnotesize
+A parameterized hybrid Markov Decision Process (PHMDP) is defined by the tuple {\footnotesize \PMDPTuple}. {\footnotesize \State} specifies a vector of states given by {\footnotesize $(\vec{d}, \vec{x}) =  \left( d_1, \ldots, d_m, x_1, \ldots, x_n \right) $}, where each {\footnotesize $ d_i \in \left\lbrace 0, 1 \right\rbrace $} {\footnotesize $\left( 1 \leq i \leq m \right)$} is discrete and each {\footnotesize$ x_j \in \Real $} {\footnotesize $\left( 1 \leq j \leq   n \right)$} is continuous. {\footnotesize $\Action^{h}_{s}$} specifies a finite set of state and horizon dependent actions.  {\footnotesize $\vec{\theta} \in \Theta$} are free parameters from the parameter space {\footnotesize $ \Theta $}. PHMDPs are naturally factored~\parencite{Boutilier_JAIR_1999} in terms of the state variables {\footnotesize$\vec{d}$} and {\footnotesize
 $\vec{x}$}. Hence, the joint transition model can be written as:
 {\footnotesize
 \abovedisplayskip=0pt
@@ -20,7 +20,7 @@ $\vec{x}$}. Hence, the joint transition model can be written as:
 }
 where {\footnotesize $ a \in \Action^{h}_{s} $}. The transition model permits discrete noise in the sense that {\footnotesize $ \ProbArg{ x_j' | \vec{d}, \vec{d}', \vec{x}, a, \vec{\theta} } $} may condition on $ \vec{d}' $, which are stochastically sampled according to their conditional probability functions. 
 %It is clear that while the transition model does not permit general stochastic transition noise, they do permit discrete noise in the sense that {\footnotesize $ \ProbArg{ x_j' | \vec{d}, \vec{d}', \vec{x}, a, \vec{\theta} } $} may condition on $ \vec{d}' $, which are stochastically sampled according to their conditional probability functions. 
-%We refer the reader to~\cite{Zamani_AAAI_2012,Sanner_UAI_2011} for further details.
+%We refer the reader to~\parencite{Zamani_AAAI_2012,Sanner_UAI_2011} for further details.
 
 {\footnotesize \RewardFunc} is the reward function which encodes the preferences of the agent. {\footnotesize \Horizon} represents the number of decision steps until termination and the discount factor {\footnotesize $\gamma \in [0, 1)$} is used to geometrically discount future rewards. A policy {\footnotesize $\pi : \State \times \Horizon \rightarrow \Action$}, specifies the action to take in every state and horizon. The value function of the optimal policy {\footnotesize$ \pi^{*} $} satisfies:
 {\footnotesize 
@@ -83,8 +83,8 @@ In subsequent sections we demonstrate how the PHMDP framework can be specialized
 %%An example of nonlinear parameterized policy optimization is shown in section~\ref{sec:results_influenza}. 
 
 %\subsection{Solution Methods}
-%Value iteration (VI)~\cite{Bellman_PU_1957} can be modified to solve PHMDPs as follows:
-%Value iteration (VI)~\cite{Bellman_PU_1957} is a general dynamic programming algorithm used to solve Markov Decision Processes (MDPs). In this section we modify VI to solve PHMDPs. The key idea of VI is to successively approximate {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta})$} and {\footnotesize $Q^{\pi^{*}}(\vec{d}, \vec{x}, a; \vec{\theta})$} by {\footnotesize $V^{h}(\vec{d}, \vec{x}; \vec{\theta})$} and
+%Value iteration (VI)~\parencite{Bellman_PU_1957} can be modified to solve PHMDPs as follows:
+%Value iteration (VI)~\parencite{Bellman_PU_1957} is a general dynamic programming algorithm used to solve Markov Decision Processes (MDPs). In this section we modify VI to solve PHMDPs. The key idea of VI is to successively approximate {\footnotesize $V^{\pi^{*}}(\vec{d}, \vec{x}; \vec{\theta})$} and {\footnotesize $Q^{\pi^{*}}(\vec{d}, \vec{x}, a; \vec{\theta})$} by {\footnotesize $V^{h}(\vec{d}, \vec{x}; \vec{\theta})$} and
 %{\footnotesize $Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta})$}, respectively, at each horizon {\footnotesize$h \in \Horizon$}. These two functions satisfy the following recursive relationship:
 %{\footnotesize 
 %    \abovedisplayskip=0pt
