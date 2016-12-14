@@ -4,7 +4,7 @@
 In this section we demonstrate the efficacy and tractability of our novel framework by calculating the first known optimal solutions to three difficult nonlinear sequential decision problems.
 %the following difficult nonlinear sequential decision problems: (i) inverse learning of parameters in a multi-objective navigation domain; (ii) non-convex optimization of vaccination policy parameters in a public health setting; and (iii) exact sensitivity analysis of portfolio transaction models over the full range of model parameters. 
 %Furthermore, we show that our framework is scalable in both time and space. 
-We note that while dOp~\parencite{Gao2013} offers strong {\footnotesize $ \delta $}-optimality guarantees, we found that nonlinear solvers such as $ \mathtt{fmincon} $~\parencite{MATLAB_2010} perform comparably well at optimization and are much more efficient, hence we use $ \mathtt{fmincon} $.
+We note that while dOp~\cite{Gao2013} offers strong {\footnotesize $ \delta $}-optimality guarantees, we found that nonlinear solvers such as $ \mathtt{fmincon} $~\cite{MATLAB_2010} perform comparably well at optimization and are much more efficient, hence we use $ \mathtt{fmincon} $.
 
 {\centering
     \begin{figure}[ht]
@@ -69,7 +69,7 @@ The domain is specified as follows: {\footnotesize $ \State = \left\langle loc \
 Figure~\ref{fig:navigation_vf}, which shows the optimal value function at {\footnotesize$ \Horizon = 15 $}, 
 reveals that the vehicle is willing to incur a cost that is inversely proportional to its distance from the goal region,
 %reveals that the movement cost the vehicle is willing to incur is inversely proportional to its distance from the goal region. 
-In Figure~\ref{fig:navigation_opt} we utilise techniques from inverse reinforcement learning~\parencite{Ng_ICML_2000} to learn the parameters (weights) of the multi-objective reward under a sub-optimal policy of the form: {\footnotesize $ \tilde{\pi}(0 < loc < 10) = 5.0,  \tilde{\pi}(loc < 0 \,\mathrm{or}\, loc > 10) = 0.0$}. We note that {\footnotesize $ w_2 $} was at its maximum allowable value when the vehicle did not move and that it was sufficiently low when the vehicle does move. 
+In Figure~\ref{fig:navigation_opt} we utilise techniques from inverse reinforcement learning~\cite{Ng_ICML_2000} to learn the parameters (weights) of the multi-objective reward under a sub-optimal policy of the form: {\footnotesize $ \tilde{\pi}(0 < loc < 10) = 5.0,  \tilde{\pi}(loc < 0 \,\mathrm{or}\, loc > 10) = 0.0$}. We note that {\footnotesize $ w_2 $} was at its maximum allowable value when the vehicle did not move and that it was sufficiently low when the vehicle does move. 
 %As per the Figure~\ref{fig:navigation_vf}, the vehicle is willing to incur a higher {\footnotesize $ w_2 $} the closer it is to the goal region.
 
 \subsection{Influenza Public Health Policy}
@@ -96,8 +96,8 @@ Figure~\ref{fig:sir_vf} shows the optimal value function at {\footnotesize$ \Hor
 %the non-convex optimization of the value function with respect to the policy parameter {\footnotesize $ \nu $}, shown in 
 Figure~\ref{fig:sir_opt} reveals that 
 %vaccinating the entire population 
-this is only optimal when {\footnotesize $ \beta > 0.25 $}, that is, when the \textit{basic reproductive ratio} {\footnotesize $ R_0 \,(= \beta/\lambda)$}~\parencite{Heffernan_2005} exceeds 1.0. 
-%is optimal to vaccinate the entire population only when the infection rate {\footnotesize $ \beta > 0.25 $}. When  {\footnotesize $ \beta > 0.25 $}, the \textit{basic reproductive ratio} {\footnotesize $ R_0 \,(= \beta/\lambda)$}~\parencite{Heffernan_2005} exceeds 1.0. 
+this is only optimal when {\footnotesize $ \beta > 0.25 $}, that is, when the \textit{basic reproductive ratio} {\footnotesize $ R_0 \,(= \beta/\lambda)$}~\cite{Heffernan_2005} exceeds 1.0. 
+%is optimal to vaccinate the entire population only when the infection rate {\footnotesize $ \beta > 0.25 $}. When  {\footnotesize $ \beta > 0.25 $}, the \textit{basic reproductive ratio} {\footnotesize $ R_0 \,(= \beta/\lambda)$}~\cite{Heffernan_2005} exceeds 1.0. 
 %{\footnotesize $ R_0$} indicates the average number of secondary cases produced by an infected individual in a completely susceptible population and scenarios where {\footnotesize $R_0 > 1.0$} can lead to an epidemic. 
 Scenarios where {\footnotesize $R_0 > 1.0$} can lead to an epidemic. 
 %The non-convex optimization shows that in this scenario it is worth incurring the vaccination cost to mitigate the costs associated with the burden of disease in an epidemic. 
@@ -127,9 +127,9 @@ This insight is confirmed in Figure~\ref{fig:oe_vf_deriv} which shows that the v
 %{\centering
     \begin{figure}[ht]
         \begin{tabular}{cc}
-            \begin{subfigure}[b]{0.24\textwidth}\centering \includegraphics[width=\textwidth]{images/time_plot_new}
+            \begin{subfigure}[b]{0.24\textwidth}\centering \includegraphics[width=\textwidth]{images/time_plot_new.pdf}
                 \label{fig:time_complexity}\end{subfigure}\hspace{-1em}
-            \begin{subfigure}[b]{0.24\textwidth}\centering \includegraphics[width=\textwidth]{images/space_plot_new}
+            \begin{subfigure}[b]{0.24\textwidth}\centering \includegraphics[width=\textwidth]{images/space_plot_new.pdf}
                 \label{fig:space_complexity}\end{subfigure}
             \\
         \end{tabular}

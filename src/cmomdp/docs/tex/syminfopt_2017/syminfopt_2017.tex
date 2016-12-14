@@ -18,8 +18,7 @@
 \setcounter{secnumdepth}{2}
 
 % GRAPHICS
-%\usepackage[draft]{graphicx}
-\usepackage[]{graphicx}
+\usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{multicol}
@@ -39,13 +38,24 @@
 % Graphics Path
 \graphicspath{{./images/}}
 
- \renewcommand*{\mkbibparens}[1]{{\ifcitation{\bibleftbracket#1\bibrightbracket}%
-         {\bibleftparen#1\bibrightparen}}}
- \renewcommand*{\bibopenparen}[1]{{\ifcitation{\bibleftbracket#1}{\bibleftparen#1}}}
- \renewcommand*{\bibcloseparen}{{\ifcitation{\bibrightbracket}{\bibrightparen}}}
-
 % Bibliography
- \addbibresource{references.bib}
+%\usepackage[
+%backend=biber,
+%style=alphabetic,
+%sorting=nyt,
+%sortcites=true,
+%doi=false,
+%url=false,
+%isbn=false,
+%hyperref=false
+%]{biblatex}
+%\addbibresource{references.bib}
+
+%\renewcommand*{\mkbibparens}[1]{{\ifcitation{\bibleftbracket#1\bibrightbracket}%
+%     {\bibleftparen#1\bibrightparen}}}
+%\renewcommand*{\bibopenparen}[1]{{\ifcitation{\bibleftbracket#1}{\bibleftparen#1}}}
+%\renewcommand*{\bibcloseparen}{{\ifcitation{\bibrightbracket}{\bibrightparen}}}
+
 
 \begin{document}
     
@@ -70,14 +80,14 @@
 %--------------------------------------------------------------------------------------------------
 % Bibliography
 %--------------------------------------------------------------------------------------------------
-\newpage
-\clearpage
+%\newpage
+%\clearpage
 
-%\bibliographystyle{alpha}
-% \bibliography{references}
-%\input{icaps_2017.bbl}
+% {\small
+% \printbibliography
+% }
 
- {\small
- \printbibliography
- }
+\bibliographystyle{alpha}
+\bibliography{references}
+
 \end{document}
