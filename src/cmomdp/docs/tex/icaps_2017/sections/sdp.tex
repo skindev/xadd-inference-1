@@ -58,22 +58,6 @@ Unary operations on a single case statement \emph{f}, such as scalar multiplicat
 
 ``cross-subtraction'' {\footnotesize$\ominus$} and ``cross-multiplication'' {\footnotesize$\otimes$} are defined in a similar manner but with the addition operator replaced by the subtraction and multiplication operators, respectively. Some partitions resulting from case operators may be inconsistent and are thus removed.
 
-%Substitution into case statements is performed via a set {\footnotesize$\vartheta$} of variables and their substitutions e.g. {\footnotesize$\vartheta = \left\{ x'_1/(x_1 + x_2) \right\}$}, where the LHS of the / represents the substitution variable and the RHS of the / represents the expression that should be substituted in its place. 
-%%{\footnotesize$\vartheta$} can be applied to both non-case functions {\footnotesize$f_i$} and case partitions {\footnotesize$\phi_i$} as {\footnotesize$f_i\vartheta$} and {\footnotesize$\phi_i\vartheta$}, respectively. Substitution into case statements can be written as:
-%%{\footnotesize 
-%%    \abovedisplayskip=5pt
-%%    \belowdisplayskip=0pt
-%%    \begin{align*}
-%%        f\vartheta = 
-%%        \begin{cases}
-%%            \phi_1\vartheta: & f_1\vartheta \\ 
-%%            \vdots & \vdots\\ 
-%%            \phi_k\vartheta: & f_k\vartheta \\ 
-%%        \end{cases}
-%%    \end{align*}
-%%}%
-%Substitution is used when calculating integrals with respect to deterministic {\footnotesize$\delta$} transitions~\cite{Sanner_UAI_2011}.
-
 Maximisation over cases, known as $\casemax$, is defined as:
 \vspace{-0.5em}
 {\footnotesize 
@@ -112,80 +96,43 @@ Maximisation over cases, known as $\casemax$, is defined as:
 }%
 
 $\casemax$ preserves the linearity of the constraints and the constant or linear nature of the {\footnotesize$f_i$} and {\footnotesize$g_i$}. 
-%If the {\footnotesize$f_i$} or {\footnotesize$g_i$} are quadratic then the expressions {\footnotesize$f_i > g_i$} or {\footnotesize$f_i \leq g_i$} will be at most univariate quadratic and any such constraint can be linearized into a combination of at most two linear inequalities by completing the square. 
 
-A case statement can be maximized with respect to a continuous parameter {\footnotesize$y$} as {\footnotesize $ f_1(\vec{x}, y) = \contmax_{y}f_2(\vec{x}, y) $}. The continuous maximization operation is a complex case operation whose explanation is beyond the scope of this paper. We refer the reader to~\cite{Zamani_AAAI_2012} for further details.
+A case statement can be maximized with respect to a continuous parameter {\footnotesize$y$} as {\footnotesize $ f_1(\vec{x}) = \contmax_{y}f_2(\vec{x}, y) $}. The continuous maximization operation is a complex case operation whose explanation is beyond the scope of this paper. We refer the reader to~\cite{Zamani_AAAI_2012} for further details.
 
 In principle, case statements can be used to represent all PHMDP components. In practice, case statements are implemented using a more compact representation known as Extended Algebraic Decision Diagrams (XADDs)~\cite{Sanner_UAI_2011}, which also support efficient versions of all of the aforementioned operations. 
-%Figure~\ref{fig:xadd} shows how an XADD is used to represent a function {\footnotesize $f$} that is piecewise continuous, nonlinear and multimodal.
-
-%\begin{figure}[!htb]
-%%    \centering
-%    \begin{subfigure}[b]{0.20\textwidth}
-%        \includegraphics[width=1.0\linewidth]{images/quad2.pdf}
-%%        \caption{$f(x, y, a=\mathit{true})$}
-%    \end{subfigure}
-%            \hspace{-5mm}
-%    \begin{subfigure}[b]{0.24\textwidth}
-%
-%        \includegraphics[width=1.3\linewidth, height=1.0\linewidth]{images/quad2_xadd5.pdf}
-%%        \caption{XADD representation}        
-%    \end{subfigure}    
-%    \caption{(left) A plot of a function $f(x, y, a=\mathit{true})$ for continuous variables $x$ and $y$ and boolean variable $a$; and (right) its XADD representation.}
-%    \label{fig:xadd}
-%\end{figure}
-
 
 \subsection{SDP for Parameterized Hybrid MDPs}
 
 Value iteration (VI)~\cite{Bellman_PU_1957} can be modified to solve Parameterized Hybrid MDPs in terms of the following case operations:
-%To calculate the exact solution to PHMDPs we begin by replacing all functions and operations in Equations~\eqref{eq:vi_qfunc} and~\eqref{eq:vi_vfunc} by their case statement equivalents: 
-%That is, we exchange operations such as {\footnotesize$+$}, {\footnotesize$\times$} and {\footnotesize$\max$}, by their symbolic equivalents, {\footnotesize$\oplus$}, {\footnotesize$\otimes$} and $\casemax$, respectively, and express {\footnotesize $\Reward(\vec{d}, \vec{x}, a; \vec{\theta})$},  {\footnotesize $\ProbArg{\vec{d}', \vec{x}' | \vec{d}, \vec{x}, a, \vec{\theta}}$}, {\footnotesize $V^0(\vec{d}, \vec{x}; \vec{\theta})$} as case statements. 
-%The optimal solution to PHMDPs can now be described by the following recursive SDP equations:
 {\footnotesize 
     \abovedisplayskip=0pt
     \belowdisplayskip=0pt
     \begin{align}
-        Q^{h} \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) = \Reward \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) \oplus \gamma \, \cdot &  \nonumber \\ 
-        \bigoplus_{\vec{d}'} \int_{\vec{x}'} \ProbArg{ \left. \vec{d}', \vec{x}' \middle| \vec{d}, \vec{x}, a; \vec{\theta} \right.} \otimes V^{h-1} \left( \vec{d}', \vec{x}'; \vec{\theta} \right) & \, d\vec{x}'  \label{eq:vi_sdp_qfunc} \\
-        V^{h}\left( \vec{d}, \vec{x}; \vec{\theta} \right) = \casemax_{a \in \mathcal{A}} \left\{ Q^{h} \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) \right\} & \label{eq:vi_sdp_vfunc}
+        Q^{h} \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) = \Reward \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) \oplus \gamma \qquad \qquad \qquad \qquad &  \nonumber \\ 
+        \bigoplus_{\vec{d}'} \int_{\vec{x}'} \ProbArg{ \left. \vec{d}', \vec{x}' \middle| \vec{d}, \vec{x}, a; \vec{\theta} \right.} \otimes V^{h-1} \left( \vec{d}', \vec{x}'; \vec{\theta} \right) \, d\vec{x}' & \label{eq:vi_sdp_qfunc} \\
+        V^{h}\left( \vec{d}, \vec{x}; \vec{\theta} \right) = \casemax_{a \in \mathcal{A}} \left\{ Q^{h} \left( \vec{d}, \vec{x}, a; \vec{\theta} \right) \right\} \qquad \qquad & \label{eq:vi_sdp_vfunc}
     \end{align}
 }%
 
 {\footnotesize $\ProbArg{\left. \vec{d}', \vec{x}' \middle| \vec{d}, \vec{x}, a; \vec{\theta} \right.}$ } is specified in Equation~\eqref{eq:hmdp_tfunc}. We note that all parameters {\footnotesize $\theta_i$} that are free variables 
-are encoded as {\footnotesize $\delta\left[\left(\theta_i' - \theta_i\right)\right]$}, indicating that they are stationary and hence do not change during the backup operation. Continuous state parameters {\footnotesize $ \vec{x} $} are handled in a similar fashion. All operations including action maximization will automatically condition the value on these parameters, yielding the parameterized value function in Equation~\eqref{eq:vi_sdp_vfunc}.
+are encoded as {\footnotesize $\delta\left[\left(\theta_i' - \theta_i\right)\right]$}, indicating that they are stationary and hence do not change during the backup operation. Continuous state parameters {\footnotesize $ \vec{x} $} are handled in a similar fashion. The symbolic integration operation over continuous variables are carried out with respect to a deterministic Dirac {\footnotesize $\delta$} function. This is a consequence of the discrete noise restriction mentioned in section~\ref{sec:phmdp_def} and ultimately yields a closed-form backup operation~\cite{Sanner_UAI_2011}. All operations including action maximization will automatically condition the value on these parameters, yielding the parameterized value function in Equation~\eqref{eq:vi_sdp_vfunc}.
 
 In the case of discrete {\footnotesize \Action} it can be proved that all of the SDP operations used in Equations~\eqref{eq:vi_sdp_qfunc} and~\eqref{eq:vi_sdp_vfunc} are closed form for NPWN functions~\cite{Sanner_UAI_2011}. In the case of continuous {\footnotesize \Action} all of the operations are closed form for only LPWC or LPWL functions~\cite{Zamani_AAAI_2012}.
 
-%It can be proved that all of the SDP operations used in Equations~\eqref{eq:vi_qfunc} and~\eqref{eq:vi_vfunc} are closed form for LPWC or LPWL functions~\cite{Sanner_UAI_2011,Zamani_AAAI_2012}. Given a LPWL {\footnotesize $V^{0}(\vec{d}, \vec{x}; \vec{\theta})$} and that SDP operations are closed form, the resulting {\footnotesize $V^{1}(\vec{d}, \vec{x}; \vec{\theta})$} is also LPWL. Therefore, by induction is {\footnotesize $V^{h+1}(\vec{d}, \vec{x}; \vec{\theta})$} LPWL for all horizons {\footnotesize $ \Horizon $}. 
-
 \subsubsection{Inverse Learning for Multi-objective PHMDPs}
 
-A possible formulation for the inverse learning problem for multi-objective MDPs is to 
-%The inverse learning problem for multi-objective MDPs, whereby observed behavior is used to infer multi-objective weights that explain the observed behavior, has many possible formulations. One possible formulation is to 
-constrain the Q-values corresponding to the observed behavior and maximize the weight {\footnotesize $ w $} that best explains the observed behavior: 
+A possible formulation for the inverse learning problem for multi-objective MDPs is to constrain the Q-values corresponding to the observed behavior and maximize the weight {\footnotesize $ w $} that best explains the observed behavior: 
 \begin{align}
     \max_w Q^{h} \left(w, \vec{d}, x, a_1; \vec{\theta}^d \right) \ominus Q^{h} \left(w, \vec{d}, x, a_2; \vec{\theta}^d \right),
 \end{align}
 where {\footnotesize $ x $} can either be fixed or a region specified in the constraints. The PHMDP framework permits any variant of the inverse learning problem for multi-objective MDPs.
 
-PHMDPs with multi-objective {\footnotesize $\Reward$} and linear scalarization functions can be solved exactly and in closed-form by restricting {\footnotesize $\Reward$} to LPWC functions and {\footnotesize $\Transition$} to LPWL functions. 
-%Given a LPWL {\footnotesize $V^{0}(\vec{d}, \vec{x}; \vec{\theta})$} and SDP operations that are closed form, the resulting {\footnotesize $V^{1}(\vec{d}, \vec{x}; \vec{\theta})$} is also LPWL. Therefore, by induction {\footnotesize $V^{h+1}(\vec{d}, \vec{x}; \vec{\theta})$} is LPWL for all horizons {\footnotesize $ h \in \Horizon $}. 
-Multi-objective PHMDPs with a nonlinear scalarization function and NPWN {\footnotesize $\Reward$} and {\footnotesize $\Transition$} functions lead to NPWN solutions, which are exact and closed-form~\cite{Sanner_UAI_2011}.
+PHMDPs with multi-objective {\footnotesize $\Reward$} and linear scalarization functions can be solved exactly and in closed-form by restricting {\footnotesize $\Reward$} to LPWC functions and {\footnotesize $\Transition$} to LPWL functions. Multi-objective PHMDPs with a nonlinear scalarization function and NPWN {\footnotesize $\Reward$} and {\footnotesize $\Transition$} functions lead to NPWN solutions, which are exact and closed-form~\cite{Sanner_UAI_2011}.
 
 \subsubsection{Sensitivity Analysis for PHMDPs}
 
-%Sensitivity analysis for PHMDPs can be conducted exactly and in closed-form by firstly imposing the same restrictions on the {\footnotesize $\Reward$} and {\footnotesize $\Transition$} as the previous section and then differentiating the resulting value function with respect to the parameter {\footnotesize $\vec{\theta}$} i.e. {\footnotesize $\bigtriangledown_{\vec{\theta}} V^{h}\left(\vec{d}, \vec{x}; \vec{\theta}\right)$ }.
-
 Sensitivity analysis for PHMDPs can be analysed exactly and in closed-form via SDP by first calculating Equation~\eqref{eq:vi_sdp_vfunc} and then taking symbolic derivatives, up to any order, with respect to the parameter {\footnotesize $\vec{\theta}^{d}$}.
-
-% i.e. {\footnotesize $\bigtriangledown_{\vec{\theta}^{d}} V^{h}\left(\vec{d}, \vec{x}; \vec{\theta}^{d}\right)$}.
 
 \subsubsection{Nonlinear Parameterized Policy Optimization Methods for PHMDPs}
 
-Parameterized policies {\footnotesize $ \pi(\vec{\theta}^{d}) $}, where {\footnotesize $\vec{\theta}^{d}$} may be nonlinear, for PHMDPs can be analyzed exactly and in closed-form via SDP by substituting {\footnotesize $ \pi(\vec{\theta}^{d}) $} in for {\footnotesize  $ a $} in Equation~\eqref{eq:vi_sdp_qfunc}. This precludes the need for action maximization in Equation~\eqref{eq:vi_sdp_vfunc}. Because this function is parametric, it is possible to take symbolic derivatives up to any order i.e. {\footnotesize $\bigtriangledown_{\vec{\theta}^{d}} Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta}^{d})$ } and apply non-convex optimization tools
-%, such as dReal or dOp~\cite{Gao2013}, 
-that exploit parametric knowledge of the function. 
-%Symbolic derivatives avoid the stochasticity issues associated with traditional policy gradient methods.
-
-%In the next section we demonstrate how PHMDPs can be combined with SDP and state-of-the-art nonlinear optimization techniques to solve hard nonlinear sequential decision problems that were previously impossible.
+Parameterized policies {\footnotesize $ \pi(\vec{\theta}^{d}) $}, where {\footnotesize $\vec{\theta}^{d}$} may be nonlinear, for PHMDPs can be analyzed exactly and in closed-form via SDP by substituting {\footnotesize $ \pi(\vec{\theta}^{d}) $} in for {\footnotesize  $ a $} in Equation~\eqref{eq:vi_sdp_qfunc}. This precludes the need for action maximization in Equation~\eqref{eq:vi_sdp_vfunc}. Because this function is parametric, it is possible to take symbolic derivatives up to any order i.e. {\footnotesize $\bigtriangledown_{\vec{\theta}^{d}} Q^{h}(\vec{d}, \vec{x}, a; \vec{\theta}^{d})$ } and apply non-convex optimization tools that exploit parametric knowledge of the function. 
