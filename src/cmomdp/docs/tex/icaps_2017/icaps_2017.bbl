@@ -76,6 +76,12 @@ Suresh Kalyanasundaram, Edwin K.~P. Chong, and Ness~B. Shroff.
   sensitivity and max hyphen min control.
 \newblock {\em Asian Journal of Control}, 6(2):253--269, 2004.
 
+\bibitem[KM27]{KermackMcKendrick_1927}
+W.~O. Kermack and A.~G. McKendrick.
+\newblock A contribution to the mathematical theory of epidemics.
+\newblock {\em Proceedings of the Royal Society of London A: Mathematical,
+  Physical and Engineering Sciences}, 115(772):700--721, 1927.
+
 \bibitem[NJ00]{Ng_UAI_2000}
 A.~Y. Ng and M.~Jordan.
 \newblock Pegasus: A policy search method for large mpds and pomdps.
