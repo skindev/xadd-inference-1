@@ -21,8 +21,9 @@ SDP assumes that all functions can be represented in case statement form \cite{B
 
 Here, {\footnotesize$ f_i $} are nonlinear expressions over {\footnotesize$ \vec{x} $} and {\footnotesize$\phi_i$} are logical formulae defined over the state {\footnotesize$( \vec{d}, \vec{x}, \vec{\theta})$} that can consist of arbitrary logical combinations of boolean variables and linear inequalities {\footnotesize$\left( \geq, >, <, \leq \right)$} over continuous variables. We assume that the set of conditions {\footnotesize$\left\lbrace \phi_1, \ldots, \phi_k \right\rbrace$} disjointly and exhaustively partition {\footnotesize$(\vec{d}, \vec{x}, \vec{\theta})$} such that {\footnotesize$f$} is well-defined for all {\footnotesize$(\vec{d}, \vec{x}, \vec{\theta})$}. Henceforth, we refer to functions with linear {\footnotesize$\phi_i$} and piecewise linear {\footnotesize$f_i$} as linear piecewise linear (LPWL) and functions with nonlinear {\footnotesize$\phi_i$} and piecewise nonlinear {\footnotesize$f_i$} as nonlinear piecewise nonlinear (NPWN) functions.
 
-Operations on case statements may be either unary or binary. All of the operations presented here are closed form for LPWC and LPWL functions. All operations except $\contmax_{y}$, presented below, is closed form for NPWN functions. We refer the reader to~\cite{Sanner_UAI_2011,Zamani_AAAI_2012} for more thorough expositions of SDP for piecewise continuous functions.
-
+Operations on case statements may be either unary or binary. 
+%All of the operations presented here are closed form for LPWC and LPWL functions. 
+%All operations except $\contmax_{y}$, presented below, is closed form for NPWN functions. We refer the reader to~\cite{Sanner_UAI_2011,Zamani_AAAI_2012} for more thorough expositions of SDP for piecewise continuous functions.
 Unary operations on a single case statement \emph{f}, such as scalar multiplication {\footnotesize$c \cdot f$} where {\footnotesize$ c \in \mathbb{R} $}, are applied to  each {\footnotesize$f_i \left(1 \leq i \leq k\right)$}. Binary operations such as addition, subtraction and multiplication are executed in two stages. Firstly, the cross-product of the logical partitions of each case statement is taken, producing paired partitions. Finally, the binary operation is applied to the resulting paired partitions. The ``cross-sum'' {\footnotesize$\oplus$} operation can be performed on two cases in the following manner:
 {\footnotesize 
 %    \abovedisplayskip=5pt
@@ -56,9 +57,9 @@ Unary operations on a single case statement \emph{f}, such as scalar multiplicat
 }%
 %\vspace{-4em}
 
-``cross-subtraction'' {\footnotesize$\ominus$} and ``cross-multiplication'' {\footnotesize$\otimes$} are defined in a similar manner but with the addition operator replaced by the subtraction and multiplication operators, respectively. Some partitions resulting from case operators may be inconsistent and are thus removed.
+``cross-subtraction'' {\footnotesize$\ominus$} and ``cross-multiplication'' {\footnotesize$\otimes$} are defined in a similar manner but with the addition operator replaced by the subtraction and multiplication operators, respectively. Some partitions resulting from case operators may be inconsistent and are thus removed. All of the operations presented thus far are closed form for NPWN functions.
 
-A case statement can be maximized with respect to a continuous parameter {\footnotesize$y$} as {\footnotesize $ f_1(\vec{x}) = \contmax_{y}f_2(\vec{x}, y) $}. The continuous maximization operation is used for continuous actions in PHMDPs and remains closed-form for LPWL functions; maximization of discrete actions remains closed-form for all NPWN functions. We refer the reader to~\cite{Sanner_UAI_2011, Zamani_AAAI_2012} for further details.
+A case statement can be maximized with respect to a continuous parameter {\footnotesize$y$} as {\footnotesize $ f_1(\vec{x}) = \contmax_{y}f_2(\vec{x}, y) $}. Continuous maximization is used for continuous actions within the PHDMP framework and is closed-form for LPWL functions; maximization of discrete actions remains closed-form for all NPWN functions. We refer the reader to~\cite{Sanner_UAI_2011,Zamani_AAAI_2012} for more thorough expositions of SDP for piecewise continuous functions.
 
 In principle, case statements can be used to represent all PHMDP components. In practice, case statements are implemented using a more compact representation known as Extended Algebraic Decision Diagrams (XADDs)~\cite{Sanner_UAI_2011}, which also support efficient versions of all of the aforementioned operations. 
 
@@ -75,9 +76,11 @@ Value iteration (VI)~\cite{Bellman_PU_1957} can be modified to solve Parameteriz
     \end{align}
 }%
 
-{\footnotesize $\ProbArg{\left. \vec{d}', \vec{x}' \middle| \vec{d}, \vec{x}, a; \vec{\theta} \right.}$ } is specified in Equation~\eqref{eq:hmdp_tfunc}. We note that all parameters {\footnotesize $\theta_i$} are free variables that are stationary and hence do not change during the backup operation. Continuous state parameters {\footnotesize $ \vec{x} $} are handled in a similar fashion. The symbolic integration operation over continuous variables are carried out with respect to a deterministic Dirac {\footnotesize $\delta$} function. This is a consequence of the discrete noise restriction mentioned in section~\ref{sec:phmdp_def} and ultimately yields a closed-form backup operation~\cite{Sanner_UAI_2011}. All operations including action maximization will automatically condition the value on these parameters, yielding the parameterized value function in Equation~\eqref{eq:vi_sdp_vfunc}.
+{\footnotesize $\ProbArg{\left. \vec{d}', \vec{x}' \middle| \vec{d}, \vec{x}, a; \vec{\theta} \right.}$ } is specified in Equation~\eqref{eq:hmdp_tfunc}. The parameters {\footnotesize $\theta_i$} are stationary free variables and hence do not change during the backup operation. Continuous state parameters {\footnotesize $ \vec{x} $} are handled in a similar fashion. Symbolic integration over continuous variables are carried out with respect to a deterministic Dirac {\footnotesize $\delta$} function. This is a consequence of the discrete noise restriction mentioned in section~\ref{sec:phmdp_def} and ultimately yields a closed-form backup operation~\cite{Sanner_UAI_2011}. 
 
-A particular strength of SDP is that it automatically conditions the value and policy on the unknown parameters {\footnotesize $\theta_i$} without needing to know their value a priori.
+A particular strength of SDP is that all operations will automatically condition the value and policy on the {\footnotesize $\theta_i$}, without needing to know their value a priori, yielding the parameterized value function in Equation~\eqref{eq:vi_sdp_vfunc}.
+
+%A particular strength of SDP is that it automatically conditions the value and policy on the unknown parameters {\footnotesize $\theta_i$} without needing to know their value a priori.
 
 In the case of discrete {\footnotesize \Action} it can be proved that all of the SDP operations used in Equations~\eqref{eq:vi_sdp_qfunc} and~\eqref{eq:vi_sdp_vfunc} are closed form for NPWN functions~\cite{Sanner_UAI_2011}. In the case of continuous {\footnotesize \Action} all of the operations are closed form for only LPWL functions~\cite{Zamani_AAAI_2012}.
 
@@ -88,11 +91,10 @@ A possible formulation for the inverse learning problem for multi-objective MDPs
     \label{eq:irl_q}
     \max_{\vec{\theta}} \max_{a_k, a_k \neq \pi } Q^{h} \left(\vec{d}, x, a_k; \vec{\theta} \right) \ominus Q^{h} \left(\vec{d}, x, a_{-k}; \vec{\theta} \right),
 \end{align}
-where {\footnotesize $ x $} can either be fixed or a region specified in the constraints, {\footnotesize $a_{k}$} refers to the action taken under the policy {\footnotesize $\pi$} in a particular state and {\footnotesize $a_{-k}$} refers to all other available actions in that state. 
+where {\footnotesize $ x $} can either be fixed or a region specified in the constraints, {\footnotesize $a_{k}$} refers to the action taken under the policy {\footnotesize $\pi$} in a particular state and {\footnotesize $a_{-k}$} refers to all other available actions in that state. We note that this formulation is but one of many possible approaches to inverse reinforcement learning and refer the reader to~\cite{Ng_ICML_2000} for alternate approaches. 
+%The PHMDP framework permits any variant of the inverse learning problem for multi-objective MDPs. 
 
-The PHMDP framework permits any variant of the inverse learning problem for multi-objective MDPs. We note that the formulation above is but one of many possible approaches to inverse reinforcement learning and refer the reader to~\cite{Ng_ICML_2000} for alternate approaches. 
-
-PHMDPs with multi-objective {\footnotesize $\Reward$} and linear scalarization functions can be solved exactly and in closed-form by restricting {\footnotesize $\Reward$} to LPWC functions and {\footnotesize $\Transition$} to LPWL functions. Multi-objective PHMDPs with a nonlinear scalarization function and NPWN {\footnotesize $\Reward$} and {\footnotesize $\Transition$} functions lead to NPWN solutions, which are exact and closed-form~\cite{Sanner_UAI_2011}.
+PHMDPs with multi-objective {\footnotesize $\Reward$} and linear scalarization functions can be solved exactly and in closed-form by restricting {\footnotesize $\Reward$} and {\footnotesize $\Transition$} to LPWL functions. Multi-objective PHMDPs with a nonlinear scalarization function and NPWN {\footnotesize $\Reward$} and {\footnotesize $\Transition$} functions lead to NPWN solutions, which are exact and closed-form~\cite{Sanner_UAI_2011}.
 
 \subsubsection{Sensitivity Analysis for PHMDPs}
 
@@ -100,4 +102,6 @@ Sensitivity analysis for PHMDPs can be analysed exactly and in closed-form via S
 
 \subsubsection{Nonlinear Parameterized Policy Optimization Methods for PHMDPs}
 
-Parameterized policies {\footnotesize $ \pi(\vec{\theta}) $}, where {\footnotesize $\vec{\theta}$} may be nonlinear, for PHMDPs can be analyzed exactly and in closed-form via SDP by substituting {\footnotesize $ \pi(\vec{\theta}) $} in for {\footnotesize  $ a $} in Equation~\eqref{eq:vi_sdp_qfunc}. This precludes the need for action maximization in Equation~\eqref{eq:vi_sdp_vfunc} and makes SDP efficient in both computation time and space. Because this function is parametric it is possible to directly apply non-convex optimization tools that require a symbolic form of the function to optimize. This yields a global optimization of the function in contrast to policy gradient methods which only guarantee local optimization.
+Parameterized policies {\footnotesize $ \pi(\vec{\theta}) $} for PHMDPs, where {\footnotesize $\vec{\theta}$} may be nonlinear, can be analyzed exactly and in closed-form via SDP by substituting {\footnotesize $ \pi(\vec{\theta}) $} in for {\footnotesize  $ a $} in Equation~\eqref{eq:vi_sdp_qfunc}. This precludes the need for action maximization in Equation~\eqref{eq:vi_sdp_vfunc} and makes SDP efficient in both computation time and space. The parametric nature of this function allows us to directly apply non-convex optimization tools that require symbolic forms of the objective function. 
+%Because this function is parametric it is possible to directly apply non-convex optimization tools that require a symbolic form of the function to optimize. 
+This yields a global optimization of the function in contrast to policy gradient methods which only guarantee local optimization.
