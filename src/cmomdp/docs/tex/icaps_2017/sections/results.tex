@@ -53,16 +53,9 @@ The domain is specified as follows: {\footnotesize $ \State = \left\langle loc \
     \end{tabular}
 } 
 
-%The 2a explanation does not explain the two different slopes, which is key to explain. 
-
-
-Figure~\ref{fig:navigation_vf} shows the optimal value function at {\footnotesize$ \Horizon = 15 $} and reveals the trade-off between reaching the goal region and incurring a movement cost $w_2 \cdot \Reward_{\mathtt{move}}$. The vehicle will incur the movement cost as long as it is mitigated by the reward gained within the goal region. Furthermore, the range of acceptable non-zero movement costs decreases the further the vehicle is from the goal region. 
+Figure~\ref{fig:navigation_vf} shows the optimal value function at {\footnotesize$ \Horizon = 15 $} and reveals the trade-off between reaching the goal region and incurring a movement cost {\footnotesize $w_2 \cdot \Reward_{\mathtt{move}}$}, when {\footnotesize $w_2 \in [0.0, 50.0]$}. The vehicle will incur the movement cost as long as it is mitigated by the reward gained within the goal region. Furthermore, the range of acceptable non-zero movement costs decreases the further the vehicle is from the goal region. 
 %For example, when {\footnotesize $loc = -20.0$} the vehicle will only move if the cost is close to {\footnotesize $0.0$}, whereas when the {\footnotesize $loc = 0.0$}, the vehicle is willing to incur higher movement costs. 
-In Figure~\ref{fig:navigation_opt} we utilise Equation~\eqref{eq:irl_q} to learn the parameters (weights) of the multi-objective reward under the following sub-optimal policy: {\footnotesize $ \tilde{\pi}(0 < loc < 10) = 5.0,  \tilde{\pi}(loc < 0 \,\mathrm{or}\, loc > 10) = 0.0$}. We observe that when {\footnotesize $a = 0.0$}, {\footnotesize $ w_2 $} is at its maximum allowable value. When {\footnotesize $a = 5.0$}, in the region {\footnotesize $ (5 < loc < 10) $}, the rate at which {\footnotesize $ w_2 $} increased is dependent on the distance of the vehicle from the goal region and the movement size.
-
-% step size is 5.0
-% when 0 < loc < 5 it is linear with flatter gradient
-% when 5 < loc < 10 < it is linear with steeper gradient
+In Figure~\ref{fig:navigation_opt} we utilise Equation~\eqref{eq:irl_q} to learn the parameters (weights) of the multi-objective reward under the following sub-optimal policy: {\footnotesize $ \tilde{\pi}(0 < loc < 10) = 5.0,  \tilde{\pi}(loc < 0 \,\mathrm{or}\, loc > 10) = 0.0$}. We observe that when {\footnotesize $a = 0.0$}, {\footnotesize $ w_2 = 50.0$}, its maximum value. When {\footnotesize $a = 5.0$}, there are two different gradients for {\footnotesize $ w_2 $}, one when {\footnotesize $ (0 < loc < 5) $} and another when {\footnotesize $ (5 < loc < 10) $}. The steepness of the gradient in the latter region illustrates that being one step closer to the reward region allows the vehicle to accumulate an additional goal region reward over the finite horizon.
 
 \subsection{SIR Epidemic}
 \label{sec:results_influenza}
@@ -84,14 +77,11 @@ where {\footnotesize $ \beta $} is the infection rate and {\footnotesize $\lambd
 
 Figure~\ref{fig:sir_vf} shows the optimal value function at {\footnotesize$ \Horizon = 7 $} when {\footnotesize $ s = 1000.0, i = 100.0, r = 0.0, \lambda = 0.25 $}, {\footnotesize $ cost_{\mathtt{vaccine}} = 4.0$} and {\footnotesize $ cost_{\mathtt{inf}} = 10.0 $}. The value function shows that it is not always optimal to vaccinate the entire population. In fact, Figure~\ref{fig:sir_opt} reveals that vaccinating the entire population is only optimal when {\footnotesize $ \beta > 0.25 $}, that is, when the \textit{basic reproductive ratio} {\footnotesize $ R_0 \,(= \beta/\lambda)$}~\cite{Heffernan_2005} exceeds 1.0. Scenarios where {\footnotesize $R_0 > 1.0$} can lead to an epidemic. 
 
-%We remark that, as far as we are aware, 
 To the best of our knowledge, this is the \textit{first} exact symbolic analysis of vaccination policies in an SIR epidemiological model. Furthermore, PHMDPs and SDP can be used to solve \textit{any} SIR model without needing an analytical solution.
-%, such as those specified in~\cite{LekoneFinkenstaedt_2006,CoburnWagnerBlower_2009}, without needing an analytical solution. 
 
 \subsection{Optimal Execution}
 \label{sec:results_oe}
 
-%In this domain we examine the sensitivity of an optimal portfolio transaction model to its parameters. Institutional investors often want to transact a number of shares that exceeds available liquidity. In these situations they face a clear trade-off between the market impact of transacting immediately and the volatility of slow execution. 
 The domain is specified as follows {\footnotesize $ \State = \left\langle p, inv \right\rangle$}, where $ p $ is the price of the asset and $ inv $ is the inventory remaining. {\footnotesize $ \Action \in \left\lbrace \pi\left( \theta \right) \right\rbrace$}, where {\footnotesize $ \theta \in \left( 0.0, 1.0\right)$} is the proportion of inventory to be sold. The transition function {\footnotesize \Transition} for each state variable in {\footnotesize \State} is given by:
 {\footnotesize 
     \abovedisplayskip=5pt
@@ -119,10 +109,10 @@ Figures~\ref{fig:oe_vf} and~\ref{fig:oe_vf_deriv} show the optimal value functio
                 \label{fig:space_complexity}\end{subfigure}
             \\
         \end{tabular}
-        \vspace{-2em}
+%        \vspace{-2em}
         \caption{Time and Space versus {\footnotesize $ \Horizon $} for Navigation.}
         \label{fig:time_space_complexity}    
-%        \vspace{-3mm}
+        \vspace{-3mm}
     \end{figure}
 %}
 
