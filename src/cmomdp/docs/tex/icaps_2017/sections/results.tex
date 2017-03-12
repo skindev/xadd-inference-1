@@ -3,36 +3,6 @@
 
 In this section we demonstrate the efficacy and tractability of PHMDPs by calculating the first known optimal solutions to three difficult nonlinear sequential decision problems. We note that while dOp~\cite{Gao2013} offers strong {\footnotesize $ \delta $}-optimality guarantees, we found that nonlinear solvers such as $ \mathtt{fmincon} $~\cite{MATLAB_2010}, an interior-point algorithm, perform comparably well at optimization and are much more efficient, hence we use $ \mathtt{fmincon} $.
 
-{\centering
-    \begin{figure}[ht]
-        \begin{tabular}{cc}
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=\textwidth]{images/robot_vf_new}\caption{{\footnotesize $V^{\pi^{*}}(loc, w_2; w_1 = 1.0)$} }\label{fig:navigation_vf}\end{subfigure}&
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=\textwidth]{images/sir_vf_new}\caption{{\footnotesize $V^{\pi^{*}}(\beta, \nu; s, i, r, \lambda, \\\hspace{\textwidth}\qquad cost_{\mathtt{inf}}, cost_{\mathtt{vaccine}})$}}\label{fig:sir_vf}\end{subfigure}
-            \\
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=\textwidth]{images/oe_vf_new}\caption{{\footnotesize $V^{\pi^{*}}(\theta, inv; \\\hspace{\textwidth}\qquad p = 55.0, \kappa = 0.165)$}}\label{fig:oe_vf}\end{subfigure}&
-            \begin{subfigure}{0.24\textwidth}\centering\includegraphics[width=\textwidth]{images/oe_vf_deriv_new}\caption{{\footnotesize $\nabla_{\theta} V^{\pi^{*}} (\theta, inv; \\\hspace{\textwidth}\qquad p = 55.0, \kappa = 0.165)    $}}\label{fig:oe_vf_deriv}\end{subfigure}\\            
-        \end{tabular}
-        \caption{Optimal Value functions for each domain.}        
-        \label{tab:vf_Results}
-        \vspace{-3mm}
-    \end{figure}
-}
-
-{\centering
-    \begin{figure}[ht]
-        \begin{tabular}{cc}
-            \begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/robot_opt_new}\caption{Max {\footnotesize $w_2 \in \left[0.0, 50.0 \right]$} for $ \tilde{\pi} $}\label{fig:navigation_opt}\end{subfigure}&            
-            \begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/sir_opt_new}\caption{Optimal {\footnotesize $ \nu $} for {\footnotesize $ \beta \in \left[ 0.0, 1.0 \right] $}}\label{fig:sir_opt}\end{subfigure}
-            \\
-%            \begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/oe_opt_new}\caption{Optimal {\footnotesize $ \theta $} for {\footnotesize $ inv \in \left(0.0, 1000.0 \right) $}}\label{fig:oe_opt}\end{subfigure}&
-%            \\
-        \end{tabular}
-        \caption{Nonlinear optimization for Navigation and SIR.}        
-        \label{tab:opt_results}
-        \vspace{-3mm}
-    \end{figure}
-}
-
 \subsection{Inverse Learning for Navigation}
 \label{sec:results_navigation}
 
@@ -57,6 +27,21 @@ Figure~\ref{fig:navigation_vf} shows the optimal value function at {\footnotesiz
 %For example, when {\footnotesize $loc = -20.0$} the vehicle will only move if the cost is close to {\footnotesize $0.0$}, whereas when the {\footnotesize $loc = 0.0$}, the vehicle is willing to incur higher movement costs. 
 In Figure~\ref{fig:navigation_opt} we utilise Equation~\eqref{eq:irl_q} to learn the parameters (weights) of the multi-objective reward under the following sub-optimal policy: {\footnotesize $ \tilde{\pi}(0 < loc < 10) = 5.0,  \tilde{\pi}(loc < 0 \,\mathrm{or}\, loc > 10) = 0.0$}. We observe that when {\footnotesize $a = 0.0$}, {\footnotesize $ w_2 = 50.0$}, its maximum value. When {\footnotesize $a = 5.0$}, there are two different gradients for {\footnotesize $ w_2 $}, one when {\footnotesize $ (0 < loc < 5) $} and another when {\footnotesize $ (5 < loc < 10) $}. The steepness of the gradient in the latter region illustrates that being one step closer to the reward region allows the vehicle to accumulate an additional goal region reward over the finite horizon.
 
+{\centering
+	\begin{figure}[t!]
+		\begin{tabular}{cc}
+			\begin{subfigure}{0.22\textwidth}\centering\includegraphics[width=\textwidth]{images/robot_vf_new}\caption{{\footnotesize $V^{\pi^{*}}(loc, w_2; w_1 = 1.0)$} }\label{fig:navigation_vf}\end{subfigure}&
+			\begin{subfigure}{0.22\textwidth}\centering\includegraphics[width=\textwidth]{images/sir_vf_new}\caption{{\footnotesize $V^{\pi^{*}}(\beta, \nu; s, i, r, \lambda, \\\hspace{\textwidth}\qquad cost_{\mathtt{inf}}, cost_{\mathtt{vaccine}})$}}\label{fig:sir_vf}\end{subfigure}
+			\\
+			\begin{subfigure}{0.22\textwidth}\centering\includegraphics[width=\textwidth]{images/oe_vf_new}\caption{{\footnotesize $V^{\pi^{*}}(\theta, inv; \\\hspace{\textwidth}\qquad p = 55.0, \kappa = 0.165)$}}\label{fig:oe_vf}\end{subfigure}&
+			\begin{subfigure}{0.22\textwidth}\centering\includegraphics[width=\textwidth]{images/oe_vf_deriv_new}\caption{{\footnotesize $\nabla_{\theta} V^{\pi^{*}} (\theta, inv; \\\hspace{\textwidth}\qquad p = 55.0, \kappa = 0.165)    $}}\label{fig:oe_vf_deriv}\end{subfigure}\\            
+		\end{tabular}
+		\caption{Optimal Value functions for each domain.}        
+		\label{tab:vf_Results}
+		\vspace{-3mm}
+	\end{figure}
+}
+
 \subsection{SIR Epidemic}
 \label{sec:results_influenza}
 
@@ -78,6 +63,21 @@ where {\footnotesize $ \beta $} is the infection rate and {\footnotesize $\lambd
 Figure~\ref{fig:sir_vf} shows the optimal value function at {\footnotesize$ \Horizon = 7 $} when {\footnotesize $ s = 1000.0, i = 100.0, r = 0.0, \lambda = 0.25 $}, {\footnotesize $ cost_{\mathtt{vaccine}} = 4.0$} and {\footnotesize $ cost_{\mathtt{inf}} = 10.0 $}. The value function shows that it is not always optimal to vaccinate the entire population. In fact, Figure~\ref{fig:sir_opt} reveals that vaccinating the entire population is only optimal when {\footnotesize $ \beta > 0.25 $}, that is, when the \textit{basic reproductive ratio} {\footnotesize $ R_0 \,(= \beta/\lambda)$}~\cite{Heffernan_2005} exceeds 1.0. Scenarios where {\footnotesize $R_0 > 1.0$} can lead to an epidemic. 
 
 To the best of our knowledge, this is the \textit{first} exact symbolic analysis of vaccination policies in an SIR epidemiological model. Furthermore, PHMDPs and SDP can be used to solve \textit{any} SIR model without needing an analytical solution.
+
+{\centering
+	\begin{figure}[t!]
+		\begin{tabular}{cc}
+			\begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/robot_opt_new}\caption{Max {\footnotesize $w_2 \in \left[0.0, 50.0 \right]$} for $ \tilde{\pi} $}\label{fig:navigation_opt}\end{subfigure}&            
+			\begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/sir_opt_new}\caption{Optimal {\footnotesize $ \nu $} for {\footnotesize $ \beta \in \left[ 0.0, 1.0 \right] $}}\label{fig:sir_opt}\end{subfigure}
+			\\
+			%            \begin{subfigure}{0.2\textwidth}\centering\includegraphics[width=\textwidth]{images/oe_opt_new}\caption{Optimal {\footnotesize $ \theta $} for {\footnotesize $ inv \in \left(0.0, 1000.0 \right) $}}\label{fig:oe_opt}\end{subfigure}&
+			%            \\
+		\end{tabular}
+		\caption{Nonlinear optimization for Navigation and SIR.}        
+		\label{tab:opt_results}
+		\vspace{-3mm}
+	\end{figure}
+}
 
 \subsection{Optimal Execution}
 \label{sec:results_oe}
@@ -109,10 +109,10 @@ Figures~\ref{fig:oe_vf} and~\ref{fig:oe_vf_deriv} show the optimal value functio
                 \label{fig:space_complexity}\end{subfigure}
             \\
         \end{tabular}
-%        \vspace{-2em}
+        \vspace{-1em}
         \caption{Time and Space versus {\footnotesize $ \Horizon $} for Navigation.}
         \label{fig:time_space_complexity}    
-        \vspace{-3mm}
+%        \vspace{-3mm}
     \end{figure}
 %}
 
